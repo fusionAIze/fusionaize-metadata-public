@@ -1,0 +1,121 @@
+{
+  "schema_version": "fusionaize-offering-catalog/v1",
+  "generated_at": "2026-04-01T12:00:00Z",
+  "source_repo": "fusionaize-metadata",
+  "offerings": {
+    "deepseek-chat-direct": {
+      "offering_id": "deepseek-chat-direct",
+      "model_id": "deepseek/chat",
+      "provider_id": "deepseek-chat",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://api-docs.deepseek.com/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 0.14,
+        "output_cost_per_1m": 0.28,
+        "cache_read_cost_per_1m": 0.014
+      },
+      "region": "global",
+      "availability": "available",
+      "default_for_model_provider": true,
+      "notes": "DeepSeek Chat direct offering via DeepSeek API.",
+      "last_reviewed": "2026-04-01"
+    },
+    "deepseek-reasoner-direct": {
+      "offering_id": "deepseek-reasoner-direct",
+      "model_id": "deepseek/reasoner",
+      "provider_id": "deepseek-reasoner",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://api-docs.deepseek.com/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 0.5,
+        "output_cost_per_1m": 1.0,
+        "cache_read_cost_per_1m": 0.05
+      },
+      "region": "global",
+      "availability": "available",
+      "default_for_model_provider": true,
+      "notes": "DeepSeek Reasoner direct offering via DeepSeek API.",
+      "last_reviewed": "2026-04-01"
+    },
+    "anthropic-haiku-direct": {
+      "offering_id": "anthropic-haiku-direct",
+      "model_id": "anthropic/haiku-4.5",
+      "provider_id": "anthropic-haiku",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://www.anthropic.com/pricing#api",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 0.8,
+        "output_cost_per_1m": 4.0,
+        "cache_read_cost_per_1m": 0.08
+      },
+      "region": "global",
+      "availability": "available",
+      "default_for_model_provider": true,
+      "notes": "Anthropic Claude Haiku 3.5 direct offering via Anthropic API.",
+      "last_reviewed": "2026-04-01"
+    },
+    "anthropic-sonnet-direct": {
+      "offering_id": "anthropic-sonnet-direct",
+      "model_id": "anthropic/sonnet-4.6",
+      "provider_id": "anthropic-sonnet",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://www.anthropic.com/pricing#api",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 3.0,
+        "output_cost_per_1m": 15.0,
+        "cache_read_cost_per_1m": 0.3
+      },
+      "region": "global",
+      "availability": "available",
+      "default_for_model_provider": true,
+      "notes": "Anthropic Claude Sonnet 4.6 direct offering via Anthropic API.",
+      "last_reviewed": "2026-04-01"
+    },
+    "gemini-flash-lite-direct": {
+      "offering_id": "gemini-flash-lite-direct",
+      "model_id": "google/gemini-flash-lite",
+      "provider_id": "gemini-flash-lite",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://ai.google.dev/gemini-api/docs/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 0.075,
+        "output_cost_per_1m": 0.3,
+        "cache_read_cost_per_1m": 0.02
+      },
+      "region": "global",
+      "availability": "available",
+      "default_for_model_provider": true,
+      "notes": "Google Gemini Flash Lite direct offering via Google AI Studio.",
+      "last_reviewed": "2026-04-01"
+    },
+    "openai-gpt4o-direct": {
+      "offering_id": "openai-gpt4o-direct",
+      "model_id": "openai/gpt-4o",
+      "provider_id": "openai-gpt4o",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://openai.com/api/pricing/",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 2.5,
+        "output_cost_per_1m": 10.0,
+        "cache_read_cost_per_1m": 1.25
+      },
+      "region": "global",
+      "availability": "available",
+      "default_for_model_provider": true,
+      "notes": "OpenAI GPT-4o direct offering via OpenAI API.",
+      "last_reviewed": "2026-04-01"
+    }
+  }
+}

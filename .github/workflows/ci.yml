@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 0 * * 1'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+        
+      - name: Validate JSON syntax
+        run: |
+          echo "Validating JSON files..."
+          for file in $(find . -name "*.json" -type f ! -path "./.git/*"); do
+            echo "Checking $file"
+            jq empty "$file" || exit 1
+          done
+          
+      - name: Check for duplicate provider IDs
+        run: |
+          echo "Checking for duplicate provider IDs in catalog..."
+          duplicates=$(jq -r '.providers | keys[]' providers/catalog.v1.json | sort | uniq -d)
+          if [ -n "$duplicates" ]; then
+            echo "ERROR: Duplicate provider IDs found: $duplicates"
+            exit 1
+          fi
+          count=$(jq -r '.providers | keys | length' providers/catalog.v1.json)
+          echo "✓ Found $count unique provider IDs"
+          
+      - name: Validate catalog schema
+        run: |
+          if [ -f "schemas/provider-catalog.v1.schema.json" ]; then
+            echo "Schema validation requires Python and jsonschema, skipping for now"
+            echo "Note: Schema validation is optional"
+          fi
+          
+      - name: Validate sources structure
+        run: |
+          if [ -f "providers/sources.v1.json" ]; then
+            schema_version=$(jq -r '.schema_version' providers/sources.v1.json 2>/dev/null || echo "")
+            if [ -z "$schema_version" ]; then
+              echo "ERROR: Missing schema_version in sources.v1.json"
+              exit 1
+            fi
+            sources_count=$(jq -r '.sources | keys | length' providers/sources.v1.json 2>/dev/null || echo "0")
+            echo "✓ Sources file has $sources_count sources"
+          fi
+          
+      - name: Validate overlays structure
+        run: |
+          if [ -f "products/gate/overlays.v1.json" ]; then
+            schema_version=$(jq -r '.schema_version' products/gate/overlays.v1.json 2>/dev/null || echo "")
+            if [ -z "$schema_version" ]; then
+              echo "ERROR: Missing schema_version in overlays.v1.json"
+              exit 1
+            fi
+            echo "✓ Overlays file is valid"
+          fi

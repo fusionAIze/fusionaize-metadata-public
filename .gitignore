@@ -1,0 +1,19 @@
+# Editor leftovers
+.DS_Store
+*.swp
+*.swo
+
+# Catalog backups / work-in-progress
+*.tmp
+*.bak
+catalog.*.tmp
+
+# Python (local validation tools)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/

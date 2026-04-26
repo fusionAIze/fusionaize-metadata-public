@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fusionaize.local/schemas/offering-catalog.v1.schema.json",
+  "title": "fusionAIze Offering Catalog v1",
+  "type": "object",
+  "required": ["schema_version", "offerings"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^fusionaize-offering-catalog/v\\d+$"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_repo": {
+      "type": "string"
+    },
+    "offerings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["offering_id", "model_id", "provider_id", "pricing"],
+        "properties": {
+          "offering_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+          },
+          "model_id": {
+            "type": "string"
+          },
+          "provider_id": {
+            "type": "string"
+          },
+          "pricing": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "input_cost_per_1m": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_1m": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_read_cost_per_1m": {
+                "type": "number",
+                "minimum": 0
+              },
+              "source_type": {
+                "type": "string",
+                "enum": ["provider-docs", "registry-default", "unknown", "free-local", "mixed", "community"]
+              },
+              "source_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "refreshed_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "freshness_status": {
+                "type": "string",
+                "enum": ["fresh", "aging", "stale", "unknown"]
+              }
+            },
+            "additionalProperties": true
+          },
+          "region": {
+            "type": "string"
+          },
+          "availability": {
+            "type": "string",
+            "enum": ["available", "limited", "beta", "deprecated", "unavailable"]
+          },
+          "rate_limits": {
+            "type": "object",
+            "properties": {
+              "requests_per_minute": {
+                "type": "integer"
+              },
+              "tokens_per_minute": {
+                "type": "integer"
+              }
+            }
+          },
+          "default_for_model_provider": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "last_reviewed": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

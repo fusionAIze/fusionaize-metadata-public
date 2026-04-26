@@ -1,0 +1,282 @@
+{
+  "schema_version": "fusionaize-model-catalog/v1",
+  "generated_at": "2026-04-01T12:00:00Z",
+  "source_repo": "fusionaize-metadata",
+  "models": {
+    "gpt-4o": {
+      "canonical_id": "gpt-4o",
+      "display_name": "GPT-4o",
+      "family": "openai-gpt",
+      "description": "OpenAI's latest multimodal model with strong reasoning and coding capabilities",
+      "capabilities": {
+        "context_window": 128000,
+        "modalities": ["text", "vision"],
+        "supports_tools": true,
+        "supports_function_calling": true,
+        "supports_json_mode": true,
+        "max_output_tokens": 16384
+      },
+      "primary_provider": "openai",
+      "typical_use_cases": ["coding", "reasoning", "multimodal", "general"],
+      "performance_profile": {
+        "reasoning": "high",
+        "speed": "medium",
+        "coding": "high",
+        "multimodal": "high"
+      },
+      "first_released": "2024-05-13",
+      "metadata_source": "https://platform.openai.com/docs/models/gpt-4o",
+      "last_verified": "2026-04-01"
+    },
+    "claude-3-5-sonnet": {
+      "canonical_id": "claude-3-5-sonnet",
+      "display_name": "Claude 3.5 Sonnet",
+      "family": "anthropic-claude",
+      "description": "Anthropic's balanced model with strong reasoning and tool use capabilities",
+      "capabilities": {
+        "context_window": 200000,
+        "modalities": ["text"],
+        "supports_tools": true,
+        "supports_function_calling": true,
+        "supports_json_mode": true,
+        "max_output_tokens": 8192
+      },
+      "primary_provider": "anthropic",
+      "typical_use_cases": ["coding", "reasoning", "tool_use", "analysis"],
+      "performance_profile": {
+        "reasoning": "high",
+        "speed": "medium",
+        "coding": "very_high",
+        "tool_use": "very_high"
+      },
+      "first_released": "2024-06-20",
+      "metadata_source": "https://docs.anthropic.com/en/docs/about-claude/models",
+      "last_verified": "2026-04-01"
+    },
+    "claude-3-haiku": {
+      "canonical_id": "claude-3-haiku",
+      "display_name": "Claude 3 Haiku",
+      "family": "anthropic-claude",
+      "description": "Anthropic's fastest and most cost-effective model",
+      "capabilities": {
+        "context_window": 200000,
+        "modalities": ["text"],
+        "supports_tools": true,
+        "supports_function_calling": true,
+        "supports_json_mode": true,
+        "max_output_tokens": 8192
+      },
+      "primary_provider": "anthropic",
+      "typical_use_cases": ["general", "summarization", "fast_response", "cost_sensitive"],
+      "performance_profile": {
+        "reasoning": "medium",
+        "speed": "very_high",
+        "coding": "medium",
+        "tool_use": "medium"
+      },
+      "first_released": "2024-03-13",
+      "metadata_source": "https://docs.anthropic.com/en/docs/about-claude/models",
+      "last_verified": "2026-04-01"
+    },
+    "gemini-2-5-pro": {
+      "canonical_id": "gemini-2-5-pro",
+      "display_name": "Gemini 2.5 Pro",
+      "family": "google-gemini",
+      "description": "Google's high-reasoning model with long context window",
+      "capabilities": {
+        "context_window": 1000000,
+        "modalities": ["text"],
+        "supports_tools": true,
+        "supports_function_calling": true,
+        "supports_json_mode": true,
+        "max_output_tokens": 8192
+      },
+      "primary_provider": "google",
+      "typical_use_cases": ["reasoning", "long_context", "analysis", "coding"],
+      "performance_profile": {
+        "reasoning": "very_high",
+        "speed": "medium",
+        "coding": "high",
+        "long_context": "very_high"
+      },
+      "first_released": "2026-02-13",
+      "metadata_source": "https://ai.google.dev/gemini-api/docs/models/gemini",
+      "last_verified": "2026-04-01"
+    },
+    "deepseek-chat": {
+      "canonical_id": "deepseek-chat",
+      "display_name": "DeepSeek Chat",
+      "family": "deepseek",
+      "description": "DeepSeek's general-purpose chat model",
+      "capabilities": {
+        "context_window": 128000,
+        "modalities": ["text"],
+        "supports_tools": false,
+        "supports_function_calling": false,
+        "supports_json_mode": true,
+        "max_output_tokens": 8192
+      },
+      "primary_provider": "deepseek",
+      "typical_use_cases": ["general", "coding", "cost_sensitive", "summarization"],
+      "performance_profile": {
+        "reasoning": "medium",
+        "speed": "high",
+        "coding": "high",
+        "cost": "very_low"
+      },
+      "first_released": "2024-01-01",
+      "metadata_source": "https://platform.deepseek.com/api-docs",
+      "last_verified": "2026-04-01"
+    },
+    "deepseek-reasoner": {
+      "canonical_id": "deepseek-reasoner",
+      "display_name": "DeepSeek Reasoner",
+      "family": "deepseek",
+      "description": "DeepSeek's reasoning-focused model",
+      "capabilities": {
+        "context_window": 128000,
+        "modalities": ["text"],
+        "supports_tools": false,
+        "supports_function_calling": false,
+        "supports_json_mode": true,
+        "max_output_tokens": 8192
+      },
+      "primary_provider": "deepseek",
+      "typical_use_cases": ["reasoning", "coding", "problem_solving"],
+      "performance_profile": {
+        "reasoning": "high",
+        "speed": "medium",
+        "coding": "very_high",
+        "cost": "low"
+      },
+      "first_released": "2024-08-01",
+      "metadata_source": "https://platform.deepseek.com/api-docs",
+      "last_verified": "2026-04-01"
+    },
+    "gpt-4o-mini": {
+      "canonical_id": "gpt-4o-mini",
+      "display_name": "GPT-4o Mini",
+      "family": "openai-gpt",
+      "description": "OpenAI's small, fast, and cost-effective model",
+      "capabilities": {
+        "context_window": 128000,
+        "modalities": ["text", "vision"],
+        "supports_tools": true,
+        "supports_function_calling": true,
+        "supports_json_mode": true,
+        "max_output_tokens": 16384
+      },
+      "primary_provider": "openai",
+      "typical_use_cases": ["general", "coding", "cost_sensitive", "multimodal"],
+      "performance_profile": {
+        "reasoning": "medium",
+        "speed": "high",
+        "coding": "medium",
+        "cost": "low"
+      },
+      "first_released": "2024-07-18",
+      "metadata_source": "https://platform.openai.com/docs/models/gpt-4o-mini",
+      "last_verified": "2026-04-01"
+    },
+    "claude-3-opus": {
+      "canonical_id": "claude-3-opus",
+      "display_name": "Claude 3 Opus",
+      "family": "anthropic-claude",
+      "description": "Anthropic's most capable model for complex reasoning tasks",
+      "capabilities": {
+        "context_window": 200000,
+        "modalities": ["text"],
+        "supports_tools": true,
+        "supports_function_calling": true,
+        "supports_json_mode": true,
+        "max_output_tokens": 8192
+      },
+      "primary_provider": "anthropic",
+      "typical_use_cases": ["complex_reasoning", "analysis", "premium_coding", "research"],
+      "performance_profile": {
+        "reasoning": "very_high",
+        "speed": "low",
+        "coding": "very_high",
+        "tool_use": "very_high"
+      },
+      "first_released": "2024-03-04",
+      "metadata_source": "https://docs.anthropic.com/en/docs/about-claude/models",
+      "last_verified": "2026-04-01"
+    },
+    "gemini-1.5-pro": {
+      "canonical_id": "gemini-1.5-pro",
+      "display_name": "Gemini 1.5 Pro",
+      "family": "google-gemini",
+      "description": "Google's high-quality model with strong reasoning and long context",
+      "capabilities": {
+        "context_window": 1000000,
+        "modalities": ["text", "vision", "audio"],
+        "supports_tools": true,
+        "supports_function_calling": true,
+        "supports_json_mode": true,
+        "max_output_tokens": 8192
+      },
+      "primary_provider": "google",
+      "typical_use_cases": ["reasoning", "long_context", "multimodal", "coding"],
+      "performance_profile": {
+        "reasoning": "high",
+        "speed": "medium",
+        "coding": "high",
+        "multimodal": "high"
+      },
+      "first_released": "2024-02-15",
+      "metadata_source": "https://ai.google.dev/gemini-api/docs/models/gemini",
+      "last_verified": "2026-04-01"
+    },
+    "llama-3.1": {
+      "canonical_id": "llama-3.1",
+      "display_name": "Llama 3.1",
+      "family": "meta-llama",
+      "description": "Meta's open-weight model series, strong for general tasks",
+      "capabilities": {
+        "context_window": 131072,
+        "modalities": ["text"],
+        "supports_tools": false,
+        "supports_function_calling": false,
+        "supports_json_mode": true,
+        "max_output_tokens": 8192
+      },
+      "primary_provider": "meta",
+      "typical_use_cases": ["general", "coding", "open_weight", "local_deployment"],
+      "performance_profile": {
+        "reasoning": "medium",
+        "speed": "high",
+        "coding": "medium",
+        "cost": "very_low"
+      },
+      "first_released": "2024-07-23",
+      "metadata_source": "https://ai.meta.com/blog/meta-llama-3-1/",
+      "last_verified": "2026-04-01"
+    },
+    "mistral-large": {
+      "canonical_id": "mistral-large",
+      "display_name": "Mistral Large",
+      "family": "mistral",
+      "description": "Mistral AI's high-performance model for complex tasks",
+      "capabilities": {
+        "context_window": 131072,
+        "modalities": ["text"],
+        "supports_tools": true,
+        "supports_function_calling": true,
+        "supports_json_mode": true,
+        "max_output_tokens": 8192
+      },
+      "primary_provider": "mistral",
+      "typical_use_cases": ["coding", "reasoning", "analysis", "tool_use"],
+      "performance_profile": {
+        "reasoning": "high",
+        "speed": "medium",
+        "coding": "high",
+        "tool_use": "high"
+      },
+      "first_released": "2024-02-26",
+      "metadata_source": "https://docs.mistral.ai/",
+      "last_verified": "2026-04-01"
+    }
+  }
+}

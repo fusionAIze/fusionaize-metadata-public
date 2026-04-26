@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fusionaize.local/schemas/model-catalog.v1.schema.json",
+  "title": "fusionAIze Model Catalog v1",
+  "type": "object",
+  "required": ["schema_version", "models"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^fusionaize-model-catalog/v\\d+$"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_repo": {
+      "type": "string"
+    },
+    "models": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["canonical_id", "display_name", "family", "description"],
+        "properties": {
+          "canonical_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "capabilities": {
+            "type": "object",
+            "properties": {
+              "context_window": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "modalities": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": ["text", "vision", "audio", "tool_use", "function_calling", "json_mode"]
+                }
+              },
+              "supports_tools": {
+                "type": "boolean"
+              },
+              "supports_function_calling": {
+                "type": "boolean"
+              },
+              "supports_json_mode": {
+                "type": "boolean"
+              },
+              "max_output_tokens": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "primary_provider": {
+            "type": "string"
+          },
+          "typical_use_cases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "performance_profile": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "enum": ["very_low", "low", "medium", "high", "very_high"]
+            }
+          },
+          "first_released": {
+            "type": "string",
+            "format": "date"
+          },
+          "metadata_source": {
+            "type": "string",
+            "format": "uri"
+          },
+          "last_verified": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
