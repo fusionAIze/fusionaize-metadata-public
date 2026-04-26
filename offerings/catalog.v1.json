@@ -1,45 +1,45 @@
 {
   "schema_version": "fusionaize-offering-catalog/v1",
-  "generated_at": "2026-04-01T12:00:00Z",
-  "source_repo": "fusionaize-metadata",
+  "generated_at": "2026-04-26T00:00:00Z",
+  "source_repo": "fusionaize-metadata-public",
   "offerings": {
     "deepseek-chat-direct": {
       "offering_id": "deepseek-chat-direct",
-      "model_id": "deepseek/chat",
+      "model_id": "deepseek/v4-flash",
       "provider_id": "deepseek-chat",
       "pricing": {
         "source_type": "provider-docs",
-        "source_url": "https://api-docs.deepseek.com/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
+        "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+        "refreshed_at": "2026-04-26T00:00:00Z",
         "freshness_status": "fresh",
         "input_cost_per_1m": 0.14,
         "output_cost_per_1m": 0.28,
-        "cache_read_cost_per_1m": 0.014
+        "cache_read_cost_per_1m": 0.028
       },
       "region": "global",
       "availability": "available",
       "default_for_model_provider": true,
-      "notes": "DeepSeek Chat direct offering via DeepSeek API.",
-      "last_reviewed": "2026-04-01"
+      "notes": "DeepSeek V4 Flash direct offering via DeepSeek API.",
+      "last_reviewed": "2026-04-26"
     },
     "deepseek-reasoner-direct": {
       "offering_id": "deepseek-reasoner-direct",
-      "model_id": "deepseek/reasoner",
+      "model_id": "deepseek/v4-pro",
       "provider_id": "deepseek-reasoner",
       "pricing": {
         "source_type": "provider-docs",
-        "source_url": "https://api-docs.deepseek.com/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
+        "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+        "refreshed_at": "2026-04-26T00:00:00Z",
         "freshness_status": "fresh",
-        "input_cost_per_1m": 0.5,
-        "output_cost_per_1m": 1.0,
-        "cache_read_cost_per_1m": 0.05
+        "input_cost_per_1m": 1.74,
+        "output_cost_per_1m": 3.48,
+        "cache_read_cost_per_1m": 0.145
       },
       "region": "global",
       "availability": "available",
       "default_for_model_provider": true,
-      "notes": "DeepSeek Reasoner direct offering via DeepSeek API.",
-      "last_reviewed": "2026-04-01"
+      "notes": "DeepSeek V4 Pro direct offering via DeepSeek API.",
+      "last_reviewed": "2026-04-26"
     },
     "anthropic-haiku-direct": {
       "offering_id": "anthropic-haiku-direct",
@@ -47,18 +47,18 @@
       "provider_id": "anthropic-haiku",
       "pricing": {
         "source_type": "provider-docs",
-        "source_url": "https://www.anthropic.com/pricing#api",
-        "refreshed_at": "2026-04-01T12:00:00Z",
+        "source_url": "https://www.anthropic.com/claude/haiku",
+        "refreshed_at": "2026-04-26T00:00:00Z",
         "freshness_status": "fresh",
-        "input_cost_per_1m": 0.8,
-        "output_cost_per_1m": 4.0,
-        "cache_read_cost_per_1m": 0.08
+        "input_cost_per_1m": 1.0,
+        "output_cost_per_1m": 5.0,
+        "cache_read_cost_per_1m": 0.1
       },
       "region": "global",
       "availability": "available",
       "default_for_model_provider": true,
-      "notes": "Anthropic Claude Haiku 3.5 direct offering via Anthropic API.",
-      "last_reviewed": "2026-04-01"
+      "notes": "Anthropic Claude Haiku 4.5 direct offering via Anthropic API.",
+      "last_reviewed": "2026-04-26"
     },
     "anthropic-sonnet-direct": {
       "offering_id": "anthropic-sonnet-direct",
@@ -116,6 +116,79 @@
       "default_for_model_provider": true,
       "notes": "OpenAI GPT-4o direct offering via OpenAI API.",
       "last_reviewed": "2026-04-01"
+    },
+    "anthropic-opus-direct": {
+      "offering_id": "anthropic-opus-direct",
+      "model_id": "anthropic/opus-4.7",
+      "provider_id": "anthropic-claude",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://www.anthropic.com/claude/opus",
+        "refreshed_at": "2026-04-26T00:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 5.0,
+        "output_cost_per_1m": 25.0,
+        "cache_read_cost_per_1m": 0.5
+      },
+      "region": "global",
+      "availability": "available",
+      "default_for_model_provider": true,
+      "notes": "Anthropic Claude Opus 4.7 direct offering via Anthropic API.",
+      "last_reviewed": "2026-04-26"
+    },
+    "openai-gpt55-codex-low": {
+      "offering_id": "openai-gpt55-codex-low",
+      "model_id": "openai/gpt-5.5:low",
+      "provider_id": "openai-codex",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://openai.com/index/introducing-gpt-5-5/",
+        "refreshed_at": "2026-04-26T00:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 5.0,
+        "output_cost_per_1m": 30.0
+      },
+      "region": "global",
+      "availability": "available",
+      "default_for_model_provider": true,
+      "notes": "OpenAI GPT-5.5 Codex low reasoning-effort offering; base API token price is shared across reasoning efforts.",
+      "last_reviewed": "2026-04-26"
+    },
+    "openai-gpt55-codex-medium": {
+      "offering_id": "openai-gpt55-codex-medium",
+      "model_id": "openai/gpt-5.5:medium",
+      "provider_id": "openai-codex",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://openai.com/index/introducing-gpt-5-5/",
+        "refreshed_at": "2026-04-26T00:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 5.0,
+        "output_cost_per_1m": 30.0
+      },
+      "region": "global",
+      "availability": "available",
+      "default_for_model_provider": true,
+      "notes": "OpenAI GPT-5.5 Codex medium reasoning-effort offering; base API token price is shared across reasoning efforts.",
+      "last_reviewed": "2026-04-26"
+    },
+    "openai-gpt55-codex-high": {
+      "offering_id": "openai-gpt55-codex-high",
+      "model_id": "openai/gpt-5.5:high",
+      "provider_id": "openai-codex",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://openai.com/index/introducing-gpt-5-5/",
+        "refreshed_at": "2026-04-26T00:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 5.0,
+        "output_cost_per_1m": 30.0
+      },
+      "region": "global",
+      "availability": "available",
+      "default_for_model_provider": true,
+      "notes": "OpenAI GPT-5.5 Codex high reasoning-effort offering; base API token price is shared across reasoning efforts.",
+      "last_reviewed": "2026-04-26"
     }
   }
 }
