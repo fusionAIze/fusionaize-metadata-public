@@ -1,19 +1,22 @@
 {
-  "schema_version": "fusionaize-provider-catalog/v1",
-  "generated_at": "2026-04-01T02:22:11Z",
-  "source_repo": "fusionaize-metadata",
+  "schema_version": "fusionaize-provider-catalog/v1.1",
+  "generated_at": "2026-04-26T00:00:00Z",
+  "source_repo": "fusionaize-metadata-public",
   "providers": {
     "anthropic": {
-      "recommended_model": "claude-opus-4-6",
+      "recommended_model": "claude-opus-4-7",
       "aliases": [
+        "claude-opus-4-7",
         "claude-opus-4-6",
         "anthropic:opus",
         "claude-sonnet-4-6",
+        "claude-haiku-4-5",
         "claude-haiku-3-5"
       ],
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "active",
       "auth_modes": [
         "api_key"
       ],
@@ -22,27 +25,29 @@
       "official_source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
       "signup_url": "https://console.anthropic.com/",
       "watch_sources": [],
-      "notes": "Anthropic Claude models (Opus, Sonnet, Haiku) - direct API.",
-      "last_reviewed": "2026-04-01",
+      "notes": "Anthropic Claude models (Opus, Sonnet, Haiku) - direct API. Recommended bumped to Opus 4.7 on 2026-04-26.",
+      "last_reviewed": "2026-04-26",
       "pricing": {
         "source_type": "provider-docs",
         "source_url": "https://www.anthropic.com/pricing#api",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
+        "refreshed_at": "2026-04-26T00:00:00Z",
+        "freshness_status": "stale",
         "input_cost_per_1m": 15.0,
         "output_cost_per_1m": 75.0,
         "cache_read_cost_per_1m": 1.5
       }
     },
     "anthropic-haiku": {
-      "recommended_model": "claude-haiku-3-5",
+      "recommended_model": "claude-haiku-4-5",
       "aliases": [
+        "claude-haiku-4-5",
         "claude-haiku-3-5",
         "anthropic:haiku"
       ],
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "active",
       "auth_modes": [
         "api_key"
       ],
@@ -51,13 +56,13 @@
       "official_source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
       "signup_url": "https://console.anthropic.com/",
       "watch_sources": [],
-      "notes": "Anthropic Claude Haiku 3.5 - fast, cost-effective model for general tasks.",
-      "last_reviewed": "2026-04-01",
+      "notes": "Anthropic Claude Haiku 4.5 - fast, cost-effective model for general tasks. Pricing carried forward from 3.5; verify against provider docs.",
+      "last_reviewed": "2026-04-26",
       "pricing": {
         "source_type": "provider-docs",
         "source_url": "https://www.anthropic.com/pricing#api",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
+        "refreshed_at": "2026-04-26T00:00:00Z",
+        "freshness_status": "stale",
         "input_cost_per_1m": 0.8,
         "output_cost_per_1m": 4.0,
         "cache_read_cost_per_1m": 0.08
@@ -93,11 +98,13 @@
       }
     },
     "anthropic-claude": {
-      "recommended_model": "claude-opus-4-6",
+      "recommended_model": "claude-opus-4-7",
       "aliases": [
+        "claude-opus-4-7",
         "claude-opus-4-6",
         "anthropic:opus"
       ],
+      "tier_status": "active",
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
@@ -356,26 +363,28 @@
       "recommended_model": "deepseek-chat",
       "aliases": [
         "deepseek-chat",
+        "ds-v4",
         "ds-v3"
       ],
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "active",
       "auth_modes": [
         "api_key"
       ],
-      "volatility": "low",
+      "volatility": "medium",
       "evidence_level": "official",
       "official_source_url": "https://api-docs.deepseek.com/",
       "signup_url": "https://platform.deepseek.com/",
       "watch_sources": [],
-      "notes": "DeepSeek Chat - balanced workhorse model for coding and general tasks.",
-      "last_reviewed": "2026-04-01",
+      "notes": "DeepSeek Chat (V4 backing as of 2026-04). API model name stays 'deepseek-chat'; underlying weights/pricing may shift across versions. Verify pricing against api-docs.deepseek.com.",
+      "last_reviewed": "2026-04-26",
       "pricing": {
         "source_type": "provider-docs",
-        "source_url": "https://api-docs.deepseek.com/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
+        "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+        "refreshed_at": "2026-04-26T00:00:00Z",
+        "freshness_status": "stale",
         "input_cost_per_1m": 0.14,
         "output_cost_per_1m": 0.28,
         "cache_read_cost_per_1m": 0.014
@@ -390,21 +399,22 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "active",
       "auth_modes": [
         "api_key"
       ],
-      "volatility": "low",
+      "volatility": "medium",
       "evidence_level": "official",
       "official_source_url": "https://api-docs.deepseek.com/",
       "signup_url": "https://platform.deepseek.com/",
       "watch_sources": [],
-      "notes": "DeepSeek Reasoner - high-reasoning model for complex tasks.",
-      "last_reviewed": "2026-04-01",
+      "notes": "DeepSeek Reasoner (V4 backing as of 2026-04). High-reasoning model. Verify pricing against api-docs.deepseek.com.",
+      "last_reviewed": "2026-04-26",
       "pricing": {
         "source_type": "provider-docs",
-        "source_url": "https://api-docs.deepseek.com/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
+        "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+        "refreshed_at": "2026-04-26T00:00:00Z",
+        "freshness_status": "stale",
         "input_cost_per_1m": 0.5,
         "output_cost_per_1m": 1.0,
         "cache_read_cost_per_1m": 0.05
@@ -503,28 +513,33 @@
       }
     },
     "openai-codex": {
-      "recommended_model": "openai-codex/gpt-5.3-codex",
+      "recommended_model": "openai-codex/gpt-5.5-codex:medium",
       "aliases": [
+        "openai-codex/gpt-5.5-codex:low",
+        "openai-codex/gpt-5.5-codex:medium",
+        "openai-codex/gpt-5.5-codex:high",
+        "openai-codex/gpt-5.5-codex",
         "openai-codex/gpt-5.3-codex"
       ],
       "track": "stable",
       "offer_track": "oauth",
       "provider_type": "direct",
+      "tier_status": "active",
       "auth_modes": [
         "oauth"
       ],
-      "volatility": "low",
+      "volatility": "medium",
       "evidence_level": "official",
       "official_source_url": "https://platform.openai.com/docs/models",
       "signup_url": "https://platform.openai.com/",
       "watch_sources": [],
-      "notes": "OpenAI Codex via OAuth (requires interactive login).",
-      "last_reviewed": "2026-04-01",
+      "notes": "OpenAI Codex via OAuth. GPT-5.5-codex ships in 3 reasoning tiers (low/medium/high) — alias suffix selects the tier. Pricing per tier pending verification.",
+      "last_reviewed": "2026-04-26",
       "pricing": {
         "source_type": "provider-docs",
         "source_url": "https://openai.com/api/pricing/",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh"
+        "refreshed_at": "2026-04-26T00:00:00Z",
+        "freshness_status": "stale"
       }
     },
     "opencode": {

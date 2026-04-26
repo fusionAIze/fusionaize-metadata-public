@@ -1,15 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fusionaize.local/schemas/provider-catalog.v1.schema.json",
-  "title": "fusionAIze Provider Catalog v1",
+  "title": "fusionAIze Provider Catalog v1.1",
+  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. Older consumers ignore them.",
   "type": "object",
   "required": ["schema_version", "providers"],
   "properties": {
     "schema_version": {
-      "type": "string"
+      "type": "string",
+      "description": "fusionaize-provider-catalog/v1 or v1.1"
     },
     "generated_at": {
-      "type": "string"
+      "type": "string",
+      "format": "date-time"
     },
     "source_repo": {
       "type": "string"
@@ -17,7 +20,66 @@
     "providers": {
       "type": "object",
       "additionalProperties": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "recommended_model": {
+            "type": ["string", "null"]
+          },
+          "aliases": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "track": { "type": "string" },
+          "offer_track": { "type": "string" },
+          "provider_type": { "type": "string" },
+          "auth_modes": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "tier_status": {
+            "type": "string",
+            "enum": ["active", "deprecated", "expired", "preview"],
+            "description": "v1.1: lifecycle state of this provider tier. Defaults to 'active' when absent."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date",
+            "description": "v1.1: ISO date after which this provider entry should be treated as expired (free tier ends, deprecated, etc.)"
+          },
+          "volatility": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          },
+          "evidence_level": {
+            "type": "string",
+            "enum": ["official", "mixed", "unofficial"]
+          },
+          "official_source_url": { "type": "string" },
+          "signup_url": { "type": "string" },
+          "watch_sources": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" },
+          "last_reviewed": { "type": "string" },
+          "pricing": {
+            "type": "object",
+            "properties": {
+              "source_type": { "type": "string" },
+              "source_url": { "type": "string" },
+              "refreshed_at": { "type": "string" },
+              "freshness_status": {
+                "type": "string",
+                "enum": ["fresh", "stale", "unknown"]
+              },
+              "input_cost_per_1m": { "type": "number" },
+              "output_cost_per_1m": { "type": "number" },
+              "cache_read_cost_per_1m": { "type": "number" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
       }
     }
   },
