@@ -107,3 +107,9 @@ operator-specific quotas — those belong in the private companion repo.
 ## License
 
 Apache-2.0 — see [LICENSE](LICENSE).
+
+## Repository & Contributing
+
+Canonical repository: **self-hosted Forgejo** — `git.langevc.com/fusionaize/fusionaize-metadata-public`
+(`git clone git@git.langevc.com:fusionaize/fusionaize-metadata-public.git`). Develop against the Forgejo
+clone and open pull requests there. The GitHub copy is a read-only mirror.

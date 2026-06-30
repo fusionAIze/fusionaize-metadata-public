@@ -10,6 +10,7 @@ on:
 
 jobs:
   validate:
+    if: ${{ github.server_url == 'https://github.com' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
