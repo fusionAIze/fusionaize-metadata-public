@@ -17,3 +17,7 @@ venv/
 # IDE
 .vscode/
 .idea/
+
+# SkillWeave runtime is local; only the helper is tracked.
+.skillweave/*
+!.skillweave/agents.md
