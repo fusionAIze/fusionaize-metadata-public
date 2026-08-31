@@ -18,6 +18,7 @@ venv/
 .vscode/
 .idea/
 
-# SkillWeave runtime is local; only the helper is tracked.
-.skillweave/*
-!.skillweave/agents.md
+# SkillWeave runtime is local and never tracked here. This repository is
+# publicly mirrored, and the mirror's visibility gate (ADR-0001) blocks
+# .skillweave/** from reaching a public mirror. Nothing under it is tracked.
+.skillweave/
