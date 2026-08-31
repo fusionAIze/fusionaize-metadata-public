@@ -46,7 +46,8 @@
                 "type": "array",
                 "items": {
                   "type": "string",
-                  "enum": ["text", "vision", "audio", "tool_use", "function_calling", "json_mode"]
+                  "enum": ["text", "vision", "audio", "tool_use", "function_calling", "json_mode"],
+                  "$comment": "Divergence: provider-catalog.v1.schema.json accepts 'image_generation' in its modalities enum while model-catalog.v1.schema.json does not. Reconciling the two vocabularies is an open decision, not resolved here."
                 }
               },
               "supports_tools": {
