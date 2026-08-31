@@ -8,7 +8,7 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "description": "fusionaize-provider-catalog/v1 or v1.1"
+      "description": "fusionaize-provider-catalog version string, e.g. 'fusionaize-provider-catalog/v1.2'. v1, v1.1, and v1.2 are all valid; older consumers ignore unknown fields."
     },
     "generated_at": {
       "type": "string",
@@ -102,7 +102,11 @@
               "input_cost_per_1m": { "type": "number" },
               "output_cost_per_1m": { "type": "number" },
               "cache_read_cost_per_1m": { "type": "number" },
-              "image_cost_per_1m": { "type": "number" }
+              "image_tokens_max": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "v1.2: maximum number of tokens one image is billed as (e.g. DeepSeek V4-Flash-Vision tokenizes an image up to 384 tokens, charged at the model's normal token price)."
+              }
             },
             "additionalProperties": true
           }
