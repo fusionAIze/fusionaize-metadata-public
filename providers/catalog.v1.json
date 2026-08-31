@@ -444,23 +444,28 @@
         "vision"
       ],
       "evidence": {
-        "level": "unbestaetigt",
-        "source_url": "https://api-docs.deepseek.com/guides/vision#token-usage"
+        "level": "belegt",
+        "source_url": "https://api-docs.deepseek.com/quick_start/pricing"
       },
       "official_source_url": "https://api-docs.deepseek.com/quick_start/pricing",
       "signup_url": "https://platform.deepseek.com/",
       "watch_sources": [],
-      "notes": "DeepSeek V4 Flash Vision Exp (experimental) adds image input to V4 Flash. Images are converted to tokens by dimension with an upper bound of 384 tokens per image, billed at the input-token rate. Flat per-1M cost figures below are a best-effort mapping: the official pricing page states peak/off-peak and cache hit/miss rates rather than a single flat price, so these numbers are not directly citable.",
-      "last_reviewed": "2026-04-26",
+      "notes": "DeepSeek V4 Flash Vision Exp (experimental) adds image input to V4 Flash. Images are converted to tokens by dimension with an upper bound of 384 tokens per image, billed at the input-token rate. The pricing page lists peak/off-peak and cache hit/miss rates, not a single flat price: the canonical *_cost_per_1m fields below carry the PEAK column (input = cache-miss, cache_read = cache-hit); the corresponding off-peak rates (half of peak) are carried in the pricing_off_peak object. Peak hours are 01:00-04:00 and 06:00-10:00 UTC, Mon-Fri.",
+      "last_reviewed": "2026-08-31",
       "pricing": {
         "source_type": "provider-docs",
-        "source_url": "https://api-docs.deepseek.com/guides/vision#token-usage",
-        "refreshed_at": "2026-04-26T00:00:00Z",
+        "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+        "refreshed_at": "2026-08-31T00:00:00Z",
         "freshness_status": "fresh",
         "input_cost_per_1m": 0.44,
         "output_cost_per_1m": 1.32,
         "cache_read_cost_per_1m": 0.014,
-        "image_tokens_max": 384
+        "image_tokens_max": 384,
+        "pricing_off_peak": {
+          "input_cost_per_1m": 0.22,
+          "output_cost_per_1m": 0.66,
+          "cache_read_cost_per_1m": 0.007
+        }
       }
     },
     "blackbox-free": {
