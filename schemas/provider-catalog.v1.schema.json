@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fusionaize.local/schemas/provider-catalog.v1.schema.json",
-  "title": "fusionAIze Provider Catalog v1.1",
-  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. Older consumers ignore them.",
+  "title": "fusionAIze Provider Catalog v1.2",
+  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. Older consumers ignore unknown fields.",
   "type": "object",
   "required": ["schema_version", "providers"],
   "properties": {
@@ -54,6 +54,33 @@
             "type": "string",
             "enum": ["official", "mixed", "unofficial"]
           },
+          "modalities": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["text", "vision", "audio", "image_generation", "tool_use", "function_calling", "json_mode"]
+            }
+          },
+          "evidence": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "string",
+                "enum": ["belegt", "plausibel", "unbestaetigt"]
+              },
+              "source_url": { "type": "string" }
+            },
+            "additionalProperties": true
+          },
+          "free_tier": {
+            "type": "object",
+            "properties": {
+              "enabled": { "type": "boolean" },
+              "request_limit_per_day": { "type": "integer", "minimum": 0 },
+              "notes": { "type": "string" }
+            },
+            "additionalProperties": true
+          },
           "official_source_url": { "type": "string" },
           "signup_url": { "type": "string" },
           "watch_sources": {
@@ -74,7 +101,8 @@
               },
               "input_cost_per_1m": { "type": "number" },
               "output_cost_per_1m": { "type": "number" },
-              "cache_read_cost_per_1m": { "type": "number" }
+              "cache_read_cost_per_1m": { "type": "number" },
+              "image_cost_per_1m": { "type": "number" }
             },
             "additionalProperties": true
           }
