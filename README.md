@@ -110,6 +110,10 @@ Apache-2.0 — see [LICENSE](LICENSE).
 
 ## Repository & Contributing
 
-Canonical repository: **self-hosted Forgejo** — `git.langevc.com/fusionaize/fusionaize-metadata-public`
-(`git clone git@git.langevc.com:fusionaize/fusionaize-metadata-public.git`). Develop against the Forgejo
-clone and open pull requests there. The GitHub copy is a read-only mirror.
+This GitHub repository is a **read-only mirror**. It is force-pushed from a private
+canonical upstream, so any pull request opened here will be overwritten and lost on the
+next sync.
+
+To contribute, open a GitHub issue describing the change. For pricing corrections, please
+cite the provider's pricing page. Maintainers apply accepted changes upstream, and they
+appear here on the next mirror push.
