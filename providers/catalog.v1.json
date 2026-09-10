@@ -4,7 +4,6 @@
   "source_repo": "fusionaize-metadata-public",
   "providers": {
     "anthropic": {
-      "recommended_model": "claude-opus-4-7",
       "aliases": [
         "claude-opus-4-7",
         "claude-opus-4-6",
@@ -41,7 +40,6 @@
       "hop": []
     },
     "anthropic-claude": {
-      "recommended_model": "claude-opus-4-7",
       "aliases": [
         "claude-opus-4-7",
         "claude-opus-4-6",
@@ -76,7 +74,6 @@
       "variant": "claude"
     },
     "anthropic-haiku": {
-      "recommended_model": "claude-haiku-4-5",
       "aliases": [
         "claude-haiku-4-5",
         "claude-haiku-3-5",
@@ -110,7 +107,6 @@
       "hop": []
     },
     "anthropic-sonnet": {
-      "recommended_model": "claude-sonnet-4-6",
       "aliases": [
         "claude-sonnet-4-6",
         "anthropic:sonnet"
@@ -142,7 +138,6 @@
       "hop": []
     },
     "openai": {
-      "recommended_model": "gpt-4o",
       "aliases": [
         "gpt-4o",
         "gpt-4o-mini",
@@ -176,7 +171,6 @@
       "hop": []
     },
     "openai-gpt4o": {
-      "recommended_model": "gpt-4o",
       "aliases": [
         "gpt-4o"
       ],
@@ -208,7 +202,6 @@
       "variant": "gpt4o"
     },
     "openai-images": {
-      "recommended_model": "gpt-image-1",
       "aliases": [
         "gpt-image-1"
       ],
@@ -236,7 +229,6 @@
       "hop": []
     },
     "google": {
-      "recommended_model": "gemini-3.1-pro",
       "aliases": [
         "gemini-3.1-pro",
         "gemini-3-flash",
@@ -270,7 +262,6 @@
       "hop": []
     },
     "gemini-flash": {
-      "recommended_model": "gemini-3-flash",
       "aliases": [
         "gemini-3-flash",
         "gemini-2.5-flash"
@@ -302,7 +293,6 @@
       "hop": []
     },
     "gemini-flash-lite": {
-      "recommended_model": "gemini-3-flash-lite",
       "aliases": [
         "gemini-3-flash-lite",
         "gemini-2.5-flash-lite"
@@ -334,7 +324,6 @@
       "hop": []
     },
     "gemini-pro-high": {
-      "recommended_model": "gemini-3.1-pro",
       "aliases": [
         "gemini-3.1-pro",
         "gemini-pro-high"
@@ -367,7 +356,6 @@
       "variant": "high"
     },
     "gemini-pro-low": {
-      "recommended_model": "gemini-3.1-pro",
       "aliases": [
         "gemini-3.1-pro",
         "gemini-pro-low"
@@ -400,7 +388,6 @@
       "variant": "low"
     },
     "deepseek-chat": {
-      "recommended_model": "deepseek-v4-flash",
       "aliases": [
         "deepseek-chat",
         "ds-v4",
@@ -436,7 +423,6 @@
       "hop": []
     },
     "deepseek-reasoner": {
-      "recommended_model": "deepseek-v4-pro",
       "aliases": [
         "deepseek-reasoner",
         "r1",
@@ -471,7 +457,6 @@
       "hop": []
     },
     "deepseek-flash-vision-exp": {
-      "recommended_model": "deepseek-v4-flash-vision-exp",
       "aliases": [
         "deepseek-v4-flash-vision-exp",
         "deepseek:flash-vision-exp"
@@ -525,7 +510,6 @@
       ]
     },
     "blackbox-free": {
-      "recommended_model": "grok-code-fast-1",
       "aliases": [
         "blackboxai/x-ai/grok-code-fast-1"
       ],
@@ -560,7 +544,6 @@
       ]
     },
     "kilocode": {
-      "recommended_model": null,
       "aliases": [
         "z-ai/glm-5:free"
       ],
@@ -599,7 +582,6 @@
       "variant": "free"
     },
     "openrouter-fallback": {
-      "recommended_model": "auto",
       "aliases": [
         "openrouter/auto",
         "openrouter:auto",
@@ -628,11 +610,10 @@
         "platform_fee": "Pay-as-you-go lists a 5.5% platform fee; BYOK has monthly included request allowances, then OpenRouter fee policy applies."
       },
       "vendor": "openrouter",
-      "model": "auto",
+      "model": "auto-router",
       "hop": []
     },
     "openai-codex": {
-      "recommended_model": "gpt-5.5-codex",
       "aliases": [
         "openai-codex/gpt-5.5-codex:low",
         "openai-codex/gpt-5.5-codex:medium",
@@ -668,7 +649,6 @@
       "variant": "medium"
     },
     "opencode": {
-      "recommended_model": "claude-opus-4-6",
       "aliases": [
         "opencode/claude-opus-4-6"
       ],
@@ -698,7 +678,6 @@
       ]
     },
     "google-vertex": {
-      "recommended_model": "gemini-2.5-pro",
       "aliases": [
         "google-vertex/gemini-2.5-pro"
       ],
@@ -727,7 +706,6 @@
       "hop": []
     },
     "zai": {
-      "recommended_model": "glm-5",
       "aliases": [
         "z-ai/glm-5"
       ],
@@ -755,7 +733,6 @@
       "hop": []
     },
     "groq": {
-      "recommended_model": "llama-3.3-70b-versatile",
       "aliases": [
         "llama-3.3-70b-versatile",
         "groq/llama",
@@ -789,7 +766,6 @@
       ]
     },
     "mistral": {
-      "recommended_model": "mistral-large-latest",
       "aliases": [
         "mistral-large-latest",
         "codestral-latest"
@@ -820,7 +796,6 @@
       "hop": []
     },
     "moonshot": {
-      "recommended_model": "moonshot-v1-8k",
       "aliases": [
         "moonshot-v1-8k",
         "moonshot-v1-32k",
@@ -850,7 +825,6 @@
       "hop": []
     },
     "ollama": {
-      "recommended_model": "llama3.2",
       "aliases": [
         "llama3.2",
         "mistral",
@@ -882,7 +856,6 @@
       ]
     },
     "huggingface": {
-      "recommended_model": "zephyr-7b-beta",
       "aliases": [
         "HuggingFaceH4/zephyr-7b-beta",
         "meta-llama/Llama-3.2-3B-Instruct"
@@ -911,7 +884,6 @@
       "hop": []
     },
     "lmstudio": {
-      "recommended_model": "local-model",
       "aliases": [
         "local-model"
       ],
@@ -941,7 +913,6 @@
       ]
     },
     "vllm": {
-      "recommended_model": "local-model",
       "aliases": [
         "local-model"
       ],
@@ -971,7 +942,6 @@
       ]
     },
     "litellm": {
-      "recommended_model": "gpt-3.5-turbo",
       "aliases": [
         "gpt-3.5-turbo",
         "claude-3-haiku"
@@ -1002,7 +972,6 @@
       ]
     },
     "byteplus": {
-      "recommended_model": "seed-1-8-251228",
       "aliases": [
         "byteplus/seed-1-8-251228"
       ],
@@ -1032,7 +1001,6 @@
       ]
     },
     "byteplus-plan": {
-      "recommended_model": "ark-code-latest",
       "aliases": [
         "byteplus-plan/ark-code-latest"
       ],
@@ -1062,7 +1030,6 @@
       ]
     },
     "cerebras": {
-      "recommended_model": "llama3.3-70b",
       "aliases": [
         "llama3.3-70b"
       ],
@@ -1094,7 +1061,6 @@
       ]
     },
     "github-copilot": {
-      "recommended_model": "gpt-4o",
       "aliases": [
         "gpt-4o"
       ],
@@ -1124,7 +1090,6 @@
       ]
     },
     "kimi-coding": {
-      "recommended_model": "k2p5",
       "aliases": [
         "kimi-coding/k2p5"
       ],
@@ -1152,7 +1117,6 @@
       "hop": []
     },
     "minimax": {
-      "recommended_model": "MiniMax-M2.1",
       "aliases": [
         "minimax/MiniMax-M2.1"
       ],
@@ -1180,7 +1144,6 @@
       "hop": []
     },
     "qwen-portal": {
-      "recommended_model": "coder-model",
       "aliases": [
         "qwen-portal/coder-model"
       ],
@@ -1208,7 +1171,6 @@
       "hop": []
     },
     "synthetic": {
-      "recommended_model": "MiniMax-M2.1",
       "aliases": [
         "synthetic/hf:MiniMaxAI/MiniMax-M2.1"
       ],
@@ -1238,7 +1200,6 @@
       ]
     },
     "vercel-ai-gateway": {
-      "recommended_model": "claude-opus-4.6",
       "aliases": [
         "vercel-ai-gateway/anthropic/claude-opus-4.6"
       ],
@@ -1268,7 +1229,6 @@
       ]
     },
     "volcengine": {
-      "recommended_model": "doubao-seed-1-8-251228",
       "aliases": [
         "volcengine/doubao-seed-1-8-251228"
       ],
@@ -1296,7 +1256,6 @@
       "hop": []
     },
     "volcengine-plan": {
-      "recommended_model": "ark-code-latest",
       "aliases": [
         "volcengine-plan/ark-code-latest"
       ],
@@ -1324,7 +1283,6 @@
       "hop": []
     },
     "xai": {
-      "recommended_model": "grok-3",
       "aliases": [
         "grok-3"
       ],

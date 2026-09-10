@@ -15,11 +15,22 @@ v1.3 coverage (TASK-C1..C4 — the ID path scheme):
   TASK-C3  max_input_tokens / max_output_tokens require evidence
   TASK-C4  auto/ reserved namespace; intent-vs-model collision reported
 
-Round 3 (review findings):
-  MUSS-1   recommended_model is derived, must equal `model` (or be null)
-  MUSS-2   auto/ prefix reserved in the SCHEMA (vendor + hop), not just in tests
-  MUSS-3   hop has uniqueItems; repeated intermediary rejected
-  MUSS-4   shrink-guard also compares aliases + carried fields per entry
+ Round 3 (review findings):
+   MUSS-1   recommended_model is derived, must equal `model` (or be null)
+   MUSS-2   auto/ prefix reserved in the SCHEMA (vendor + hop), not just in tests
+   MUSS-3   hop has uniqueItems; repeated intermediary rejected
+   MUSS-4   shrink-guard also compares aliases + carried fields per entry
+
+ Round 4 (review findings):
+   MUSS-1   auto/ reserved on EVERY path segment (vendor, model, variant, hop)
+            — not just vendor + hop; model/variant were still pass-through
+   MUSS-2   recommended_model is truly DERIVED (option a): removed from the
+            data file, reconstructed at load from tier_status (auto-selectable
+            -> model, non-auto-selectable -> null); a stored value is gone, so
+            a new entry cannot contradict it
+   MUSS-3   shrink-guard baseline corrected from origin/main (v1.2, no identity
+            fields) to HEAD (v1.3, full identity); it now actually sees losses
+            inside v1.3 entries
 
 Run with ``python3 -m pytest -q``.
 """
@@ -231,32 +242,82 @@ def test_no_two_entries_claim_the_same_path():
         seen[path] = key
 
 
-def test_recommended_model_is_derived_not_independent():
-    # v1.3: recommended_model lost its independent meaning. It is now derived
-    # from the exploded identity fields and therefore must equal `model` (or be
-    # null, meaning "do not auto-select"). A value that differs from `model`
-    # (and thus from the generated path) is a second, driftable truth that this
-    # scheme exists to eliminate.
-    for key, entry in _load_catalog()["providers"].items():
-        rm = entry.get("recommended_model")
-        assert rm is None or rm == entry["model"], \
-            (f"{key}: recommended_model={rm!r} does not match model="
-             f"{entry['model']!r}")
+def test_recommended_model_is_derived_not_stored():
+    # v1.3 (round 4, MUSS-2 option a): recommended_model is DERIVED, never
+    # stored in the data file. The routing key is the identity path built from
+    # vendor/model/variant/hop; recommended_model is reconstructed at load from
+    # tier_status: `model` for an auto-selectable provider, `null` otherwise.
+    # Because it is not stored, a NEW entry (edited by no one but the author)
+    # cannot carry a value that contradicts the identity path.
+    catalog = _load_catalog()
+    for key, entry in catalog["providers"].items():
+        assert "recommended_model" not in entry, \
+            f"{key}: recommended_model must not be stored (it is derived)"
+
+
+def test_new_entry_cannot_contradict_derived_recommended_model():
+    # A hypothetical brand-new entry that nobody has reviewed. Even if its
+    # author tries to set a stored recommended_model, the schema treats it as
+    # an unknown/ignored property (additionalProperties:true) and the loader
+    # derives the value from the identity fields + tier_status, so no stored
+    # driftable truth can take hold.
+    doc = _make_doc()
+    doc["providers"]["brand-new"] = {
+        "vendor": "acme",
+        "model": "gpt-future",
+        "hop": [],
+        "recommended_model": "acme/gpt-future",  # a stale fused string
+    }
+    assert _errors(doc) == [], \
+        "a derived-only field must not be rejected as a schema error (tolerated for back-compat)"
+    # The derived rule ignores the stored value entirely: auto-selectable
+    # (no tier_status) -> derived == model.
+    entry = doc["providers"]["brand-new"]
+    assert _derived_recommended_model(entry) == "gpt-future"
+    assert _derived_recommended_model(entry) != entry["recommended_model"], \
+        "the stored stale string must NOT be what the loader derives"
+
+
+def _derived_recommended_model(entry: dict):
+    """The load-time reconstruction of recommended_model (option a)."""
+    tier = entry.get("tier_status", "active")
+    if tier in ("expired", "deprecated"):
+        return None
+    return entry["model"]
+
+
+def test_derived_recommended_model_matches_tier_status():
+    catalog = _load_catalog()
+    for key, entry in catalog["providers"].items():
+        derived = _derived_recommended_model(entry)
+        tier = entry.get("tier_status", "active")
+        if tier in ("expired", "deprecated"):
+            assert derived is None, f"{key}: non-auto-selectable must derive null"
+        else:
+            assert derived == entry["model"], \
+                f"{key}: auto-selectable must derive model={entry['model']!r}"
+    # The one non-auto-selectable entry is kilocode (expired).
+    assert _derived_recommended_model(catalog["providers"]["kilocode"]) is None
+
+
+def _derived_recommended_models(catalog: dict) -> dict:
+    """Map of derived recommended_model name -> set of (vendor, model) identities."""
+    by_name = {}
+    for key, entry in catalog["providers"].items():
+        rm = _derived_recommended_model(entry)
+        if rm is None:
+            continue
+        by_name.setdefault(rm, set()).add((entry["vendor"], entry["model"]))
+    return by_name
 
 
 def test_alias_ambiguity_resolves_via_vendor_model():
     # The pre-split catalog had ambiguous plain model names: 'gpt-4o' served by
     # three provider entries, 'gemini-3.1-pro' by three, 'claude-opus-4-7' by two.
-    # Splitting into vendor/model must collapse each recommended model name to a
-    # single (vendor, model) identity regardless of how many provider entries
-    # (differing only by hop or variant) carry it.
-    by_recommended = {}
-    for key, entry in _load_catalog()["providers"].items():
-        if not entry.get("recommended_model"):
-            continue
-        name = entry["recommended_model"]
-        resolved = (entry["vendor"], entry["model"])
-        by_recommended.setdefault(name, set()).add(resolved)
+    # Splitting into vendor/model must collapse each derived recommended model
+    # name to a single (vendor, model) identity regardless of how many provider
+    # entries (differing only by hop or variant) carry it.
+    by_recommended = _derived_recommended_models(_load_catalog())
     for ambiguous in ["gpt-4o", "gemini-3.1-pro", "claude-opus-4-7"]:
         assert ambiguous in by_recommended
         assert len(by_recommended[ambiguous]) == 1, \
@@ -299,6 +360,34 @@ def test_schema_reserves_auto_prefix_in_hop():
     doc["providers"]["example"]["model"] = "model"
     doc["providers"]["example"]["hop"] = ["auto"]
     assert _errors(doc), "hop segment 'auto' must be rejected (reserved intent namespace)"
+
+
+def test_schema_reserves_auto_prefix_in_model():
+    doc = _make_doc()
+    doc["providers"]["example"]["vendor"] = "vendor"
+    doc["providers"]["example"]["model"] = "auto"
+    assert _errors(doc), "model 'auto' must be rejected (reserved intent namespace)"
+
+    for bad in ["auto/coding-fast", "auto/eco"]:
+        doc = _make_doc()
+        doc["providers"]["example"]["vendor"] = "vendor"
+        doc["providers"]["example"]["model"] = bad
+        assert _errors(doc), f"model {bad!r} must be rejected (reserved auto/ prefix)"
+
+
+def test_schema_reserves_auto_prefix_in_variant():
+    doc = _make_doc()
+    doc["providers"]["example"]["vendor"] = "vendor"
+    doc["providers"]["example"]["model"] = "model"
+    doc["providers"]["example"]["variant"] = "auto"
+    assert _errors(doc), "variant 'auto' must be rejected (reserved intent namespace)"
+
+    for bad in ["auto/coding-fast", "auto/eco"]:
+        doc = _make_doc()
+        doc["providers"]["example"]["vendor"] = "vendor"
+        doc["providers"]["example"]["model"] = "model"
+        doc["providers"]["example"]["variant"] = bad
+        assert _errors(doc), f"variant {bad!r} must be rejected (reserved auto/ prefix)"
 
 
 def test_hop_rejects_repeated_segment():
@@ -375,13 +464,18 @@ def test_routing_modes_are_represented_as_auto_names():
     assert _load_catalog()["routing_modes"] == ROUTING_MODES
 
 
-def test_intent_model_collision_is_reported_not_resolved():
+def test_intent_model_collision_is_impossible_not_reported():
+    # v1.3 (round 4, MUSS-1): the auto/ intent namespace is reserved on EVERY
+    # path segment (vendor, model, variant, hop), so a physical entry can no
+    # longer carry `auto` as a model (or any other segment). OpenRouter's "auto"
+    # router is therefore named `auto-router`, leaving the reserved token to the
+    # intent namespace alone. A collision is now impossible by construction.
     catalog = _load_catalog()
-    # OpenRouter's `auto` model collides with the reserved `auto` intent. The
-    # loader must REPORT this rather than silently dropping or remapping it.
     collisions = _find_intent_model_collisions(catalog)
-    assert ("auto", "openrouter-fallback") in collisions, \
-        "openrouter/auto should be reported as colliding with the 'auto' intent"
+    assert collisions == [], \
+        f"reserved intent names still collide with physical entries: {collisions}"
+    # The former colliding model is represented without the reserved token.
+    assert catalog["providers"]["openrouter-fallback"]["model"] == "auto-router"
 
 
 # ---------------------------------------------------------------------------
@@ -394,7 +488,12 @@ def test_intent_model_collision_is_reported_not_resolved():
 # alias, a deleted carrying field (vendor/model/hop/variant), or a changed
 # value. Each acknowledged change must cite the reason in the commit that
 # edits this structure.
-ALLOWED_CHANGES: dict[str, set[str]] = {}
+ALLOWED_CHANGES: dict[str, set[str]] = {
+    # Round 4, MUSS-1: openrouter-fallback's model was `auto`, colliding with the
+    # reserved auto/ intent namespace. Renamed to `auto-router` (already an alias)
+    # so a physical entry no longer claims the reserved token.
+    "openrouter-fallback": {"field 'model' changed 'auto' -> 'auto-router'"},
+}
 
 # Fields that carry the v1.3 identity of a provider. Dropping one of these, or
 # changing its value, is a loss that must be acknowledged rather than silently
@@ -403,22 +502,28 @@ CARRIED_FIELDS = ("vendor", "model", "variant", "hop")
 
 
 def _baseline_provider_keys() -> set[str]:
-    """Provider keys as checked in on origin/main.
+    """Provider keys as last committed on this branch (HEAD).
 
     Compared against the working tree so a provider that is silently dropped
     (rather than consciously removed) fails the suite.
+
+    v1.2's baseline (origin/main) had no vendor/model/variant/hop fields, so
+    guarding against it could only ever see alias losses — never the v1.3
+    identity fields. The guard must compare against the state that REALLY
+    preceded the current edit: the branch tip, which is v1.3 and carries those
+    fields.
     """
     out = subprocess.run(
-        ["git", "show", "origin/main:providers/catalog.v1.json"],
+        ["git", "show", "HEAD:providers/catalog.v1.json"],
         cwd=ROOT, capture_output=True, text=True, check=True,
     ).stdout
     return set(json.loads(out)["providers"].keys())
 
 
 def _baseline_provider(key: str) -> dict:
-    """The origin/main entry for a provider key."""
+    """The HEAD (branch tip) entry for a provider key."""
     out = subprocess.run(
-        ["git", "show", "origin/main:providers/catalog.v1.json"],
+        ["git", "show", "HEAD:providers/catalog.v1.json"],
         cwd=ROOT, capture_output=True, text=True, check=True,
     ).stdout
     return json.loads(out)["providers"].get(key, {})

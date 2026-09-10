@@ -31,8 +31,7 @@
         "type": "object",
         "properties": {
           "recommended_model": {
-            "type": ["string", "null"],
-            "description": "v1.3: the recommended model, now DERIVED from the separate vendor/model fields and therefore equal to 'model' whenever present. Retained for backward compatibility with pre-v1.3 consumers; it must never carry a value that contradicts the generated ID path. A null value means 'do not auto-select this provider'."
+            "$comment": "v1.3 (MUSS-2, option a): recommended_model is DERIVED, never stored. In pre-v1.3 catalogs it was a stored value carrying the full upstream identity; v1.3 splits that identity into vendor/model/variant/hop, so the stored field is gone. Loaders reconstruct it as `model` for an auto-selectable provider (tier_status absent, 'active', or 'preview') and `null` for a non-auto-selectable one ('expired' or 'deprecated'). A stored recommended_model must NOT appear in the data file; the schema keeps this property only so that a legacy document carrying the field is still accepted (additionalProperties tolerates it) without the field being read as a second, driftable truth."
           },
           "aliases": {
             "type": "array",
@@ -94,11 +93,13 @@
           },
           "model": {
             "type": "string",
-            "description": "v1.3: the model identifier. Part of the canonical ID path. Must not repeat a segment already present via vendor or hop."
+            "pattern": "^(?!auto(?:/|$))",
+            "description": "v1.3: the model identifier. Part of the canonical ID path. Must not repeat a segment already present via vendor or hop, and must not claim the reserved auto/ intent namespace."
           },
           "variant": {
             "type": "string",
-            "description": "v1.3: optional variant suffix (:variant), e.g. reasoning-effort tiers or 'free'. Omitted when absent."
+            "pattern": "^(?!auto(?:/|$))",
+            "description": "v1.3: optional variant suffix (:variant), e.g. reasoning-effort tiers or 'free'. Omitted when absent. Must not claim the reserved auto/ intent namespace."
           },
           "hop": {
             "type": "array",
