@@ -19,6 +19,7 @@ Run with ``python3 -m pytest -q``.
 """
 
 import json
+import subprocess
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
@@ -26,6 +27,11 @@ from jsonschema import Draft202012Validator
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMA_PATH = ROOT / "schemas" / "provider-catalog.v1.schema.json"
 CATALOG_PATH = ROOT / "providers" / "catalog.v1.json"
+
+# Provider keys that may be dropped from the catalog without the shrink guard
+# failing. Add a key here ONLY when the removal is a conscious decision, with
+# the reason captured in the commit that edits this list.
+ALLOWED_REMOVALS: set[str] = set()
 
 ROUTING_MODES = [
     "auto/auto",
@@ -323,6 +329,36 @@ def test_intent_model_collision_is_reported_not_resolved():
     collisions = _find_intent_model_collisions(catalog)
     assert ("auto", "openrouter-fallback") in collisions, \
         "openrouter/auto should be reported as colliding with the 'auto' intent"
+
+
+# ---------------------------------------------------------------------------
+# SHRINK-GUARD — no provider may vanish without an explicit acknowledgement
+# ---------------------------------------------------------------------------
+
+def _baseline_provider_keys() -> set[str]:
+    """Provider keys as checked in on origin/main.
+
+    Compared against the working tree so a provider that is silently dropped
+    (rather than consciously removed) fails the suite.
+    """
+    out = subprocess.run(
+        ["git", "show", "origin/main:providers/catalog.v1.json"],
+        cwd=ROOT, capture_output=True, text=True, check=True,
+    ).stdout
+    return set(json.loads(out)["providers"].keys())
+
+
+def test_no_provider_shrinks_against_main():
+    current = set(_load_catalog()["providers"].keys())
+    baseline = _baseline_provider_keys()
+    vanished = (baseline - current) - ALLOWED_REMOVALS
+    assert not vanished, (
+        "providers vanished without an explicit acknowledgement: "
+        + ", ".join(sorted(vanished))
+        + ". If the removal is intentional, add the key(s) to ALLOWED_REMOVALS."
+    )
+    assert len(current) >= len(baseline) - len(ALLOWED_REMOVALS), \
+        "provider count shrank below the baseline minus acknowledged removals"
 
 
 if __name__ == "__main__":

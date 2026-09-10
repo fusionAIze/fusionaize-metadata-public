@@ -40,6 +40,41 @@
       "model": "claude-opus-4-7",
       "hop": []
     },
+    "anthropic-claude": {
+      "recommended_model": "claude-opus-4-7",
+      "aliases": [
+        "claude-opus-4-7",
+        "claude-opus-4-6",
+        "anthropic:opus"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "tier_status": "active",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
+      "signup_url": "https://console.anthropic.com/",
+      "watch_sources": [],
+      "notes": "Anthropic Claude Opus 4.7 direct API pricing verified from the official Opus page on 2026-04-26.",
+      "last_reviewed": "2026-04-26",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://www.anthropic.com/claude/opus",
+        "refreshed_at": "2026-04-26T00:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 5.0,
+        "output_cost_per_1m": 25.0,
+        "cache_read_cost_per_1m": 0.5
+      },
+      "vendor": "anthropic",
+      "model": "claude-opus-4-7",
+      "hop": [],
+      "variant": "claude"
+    },
     "anthropic-haiku": {
       "recommended_model": "claude-haiku-4-5",
       "aliases": [
@@ -139,6 +174,38 @@
       "vendor": "openai",
       "model": "gpt-4o",
       "hop": []
+    },
+    "openai-gpt4o": {
+      "recommended_model": "gpt-4o",
+      "aliases": [
+        "gpt-4o"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://platform.openai.com/docs/models",
+      "signup_url": "https://platform.openai.com/",
+      "watch_sources": [],
+      "notes": "OpenAI GPT-4o - balanced multimodal model for general use.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://openai.com/api/pricing/",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 2.5,
+        "output_cost_per_1m": 10.0,
+        "cache_read_cost_per_1m": 1.25
+      },
+      "vendor": "openai",
+      "model": "gpt-4o",
+      "hop": [],
+      "variant": "gpt4o"
     },
     "openai-images": {
       "recommended_model": "gpt-image-1",
