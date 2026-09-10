@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fusionaize.local/schemas/provider-catalog.v1.schema.json",
-  "title": "fusionAIze Provider Catalog v1.2",
-  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. Older consumers ignore unknown fields.",
+  "title": "fusionAIze Provider Catalog v1.3",
+  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. v1.3 (additive): splits the single fused recommended_model string into separate vendor/model/variant/hop fields (the canonical ID path is generated from these, never parsed from a string), splits modalities into input_modalities/output_modalities, adds capacity fields with mandatory evidence, and reserves the auto/ intent namespace. Older consumers ignore unknown fields.",
   "type": "object",
   "required": ["schema_version", "providers"],
   "properties": {
@@ -16,6 +16,14 @@
     },
     "source_repo": {
       "type": "string"
+    },
+    "routing_modes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^auto/[a-z0-9][a-z0-9-]*$"
+      },
+      "$comment": "v1.3: the reserved auto/ intent namespace. These are the absichtsbasiert (intent-based) routing modes, each in canonical auto/<name> form. 'auto' is itself the default intent, hence auto/auto. A physical provider entry must never occupy this prefix."
     },
     "providers": {
       "type": "object",
@@ -61,6 +69,68 @@
               "enum": ["text", "vision", "audio", "image_generation", "tool_use", "function_calling", "json_mode"],
               "$comment": "Divergence: provider-catalog.v1.schema.json accepts 'image_generation' in its modalities enum while model-catalog.v1.schema.json does not. Reconciling the two vocabularies is an open decision, not resolved here."
             }
+          },
+          "input_modalities": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["text", "image", "audio"]
+            },
+            "$comment": "v1.3: what the model RECEIVES. Split from the flat 'modalities' list so a model can take image input and produce text output (e.g. the vision model). 'vision' migrated to input 'image'; 'image_generation' migrated to output 'image'."
+          },
+          "output_modalities": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["text", "image"]
+            },
+            "$comment": "v1.3: what the model PRODUCES. Split from the flat 'modalities' list. 'text' stays text on both sides; 'image_generation' becomes output 'image'."
+          },
+          "vendor": {
+            "type": "string",
+            "description": "v1.3: the model manufacturer. Part of the canonical ID path [hop/]vendor/model[:variant], generated from separate fields, never parsed from a string."
+          },
+          "model": {
+            "type": "string",
+            "description": "v1.3: the model identifier. Part of the canonical ID path. Must not repeat a segment already present via vendor or hop."
+          },
+          "variant": {
+            "type": "string",
+            "description": "v1.3: optional variant suffix (:variant), e.g. reasoning-effort tiers or 'free'. Omitted when absent."
+          },
+          "hop": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "v1.3: ordered list of intermediaries (resellers/gateways/hosts) prefixed before vendor/model in the canonical ID path. Empty for direct providers; e.g. blackboxai/... -> hop: [blackboxai]."
+          },
+          "capacity": {
+            "type": "object",
+            "properties": {
+              "max_input_tokens": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "max_output_tokens": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "evidence": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "v1.3: mandatory whenever a token capacity value is present. A capacity value without evidence is rejected."
+              }
+            },
+            "additionalProperties": true,
+            "allOf": [
+              {
+                "if": { "required": ["max_input_tokens"] },
+                "then": { "required": ["evidence"] }
+              },
+              {
+                "if": { "required": ["max_output_tokens"] },
+                "then": { "required": ["evidence"] }
+              }
+            ]
           },
           "evidence": {
             "type": "object",
@@ -112,7 +182,18 @@
             "additionalProperties": true
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "allOf": [
+          {
+            "$comment": "v1.3: vendor and model are a coupled pair. Either both are present (physical ID path) or neither (legacy/other entry). A model without a vendor would re-fuse identity into a single string.",
+            "if": { "required": ["vendor"] },
+            "then": { "required": ["model"] }
+          },
+          {
+            "if": { "required": ["model"] },
+            "then": { "required": ["vendor"] }
+          }
+        ]
       }
     }
   },
