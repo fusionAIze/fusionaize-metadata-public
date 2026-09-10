@@ -15,6 +15,12 @@ v1.3 coverage (TASK-C1..C4 — the ID path scheme):
   TASK-C3  max_input_tokens / max_output_tokens require evidence
   TASK-C4  auto/ reserved namespace; intent-vs-model collision reported
 
+Round 3 (review findings):
+  MUSS-1   recommended_model is derived, must equal `model` (or be null)
+  MUSS-2   auto/ prefix reserved in the SCHEMA (vendor + hop), not just in tests
+  MUSS-3   hop has uniqueItems; repeated intermediary rejected
+  MUSS-4   shrink-guard also compares aliases + carried fields per entry
+
 Run with ``python3 -m pytest -q``.
 """
 
@@ -225,6 +231,19 @@ def test_no_two_entries_claim_the_same_path():
         seen[path] = key
 
 
+def test_recommended_model_is_derived_not_independent():
+    # v1.3: recommended_model lost its independent meaning. It is now derived
+    # from the exploded identity fields and therefore must equal `model` (or be
+    # null, meaning "do not auto-select"). A value that differs from `model`
+    # (and thus from the generated path) is a second, driftable truth that this
+    # scheme exists to eliminate.
+    for key, entry in _load_catalog()["providers"].items():
+        rm = entry.get("recommended_model")
+        assert rm is None or rm == entry["model"], \
+            (f"{key}: recommended_model={rm!r} does not match model="
+             f"{entry['model']!r}")
+
+
 def test_alias_ambiguity_resolves_via_vendor_model():
     # The pre-split catalog had ambiguous plain model names: 'gpt-4o' served by
     # three provider entries, 'gemini-3.1-pro' by three, 'claude-opus-4-7' by two.
@@ -254,6 +273,40 @@ def test_schema_rejects_model_without_vendor():
     doc = _make_doc()
     doc["providers"]["example"]["model"] = "claude-opus-4-7"
     assert _errors(doc), "a model without a vendor must be rejected"
+
+
+def test_schema_reserves_auto_prefix_in_vendor():
+    doc = _make_doc()
+    doc["providers"]["example"]["vendor"] = "auto"
+    doc["providers"]["example"]["model"] = "x"
+    assert _errors(doc), "vendor 'auto' must be rejected (reserved intent namespace)"
+
+    for bad in ["auto/coding-fast", "auto/eco"]:
+        doc = _make_doc()
+        doc["providers"]["example"]["vendor"] = bad
+        doc["providers"]["example"]["model"] = "x"
+        assert _errors(doc), f"vendor {bad!r} must be rejected (reserved auto/ prefix)"
+
+    ok = _make_doc()
+    ok["providers"]["example"]["vendor"] = "autocode"
+    ok["providers"]["example"]["model"] = "x"
+    assert _errors(ok) == [], "'autocode' must NOT be rejected (auto prefix is not a word boundary)"
+
+
+def test_schema_reserves_auto_prefix_in_hop():
+    doc = _make_doc()
+    doc["providers"]["example"]["vendor"] = "vendor"
+    doc["providers"]["example"]["model"] = "model"
+    doc["providers"]["example"]["hop"] = ["auto"]
+    assert _errors(doc), "hop segment 'auto' must be rejected (reserved intent namespace)"
+
+
+def test_hop_rejects_repeated_segment():
+    doc = _make_doc()
+    doc["providers"]["example"]["vendor"] = "vendor"
+    doc["providers"]["example"]["model"] = "model"
+    doc["providers"]["example"]["hop"] = ["h", "h"]
+    assert _errors(doc), "a hop that lists the same intermediary twice must be rejected (loop)"
 
 
 # ---------------------------------------------------------------------------
@@ -335,6 +388,20 @@ def test_intent_model_collision_is_reported_not_resolved():
 # SHRINK-GUARD — no provider may vanish without an explicit acknowledgement
 # ---------------------------------------------------------------------------
 
+# A provider may change without failing the suite ONLY when the change is a
+# conscious decision. ALLOWED_REMOVALS covers keys dropped from the catalog;
+# ALLOWED_CHANGES covers per-entry losses INSIDE a surviving provider — a lost
+# alias, a deleted carrying field (vendor/model/hop/variant), or a changed
+# value. Each acknowledged change must cite the reason in the commit that
+# edits this structure.
+ALLOWED_CHANGES: dict[str, set[str]] = {}
+
+# Fields that carry the v1.3 identity of a provider. Dropping one of these, or
+# changing its value, is a loss that must be acknowledged rather than silently
+# accreted (the same failure mode as a silently dropped provider key).
+CARRIED_FIELDS = ("vendor", "model", "variant", "hop")
+
+
 def _baseline_provider_keys() -> set[str]:
     """Provider keys as checked in on origin/main.
 
@@ -348,6 +415,42 @@ def _baseline_provider_keys() -> set[str]:
     return set(json.loads(out)["providers"].keys())
 
 
+def _baseline_provider(key: str) -> dict:
+    """The origin/main entry for a provider key."""
+    out = subprocess.run(
+        ["git", "show", "origin/main:providers/catalog.v1.json"],
+        cwd=ROOT, capture_output=True, text=True, check=True,
+    ).stdout
+    return json.loads(out)["providers"].get(key, {})
+
+
+def _entry_losses(key: str, baseline: dict, current: dict) -> set[str]:
+    """Losses inside a surviving provider entry, described as stable strings.
+
+    A "loss" is anything a downstream consumer could have relied on that is now
+    gone: a removed alias, a removed carrying field, or a changed carrying-field
+    value. Additions (new aliases, new fields) are never losses.
+    """
+    losses: set[str] = set()
+
+    base_aliases = set(baseline.get("aliases", []))
+    curr_aliases = set(current.get("aliases", []))
+    for alias in sorted(base_aliases - curr_aliases):
+        losses.add(f"alias {alias!r} removed")
+
+    for field in CARRIED_FIELDS:
+        old = baseline.get(field)
+        new = current.get(field)
+        if old is None:
+            continue
+        if new is None:
+            losses.add(f"field {field!r} removed")
+        elif old != new:
+            losses.add(f"field {field!r} changed {old!r} -> {new!r}")
+
+    return losses
+
+
 def test_no_provider_shrinks_against_main():
     current = set(_load_catalog()["providers"].keys())
     baseline = _baseline_provider_keys()
@@ -359,6 +462,23 @@ def test_no_provider_shrinks_against_main():
     )
     assert len(current) >= len(baseline) - len(ALLOWED_REMOVALS), \
         "provider count shrank below the baseline minus acknowledged removals"
+
+
+def test_no_provider_entry_loses_aliases_or_carried_fields():
+    current = _load_catalog()["providers"]
+    baseline = _baseline_provider_keys()
+    unacknowledged: dict[str, set[str]] = {}
+    for key in sorted(baseline & set(current)):
+        losses = _entry_losses(key, _baseline_provider(key), current[key])
+        outstanding = losses - ALLOWED_CHANGES.get(key, set())
+        if outstanding:
+            unacknowledged[key] = outstanding
+    assert not unacknowledged, (
+        "surviving providers lost aliases or carrying fields without an "
+        "explicit acknowledgement: "
+        + "; ".join(f"{k}: {', '.join(sorted(v))}" for k, v in unacknowledged.items())
+        + ". If the change is intentional, add the descriptor(s) to ALLOWED_CHANGES."
+    )
 
 
 if __name__ == "__main__":

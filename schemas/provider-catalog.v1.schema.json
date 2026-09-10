@@ -31,7 +31,8 @@
         "type": "object",
         "properties": {
           "recommended_model": {
-            "type": ["string", "null"]
+            "type": ["string", "null"],
+            "description": "v1.3: the recommended model, now DERIVED from the separate vendor/model fields and therefore equal to 'model' whenever present. Retained for backward compatibility with pre-v1.3 consumers; it must never carry a value that contradicts the generated ID path. A null value means 'do not auto-select this provider'."
           },
           "aliases": {
             "type": "array",
@@ -88,6 +89,7 @@
           },
           "vendor": {
             "type": "string",
+            "pattern": "^(?!auto(?:/|$))",
             "description": "v1.3: the model manufacturer. Part of the canonical ID path [hop/]vendor/model[:variant], generated from separate fields, never parsed from a string."
           },
           "model": {
@@ -100,8 +102,12 @@
           },
           "hop": {
             "type": "array",
-            "items": { "type": "string" },
-            "description": "v1.3: ordered list of intermediaries (resellers/gateways/hosts) prefixed before vendor/model in the canonical ID path. Empty for direct providers; e.g. blackboxai/... -> hop: [blackboxai]."
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^(?!auto(?:/|$))"
+            },
+            "description": "v1.3: ordered list of intermediaries (resellers/gateways/hosts) prefixed before vendor/model in the canonical ID path. Empty for direct providers; e.g. blackboxai/... -> hop: [blackboxai]. No intermediary may repeat (a loop is exactly what the trail exists to make visible), and no segment may claim the reserved auto/ prefix."
           },
           "capacity": {
             "type": "object",

@@ -525,7 +525,7 @@
       ]
     },
     "blackbox-free": {
-      "recommended_model": "blackboxai/x-ai/grok-code-fast-1",
+      "recommended_model": "grok-code-fast-1",
       "aliases": [
         "blackboxai/x-ai/grok-code-fast-1"
       ],
@@ -599,7 +599,7 @@
       "variant": "free"
     },
     "openrouter-fallback": {
-      "recommended_model": "openrouter/auto",
+      "recommended_model": "auto",
       "aliases": [
         "openrouter/auto",
         "openrouter:auto",
@@ -632,7 +632,7 @@
       "hop": []
     },
     "openai-codex": {
-      "recommended_model": "openai-codex/gpt-5.5-codex:medium",
+      "recommended_model": "gpt-5.5-codex",
       "aliases": [
         "openai-codex/gpt-5.5-codex:low",
         "openai-codex/gpt-5.5-codex:medium",
@@ -668,7 +668,7 @@
       "variant": "medium"
     },
     "opencode": {
-      "recommended_model": "opencode/claude-opus-4-6",
+      "recommended_model": "claude-opus-4-6",
       "aliases": [
         "opencode/claude-opus-4-6"
       ],
@@ -698,7 +698,7 @@
       ]
     },
     "google-vertex": {
-      "recommended_model": "google-vertex/gemini-2.5-pro",
+      "recommended_model": "gemini-2.5-pro",
       "aliases": [
         "google-vertex/gemini-2.5-pro"
       ],
@@ -727,7 +727,7 @@
       "hop": []
     },
     "zai": {
-      "recommended_model": "z-ai/glm-5",
+      "recommended_model": "glm-5",
       "aliases": [
         "z-ai/glm-5"
       ],
@@ -882,7 +882,7 @@
       ]
     },
     "huggingface": {
-      "recommended_model": "HuggingFaceH4/zephyr-7b-beta",
+      "recommended_model": "zephyr-7b-beta",
       "aliases": [
         "HuggingFaceH4/zephyr-7b-beta",
         "meta-llama/Llama-3.2-3B-Instruct"
@@ -1002,7 +1002,7 @@
       ]
     },
     "byteplus": {
-      "recommended_model": "byteplus/seed-1-8-251228",
+      "recommended_model": "seed-1-8-251228",
       "aliases": [
         "byteplus/seed-1-8-251228"
       ],
@@ -1032,7 +1032,7 @@
       ]
     },
     "byteplus-plan": {
-      "recommended_model": "byteplus-plan/ark-code-latest",
+      "recommended_model": "ark-code-latest",
       "aliases": [
         "byteplus-plan/ark-code-latest"
       ],
@@ -1124,7 +1124,7 @@
       ]
     },
     "kimi-coding": {
-      "recommended_model": "kimi-coding/k2p5",
+      "recommended_model": "k2p5",
       "aliases": [
         "kimi-coding/k2p5"
       ],
@@ -1152,7 +1152,7 @@
       "hop": []
     },
     "minimax": {
-      "recommended_model": "minimax/MiniMax-M2.1",
+      "recommended_model": "MiniMax-M2.1",
       "aliases": [
         "minimax/MiniMax-M2.1"
       ],
@@ -1180,7 +1180,7 @@
       "hop": []
     },
     "qwen-portal": {
-      "recommended_model": "qwen-portal/coder-model",
+      "recommended_model": "coder-model",
       "aliases": [
         "qwen-portal/coder-model"
       ],
@@ -1208,7 +1208,7 @@
       "hop": []
     },
     "synthetic": {
-      "recommended_model": "synthetic/hf:MiniMaxAI/MiniMax-M2.1",
+      "recommended_model": "MiniMax-M2.1",
       "aliases": [
         "synthetic/hf:MiniMaxAI/MiniMax-M2.1"
       ],
@@ -1238,7 +1238,7 @@
       ]
     },
     "vercel-ai-gateway": {
-      "recommended_model": "vercel-ai-gateway/anthropic/claude-opus-4.6",
+      "recommended_model": "claude-opus-4.6",
       "aliases": [
         "vercel-ai-gateway/anthropic/claude-opus-4.6"
       ],
@@ -1268,7 +1268,7 @@
       ]
     },
     "volcengine": {
-      "recommended_model": "volcengine/doubao-seed-1-8-251228",
+      "recommended_model": "doubao-seed-1-8-251228",
       "aliases": [
         "volcengine/doubao-seed-1-8-251228"
       ],
@@ -1296,7 +1296,7 @@
       "hop": []
     },
     "volcengine-plan": {
-      "recommended_model": "volcengine-plan/ark-code-latest",
+      "recommended_model": "ark-code-latest",
       "aliases": [
         "volcengine-plan/ark-code-latest"
       ],
