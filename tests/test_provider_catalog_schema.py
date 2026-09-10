@@ -479,6 +479,106 @@ def test_intent_model_collision_is_impossible_not_reported():
 
 
 # ---------------------------------------------------------------------------
+# TASK-D1 — facts migrated from faigate's hand-written Python tables
+# ---------------------------------------------------------------------------
+
+# The 23 input-token ceilings from faigate's _MODEL_INPUT_CAPS, migrated
+# verbatim (value for value) into the catalog. The keys are concrete model IDs;
+# none of them carries a per-entry provenance, so every migrated value is
+# `unbestaetigt`, not `belegt`. The exact set is asserted below so a silent drop
+# of one of the 23 entries fails the suite (the same failure mode the shrink
+# guard catches for providers).
+
+MODEL_CAPS = {
+    "deepseek-v4-pro": 1000000,
+    "deepseek-v4-flash": 1000000,
+    "gpt-5.6-sol": 922000,
+    "gpt-5.6-terra": 922000,
+    "gpt-5.6-luna": 922000,
+    "gpt-5.5": 1050000,
+    "gpt-5.5-pro": 1050000,
+    "o3": 200000,
+    "o3-mini": 200000,
+    "o4-mini": 200000,
+    "claude-opus-5": 1000000,
+    "claude-sonnet-5": 1000000,
+    "claude-haiku-4-5": 200000,
+    "claude-code": 262144,
+    "gemini-3.1-pro": 1048576,
+    "gemini-3.1-flash": 1048576,
+    "gemini-3-flash-lite": 1048576,
+    "llama-4-maverick": 131072,
+    "llama-4-scout": 131072,
+    "qwen-3.6-27b": 262144,
+    "qwen3-coder": 262144,
+    "glm-5.3": 1000000,
+    "kimi-k2.6": 262144,
+}
+
+# The canonical-lane -> (concrete model, human label) pairs merged from
+# faigate's _ACTIVE_MODEL_VERSIONS and _MODEL_VERSION_LABELS.
+MODEL_VERSIONS = {
+    "google/gemini-flash": ("gemini-3-flash", "Gemini 3 Flash"),
+    "google/gemini-flash-lite": ("gemini-3-flash-lite", "Gemini 3 Flash-Lite"),
+    "google/gemini-pro-high": ("gemini-3.1-pro", "Gemini 3.1 Pro (High)"),
+    "google/gemini-pro-low": ("gemini-3.1-pro", "Gemini 3.1 Pro (Low)"),
+    "anthropic/opus-4.6": ("claude-opus-4-6", "Claude Opus 4.6"),
+    "anthropic/sonnet-4.6": ("claude-sonnet-4-6", "Claude Sonnet 4.6"),
+    "openai/gpt-4o": ("gpt-4o", "GPT-4o"),
+    "deepseek/reasoner": ("deepseek-reasoner", "DeepSeek R1 (Reasoner)"),
+    "deepseek/chat": ("deepseek-chat", "DeepSeek V3 (Chat)"),
+}
+
+
+def test_all_23_model_caps_present_with_evidence():
+    catalog = _load_catalog()
+    caps = catalog["model_caps"]
+    assert len(caps) == 23, f"expected 23 model cap entries, got {len(caps)}"
+    for model_id, expected in MODEL_CAPS.items():
+        assert model_id in caps, f"cap for {model_id!r} missing"
+        entry = caps[model_id]
+        assert "evidence" in entry, f"cap for {model_id!r} missing evidence block"
+        assert entry["max_input_tokens"] == expected, (
+            f"cap for {model_id!r} drifted: {entry['max_input_tokens']} != {expected}"
+        )
+
+
+def test_model_caps_are_unbestaetigt_not_belegt():
+    # No migrated cap carries a source, so none may claim `belegt`. This is the
+    # truth about the value, not a weakness: a hand-written Python table without
+    # a provenance URL is unverified by public standards.
+    caps = _load_catalog()["model_caps"]
+    for model_id, entry in caps.items():
+        level = entry["evidence"]["level"]
+        assert level == "unbestaetigt", (
+            f"cap for {model_id!r} has evidence.level={level!r}; "
+            "without a source it must be unbestaetigt"
+        )
+
+
+def test_model_versions_present_with_evidence():
+    catalog = _load_catalog()
+    assert set(catalog["model_versions"].keys()) == set(MODEL_VERSIONS.keys())
+    for lane, (model, label) in MODEL_VERSIONS.items():
+        entry = catalog["model_versions"][lane]
+        assert entry["model"] == model, f"{lane}: model drifted"
+        assert entry["label"] == label, f"{lane}: label drifted"
+        assert "evidence" in entry, f"{lane}: missing evidence block"
+
+
+def test_model_versions_are_unbestaetigt():
+    versions = _load_catalog()["model_versions"]
+    for lane, entry in versions.items():
+        assert entry["evidence"]["level"] == "unbestaetigt", (
+            f"{lane}: evidence.level must be unbestaetigt, got {entry['evidence']['level']!r}"
+        )
+
+
+def test_catalog_still_valid_with_model_caps_and_versions():
+    assert _errors(_load_catalog()) == []
+
+
+# ---------------------------------------------------------------------------
 # SHRINK-GUARD — no provider may vanish without an explicit acknowledgement
 # ---------------------------------------------------------------------------
 

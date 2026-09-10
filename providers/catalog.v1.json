@@ -1312,6 +1312,211 @@
       "hop": []
     }
   },
+  "model_caps": {
+    "deepseek-v4-pro": {
+      "max_input_tokens": 1000000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "deepseek-v4-flash": {
+      "max_input_tokens": 1000000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "gpt-5.6-sol": {
+      "max_input_tokens": 922000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "gpt-5.6-terra": {
+      "max_input_tokens": 922000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "gpt-5.6-luna": {
+      "max_input_tokens": 922000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "gpt-5.5": {
+      "max_input_tokens": 1050000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "gpt-5.5-pro": {
+      "max_input_tokens": 1050000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "o3": {
+      "max_input_tokens": 200000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "o3-mini": {
+      "max_input_tokens": 200000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "o4-mini": {
+      "max_input_tokens": 200000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "claude-opus-5": {
+      "max_input_tokens": 1000000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "claude-sonnet-5": {
+      "max_input_tokens": 1000000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "claude-haiku-4-5": {
+      "max_input_tokens": 200000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "claude-code": {
+      "max_input_tokens": 262144,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "gemini-3.1-pro": {
+      "max_input_tokens": 1048576,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "gemini-3.1-flash": {
+      "max_input_tokens": 1048576,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "gemini-3-flash-lite": {
+      "max_input_tokens": 1048576,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "llama-4-maverick": {
+      "max_input_tokens": 131072,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "llama-4-scout": {
+      "max_input_tokens": 131072,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "qwen-3.6-27b": {
+      "max_input_tokens": 262144,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "qwen3-coder": {
+      "max_input_tokens": 262144,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "glm-5.3": {
+      "max_input_tokens": 1000000,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "kimi-k2.6": {
+      "max_input_tokens": 262144,
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    }
+  },
+  "model_versions": {
+    "google/gemini-flash": {
+      "model": "gemini-3-flash",
+      "label": "Gemini 3 Flash",
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "google/gemini-flash-lite": {
+      "model": "gemini-3-flash-lite",
+      "label": "Gemini 3 Flash-Lite",
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "google/gemini-pro-high": {
+      "model": "gemini-3.1-pro",
+      "label": "Gemini 3.1 Pro (High)",
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "google/gemini-pro-low": {
+      "model": "gemini-3.1-pro",
+      "label": "Gemini 3.1 Pro (Low)",
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "anthropic/opus-4.6": {
+      "model": "claude-opus-4-6",
+      "label": "Claude Opus 4.6",
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "anthropic/sonnet-4.6": {
+      "model": "claude-sonnet-4-6",
+      "label": "Claude Sonnet 4.6",
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "openai/gpt-4o": {
+      "model": "gpt-4o",
+      "label": "GPT-4o",
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "deepseek/reasoner": {
+      "model": "deepseek-reasoner",
+      "label": "DeepSeek R1 (Reasoner)",
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    },
+    "deepseek/chat": {
+      "model": "deepseek-chat",
+      "label": "DeepSeek V3 (Chat)",
+      "evidence": {
+        "level": "unbestaetigt"
+      }
+    }
+  },
   "routing_modes": [
     "auto/auto",
     "auto/coding-auto",

@@ -25,6 +25,58 @@
       },
       "$comment": "v1.3: the reserved auto/ intent namespace. These are the absichtsbasiert (intent-based) routing modes, each in canonical auto/<name> form. 'auto' is itself the default intent, hence auto/auto. A physical provider entry must never occupy this prefix."
     },
+    "model_caps": {
+      "type": "object",
+      "$comment": "v1.3: model-keyed input-token ceilings migrated from faigate's hand-written _MODEL_INPUT_CAPS. Keyed by concrete model ID (not provider), because the input ceiling is a property of the model, not of any single provider. Every value carries an evidence block; facts migrated from a source with no provenance are unbestaetigt.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["max_input_tokens", "evidence"],
+        "properties": {
+          "max_input_tokens": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "evidence": {
+            "type": "object",
+            "required": ["level"],
+            "properties": {
+              "level": {
+                "type": "string",
+                "enum": ["belegt", "plausibel", "unbestaetigt"]
+              },
+              "source_url": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "model_versions": {
+      "type": "object",
+      "$comment": "v1.3: canonical-lane -> concrete model + human label, migrated from faigate's _ACTIVE_MODEL_VERSIONS and _MODEL_VERSION_LABELS. Keyed by canonical lane ID. The two tables are merged here into one record per lane because they always share a key. Migrated values carry no per-entry source, so their evidence is unbestaetigt.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["model", "label", "evidence"],
+        "properties": {
+          "model": { "type": "string" },
+          "label": { "type": "string" },
+          "evidence": {
+            "type": "object",
+            "required": ["level"],
+            "properties": {
+              "level": {
+                "type": "string",
+                "enum": ["belegt", "plausibel", "unbestaetigt"]
+              },
+              "source_url": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    },
     "providers": {
       "type": "object",
       "additionalProperties": {
