@@ -1310,6 +1310,141 @@
       "vendor": "x-ai",
       "model": "grok-3",
       "hop": []
+    },
+    "amazon-bedrock": {
+      "aliases": [
+        "amazon/nova-pro-v1",
+        "amazon.nova-pro-v1",
+        "nova-pro",
+        "amazon/nova-lite-v1",
+        "amazon/nova-micro-v1",
+        "amazon/nova-2-lite-v1"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "tier_status": "active",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://docs.aws.amazon.com/nova/latest/userguide/what-is-nova.html",
+      "signup_url": "https://aws.amazon.com/bedrock/",
+      "watch_sources": [],
+      "notes": "Amazon Bedrock Nova family. Nova Pro context window (300k input) sourced from the LiteLLM registry entry amazon.nova-pro-v1; Nova 2 (Lite/Pro) raises the window to 1M tokens.",
+      "last_reviewed": "2026-09-11",
+      "capacity": {
+        "max_input_tokens": 300000,
+        "max_output_tokens": 10000,
+        "evidence": {
+          "level": "belegt",
+          "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "as_of": "2026-09-11"
+        }
+      },
+      "vendor": "amazon",
+      "model": "nova-pro-v1",
+      "hop": []
+    },
+    "microsoft-phi": {
+      "aliases": [
+        "microsoft/phi-4",
+        "azure_ai/Phi-4",
+        "phi-4"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "tier_status": "active",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://azure.microsoft.com/en-us/products/phi",
+      "signup_url": "https://azure.microsoft.com/",
+      "watch_sources": [],
+      "notes": "Microsoft Phi family. Phi-4 (16k input) is the current flagship small model; Phi-4-mini raises the window to 131k. Context sourced from the LiteLLM registry entry azure_ai/Phi-4.",
+      "last_reviewed": "2026-09-11",
+      "capacity": {
+        "max_input_tokens": 16384,
+        "max_output_tokens": 16384,
+        "evidence": {
+          "level": "belegt",
+          "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "as_of": "2026-09-11"
+        }
+      },
+      "vendor": "microsoft",
+      "model": "phi-4",
+      "hop": []
+    },
+    "baidu-ernie": {
+      "aliases": [
+        "baidu/ernie-4.5-vl-424b-a47b",
+        "ernie-4.5",
+        "ernie-4.5-vl"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "tier_status": "active",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "medium",
+      "evidence_level": "official",
+      "official_source_url": "https://cloud.baidu.com/product/wenxinworkshop",
+      "signup_url": "https://cloud.baidu.com/",
+      "watch_sources": [],
+      "notes": "Baidu ERNIE 4.5 (Wenxin). Context window of 123000 input tokens sourced from the OpenRouter entry baidu/ernie-4.5-vl-424b-a47b.",
+      "last_reviewed": "2026-09-11",
+      "capacity": {
+        "max_input_tokens": 123000,
+        "max_output_tokens": 16000,
+        "evidence": {
+          "level": "belegt",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "as_of": "2026-09-11"
+        }
+      },
+      "vendor": "baidu",
+      "model": "ernie-4.5-vl-424b-a47b",
+      "hop": []
+    },
+    "tencent-hunyuan": {
+      "aliases": [
+        "tencent/hy3",
+        "hunyuan-3",
+        "tencent/hunyuan-a13b-instruct"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "tier_status": "active",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "medium",
+      "evidence_level": "official",
+      "official_source_url": "https://cloud.tencent.com/product/hunyuan",
+      "signup_url": "https://cloud.tencent.com/",
+      "watch_sources": [],
+      "notes": "Tencent Hunyuan 3 (hy3). Context window of 262144 input tokens sourced from the OpenRouter entry tencent/hy3; the hy4 preview raises it to 1048576.",
+      "last_reviewed": "2026-09-11",
+      "capacity": {
+        "max_input_tokens": 262144,
+        "max_output_tokens": 128000,
+        "evidence": {
+          "level": "belegt",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "as_of": "2026-09-11"
+        }
+      },
+      "vendor": "tencent",
+      "model": "hunyuan-3",
+      "hop": []
     }
   },
   "model_caps": {
@@ -1449,6 +1584,110 @@
       "max_input_tokens": 262144,
       "evidence": {
         "level": "unbestaetigt"
+      }
+    },
+    "claude-opus-4-6": {
+      "max_input_tokens": 1000000,
+      "evidence": {
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "as_of": "2026-09-11"
+      }
+    },
+    "claude-sonnet-4-6": {
+      "max_input_tokens": 1000000,
+      "evidence": {
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "as_of": "2026-09-11"
+      }
+    },
+    "gemini-2.5-pro": {
+      "max_input_tokens": 1048576,
+      "evidence": {
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "as_of": "2026-09-11"
+      }
+    },
+    "gemini-2.5-flash": {
+      "max_input_tokens": 1048576,
+      "evidence": {
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "as_of": "2026-09-11"
+      }
+    },
+    "gemini-2.5-flash-lite": {
+      "max_input_tokens": 1048576,
+      "evidence": {
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "as_of": "2026-09-11"
+      }
+    },
+    "gpt-4o": {
+      "max_input_tokens": 128000,
+      "evidence": {
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "as_of": "2026-09-11"
+      }
+    },
+    "gpt-5.4": {
+      "max_input_tokens": 1050000,
+      "evidence": {
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "as_of": "2026-09-11"
+      }
+    },
+    "gpt-5.3-codex": {
+      "max_input_tokens": 272000,
+      "evidence": {
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "as_of": "2026-09-11"
+      }
+    },
+    "gpt-5.1-codex-mini": {
+      "max_input_tokens": 272000,
+      "evidence": {
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "as_of": "2026-09-11"
+      }
+    },
+    "deepseek-v4-flash-vision-exp": {
+      "max_input_tokens": 1000000,
+      "evidence": {
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "as_of": "2026-09-11"
+      }
+    },
+    "grok-code-fast-1": {
+      "max_input_tokens": 256000,
+      "evidence": {
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "as_of": "2026-09-11"
+      }
+    },
+    "glm-5": {
+      "max_input_tokens": 204800,
+      "evidence": {
+        "level": "belegt",
+        "source_url": "https://openrouter.ai/api/v1/models",
+        "as_of": "2026-09-11"
+      }
+    },
+    "auto-router": {
+      "max_input_tokens": 2000000,
+      "evidence": {
+        "level": "unbestaetigt",
+        "source_url": "https://openrouter.ai/api/v1/models",
+        "as_of": "2026-09-11"
       }
     }
   },
