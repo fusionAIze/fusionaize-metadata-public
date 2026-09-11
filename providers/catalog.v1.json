@@ -37,7 +37,18 @@
       },
       "vendor": "anthropic",
       "model": "claude-opus-4-7",
-      "hop": []
+      "hop": [],
+      "entry_type": "vendor",
+      "context_window": 1000000,
+      "limits": {
+        "max_input_tokens": 1000000
+      },
+      "context_evidence": {
+        "level": "plausibel",
+        "derived_from": "model_caps[\"claude-opus-4-6\"]",
+        "derived_from_value": 1000000,
+        "note": "vendor rollup; single window is the flagship Opus. claude-opus-4-7 has no direct cap entry, so derived from family member claude-opus-4-6."
+      }
     },
     "anthropic-claude": {
       "aliases": [
@@ -168,7 +179,18 @@
       },
       "vendor": "openai",
       "model": "gpt-4o",
-      "hop": []
+      "hop": [],
+      "entry_type": "vendor",
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "plausibel",
+        "derived_from": "model_caps[\"gpt-4o\"]",
+        "derived_from_value": 128000,
+        "note": "vendor rollup; derived from primary model gpt-4o."
+      }
     },
     "openai-gpt4o": {
       "aliases": [
@@ -259,7 +281,18 @@
       },
       "vendor": "google",
       "model": "gemini-3.1-pro",
-      "hop": []
+      "hop": [],
+      "entry_type": "vendor",
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "plausibel",
+        "derived_from": "model_caps[\"gemini-3.1-pro\"]",
+        "derived_from_value": 1048576,
+        "note": "vendor rollup; derived from primary model gemini-3.1-pro."
+      }
     },
     "gemini-flash": {
       "aliases": [
@@ -507,7 +540,20 @@
       ],
       "output_modalities": [
         "text"
-      ]
+      ],
+      "entry_type": "model",
+      "context_window": 1000000,
+      "limits": {
+        "max_input_tokens": 1000000
+      },
+      "context_evidence": {
+        "level": "belegt",
+        "source": "OmniRoute",
+        "source_url": "http://localhost:20128/v1/models",
+        "model_id": "deepseek/deepseek-v4-flash-vision-exp",
+        "as_of": "2026-09-11",
+        "note": "OmniRoute reports context_length=1000000; OpenRouter reports 1048576 (1 MiB). OmniRoute is primary per source-of-truth policy; value matches model_caps[\"deepseek-v4-flash-vision-exp\"]."
+      }
     },
     "blackbox-free": {
       "aliases": [
@@ -703,7 +749,18 @@
       },
       "vendor": "google",
       "model": "gemini-2.5-pro",
-      "hop": []
+      "hop": [],
+      "entry_type": "vendor",
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "plausibel",
+        "derived_from": "model_caps[\"gemini-2.5-pro\"]",
+        "derived_from_value": 1048576,
+        "note": "Google Vertex entry; derived from model gemini-2.5-pro."
+      }
     },
     "zai": {
       "aliases": [
@@ -1027,7 +1084,18 @@
       "model": "ark-code-latest",
       "hop": [
         "byteplus"
-      ]
+      ],
+      "entry_type": "plan",
+      "context_window": 262144,
+      "limits": {
+        "max_input_tokens": 262144
+      },
+      "context_evidence": {
+        "level": "plausibel",
+        "derived_from": "model_caps[\"kimi-k2.6\"]",
+        "derived_from_value": 262144,
+        "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
+      }
     },
     "cerebras": {
       "aliases": [
@@ -1281,7 +1349,18 @@
       },
       "vendor": "volcengine",
       "model": "ark-code-latest",
-      "hop": []
+      "hop": [],
+      "entry_type": "plan",
+      "context_window": 262144,
+      "limits": {
+        "max_input_tokens": 262144
+      },
+      "context_evidence": {
+        "level": "plausibel",
+        "derived_from": "model_caps[\"kimi-k2.6\"]",
+        "derived_from_value": 262144,
+        "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
+      }
     },
     "xai": {
       "aliases": [

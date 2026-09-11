@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fusionaize.local/schemas/provider-catalog.v1.schema.json",
   "title": "fusionAIze Provider Catalog v1.3",
-  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. v1.3 (additive): splits the single fused recommended_model string into separate vendor/model/variant/hop fields (the canonical ID path is generated from these, never parsed from a string), splits modalities into input_modalities/output_modalities, adds capacity fields with mandatory evidence, and reserves the auto/ intent namespace. Older consumers ignore unknown fields.",
+  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. v1.3 (additive): splits the single fused recommended_model string into separate vendor/model/variant/hop fields (the canonical ID path is generated from these, never parsed from a string), splits modalities into input_modalities/output_modalities, adds capacity fields with mandatory evidence, and reserves the auto/ intent namespace. v1.4 (additive): adds entry_type (model/vendor/plan), context_window, limits, and context_evidence so every entry can declare a context window — measured (belegt) for model entries, derived (plausibel) for manufacturer and plan rollups. Older consumers ignore unknown fields.",
   "type": "object",
   "required": ["schema_version", "providers"],
   "properties": {
@@ -137,6 +137,45 @@
               "enum": ["text", "image"]
             },
             "$comment": "v1.3: what the model PRODUCES. Split from the flat 'modalities' list. 'text' stays text on both sides; 'image_generation' becomes output 'image'."
+          },
+          "entry_type": {
+            "type": "string",
+            "enum": ["model", "vendor", "plan"],
+            "description": "v1.4: the kind of entry. 'model' is a concrete model with a real context window; 'vendor' is a manufacturer rollup spanning several models with different windows; 'plan' is a subscription/bundle rollup over several coding models. A vendor/plan entry carries a DERIVED context_window (plausibel, from its primary model), not a measured one; a model entry may carry a belegt value."
+          },
+          "context_window": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "v1.4: the context window size in tokens. For a model entry this is the model's real window (belegt when sourced); for a vendor/plan entry it is DERIVED from the entry's primary model and must be plausibel, with provenance in context_evidence.derived_from."
+          },
+          "limits": {
+            "type": "object",
+            "properties": {
+              "max_input_tokens": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "v1.4: the in-band input-token ceiling for this entry. Kept equal to context_window for single-model and derived rollup entries; a downstream router may further band-limit independently."
+              }
+            },
+            "additionalProperties": true
+          },
+          "context_evidence": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "string",
+                "enum": ["belegt", "plausibel", "unbestaetigt"]
+              },
+              "source": { "type": "string" },
+              "source_url": { "type": "string" },
+              "derived_from": { "type": "string" },
+              "derived_from_value": { "type": "integer" },
+              "model_id": { "type": "string" },
+              "as_of": { "type": "string" },
+              "note": { "type": "string" }
+            },
+            "additionalProperties": true,
+            "description": "v1.4: provenance for context_window/limits. A belegt value cites source + source_url + as_of; a derived value carries level plausibel and derived_from naming the source model/cap."
           },
           "vendor": {
             "type": "string",

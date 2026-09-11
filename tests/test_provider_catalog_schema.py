@@ -21,7 +21,7 @@ v1.3 coverage (TASK-C1..C4 — the ID path scheme):
    MUSS-3   hop has uniqueItems; repeated intermediary rejected
    MUSS-4   shrink-guard also compares aliases + carried fields per entry
 
- Round 4 (review findings):
+  Round 4 (review findings):
    MUSS-1   auto/ reserved on EVERY path segment (vendor, model, variant, hop)
             — not just vendor + hop; model/variant were still pass-through
    MUSS-2   recommended_model is truly DERIVED (option a): removed from the
@@ -31,6 +31,14 @@ v1.3 coverage (TASK-C1..C4 — the ID path scheme):
    MUSS-3   shrink-guard baseline corrected from origin/main (v1.2, no identity
             fields) to HEAD (v1.3, full identity); it now actually sees losses
             inside v1.3 entries
+
+  Round 5 (TASK-G2 — context_window/limits for the seven fallback-less entries):
+   Every entry that has no downstream embedded fallback (four manufacturer
+   rollups, two plan rollups, one experiment model) now declares a positive
+   context_window and a limits dict. Model entries are measured (belegt);
+   manufacturer/plan rollups are derived (plausibel) with provenance. The
+   entry_type field (model/vendor/plan) records why a rollup has a derived
+   value rather than a single true window.
 
 Run with ``python3 -m pytest -q``.
 """
@@ -658,6 +666,96 @@ def test_model_versions_are_unbestaetigt():
 
 def test_catalog_still_valid_with_model_caps_and_versions():
     assert _errors(_load_catalog()) == []
+
+
+# ---------------------------------------------------------------------------
+# TASK-G2 — every entry declares context_window + limits (or documents why not)
+# ---------------------------------------------------------------------------
+
+# The faigate runtime merges this catalog with an embedded fallback catalog and
+# asserts EVERY provider carries a positive context_window and a limits dict
+# (tests test_provider_catalog_declares_context_window_everywhere and
+# test_provider_catalog_declares_in_band_input_cap). Seven entries here used to
+# lack both: four manufacturer rollups (anthropic, openai, google, google-vertex),
+# two plan rollups (byteplus-plan, volcengine-plan) and one real model
+# (deepseek-flash-vision-exp). They are the entries with NO embedded fallback, so
+# a missing field here could not be backfilled downstream. The invariant must be
+# enforced at the source of truth, not recovered later.
+
+# Entry keys that carry a DERIVED (plausibel) context_window rather than a
+# measured (belegt) one. A manufacturer/plan rollup spans several models with
+# different windows, so it has no single true value — the schema's entry_type
+# records that, and the derived value is an orientation, never evidence.
+DERIVED_CONTEXT_ENTRIES = {
+    "anthropic",
+    "openai",
+    "google",
+    "google-vertex",
+    "byteplus-plan",
+    "volcengine-plan",
+}
+
+# The one real model that must carry a measured value with a named public source.
+MEASURED_CONTEXT_ENTRIES = {"deepseek-flash-vision-exp"}
+
+# The seven entries this lane is responsible for. They are the entries with no
+# embedded fallback in the downstream consumer, so a missing context_window here
+# could never be backfilled. (Entries that DO have an embedded fallback obtain
+# their context_window there; this repo is not the sole source for those.)
+TASK_G2_ENTRIES = DERIVED_CONTEXT_ENTRIES | MEASURED_CONTEXT_ENTRIES
+
+
+def test_g2_entries_declare_context_window_and_limits():
+    """The seven fallback-less entries carry a positive context_window + limits.
+
+    Every one of the seven must declare both, because the downstream consumer
+    asserts both on the merged catalog and there is no embedded value to recover
+    for these keys.
+    """
+    providers = _load_catalog()["providers"]
+    for key in TASK_G2_ENTRIES:
+        entry = providers[key]
+        ctx = entry.get("context_window")
+        assert isinstance(ctx, int) and ctx > 0, (
+            f"{key!r} must declare a positive integer context_window, got {ctx!r}"
+        )
+        limits = entry.get("limits")
+        assert isinstance(limits, dict), (
+            f"{key!r} must declare limits as a dict, got {limits!r}"
+        )
+        cap = limits.get("max_input_tokens")
+        assert isinstance(cap, int) and cap > 0, (
+            f"{key!r} limits.max_input_tokens must be a positive integer, got {cap!r}"
+        )
+
+
+def test_derived_context_entries_are_marked_plausibel_with_provenance():
+    """A derived (rollup) context_window must be plausibel and name its source."""
+    providers = _load_catalog()["providers"]
+    for key in DERIVED_CONTEXT_ENTRIES:
+        entry = providers[key]
+        assert entry.get("entry_type") in ("vendor", "plan"), (
+            f"{key!r} must be entry_type vendor/plan, got {entry.get('entry_type')!r}"
+        )
+        evidence = entry.get("context_evidence") or {}
+        assert evidence.get("level") == "plausibel", (
+            f"{key!r} derived context must be plausibel, got {evidence.get('level')!r}"
+        )
+        assert evidence.get("derived_from"), (
+            f"{key!r} derived context must name derived_from"
+        )
+
+
+def test_measured_context_entry_is_belegt_with_source():
+    """deepseek-flash-vision-exp must carry a measured value with a named source."""
+    entry = _load_catalog()["providers"]["deepseek-flash-vision-exp"]
+    assert entry.get("entry_type") == "model"
+    evidence = entry.get("context_evidence") or {}
+    assert evidence.get("level") == "belegt", (
+        f"deepseek-flash-vision-exp must be belegt, got {evidence.get('level')!r}"
+    )
+    assert evidence.get("source_url"), "a belegt context must cite a source_url"
+    assert entry["context_window"] == entry["limits"]["max_input_tokens"]
 
 
 # ---------------------------------------------------------------------------
