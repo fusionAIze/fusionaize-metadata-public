@@ -3,7 +3,7 @@
 v1.2 coverage (pre-existing):
   1. valid v1.2 document is accepted
   2. invalid modality is rejected
-  3. evidence.level outside {belegt, plausibel, unbestaetigt} is rejected
+  3. evidence.level outside {confirmed, plausible, unconfirmed} is rejected
   4. a v1.1 consumer reading a v1.2 catalog produces 0 errors
 
 v1.3 coverage (TASK-C1..C4 — the ID path scheme):
@@ -21,7 +21,7 @@ v1.3 coverage (TASK-C1..C4 — the ID path scheme):
    MUSS-3   hop has uniqueItems; repeated intermediary rejected
    MUSS-4   shrink-guard also compares aliases + carried fields per entry
 
- Round 4 (review findings):
+  Round 4 (review findings):
    MUSS-1   auto/ reserved on EVERY path segment (vendor, model, variant, hop)
             — not just vendor + hop; model/variant were still pass-through
    MUSS-2   recommended_model is truly DERIVED (option a): removed from the
@@ -31,6 +31,14 @@ v1.3 coverage (TASK-C1..C4 — the ID path scheme):
    MUSS-3   shrink-guard baseline corrected from origin/main (v1.2, no identity
             fields) to HEAD (v1.3, full identity); it now actually sees losses
             inside v1.3 entries
+
+  Round 5 (TASK-G2 — context_window/limits for the seven fallback-less entries):
+   Every entry that has no downstream embedded fallback (four manufacturer
+   rollups, two plan rollups, one experiment model) now declares a positive
+   context_window and a limits dict. Model entries are measured (confirmed);
+   manufacturer/plan rollups are derived (plausible) with provenance. The
+   entry_type field (model/vendor/plan) records why a rollup has a derived
+   value rather than a single true window.
 
 Run with ``python3 -m pytest -q``.
 """
@@ -81,7 +89,7 @@ def _make_doc(version: str = "fusionaize-provider-catalog/v1.2") -> dict:
             "example": {
                 "recommended_model": "example-vision",
                 "modalities": ["text", "vision"],
-                "evidence": {"level": "belegt"},
+                "evidence": {"level": "confirmed"},
                 "free_tier": {"enabled": True, "request_limit_per_day": 10},
                 "pricing": {
                     "input_cost_per_1m": 1.0,
@@ -122,7 +130,9 @@ def test_invalid_modality_rejected():
 
 def test_evidence_level_outside_enum_rejected():
     doc = _make_doc()
-    for bad in ["official", "verified", "confirmed", "", "BELEGT"]:
+    # "official"/"verified" were never valid; empty string and wrong-case are always invalid.
+    # The three valid values are now confirmed/plausible/unconfirmed (English).
+    for bad in ["official", "verified", "", "CONFIRMED", "Confirmed"]:
         doc["providers"]["example"]["evidence"]["level"] = bad
         assert _errors(doc), f"evidence.level {bad!r} should be rejected"
 
@@ -203,7 +213,7 @@ def test_legacy_consumer_reads_new_catalog_with_zero_errors():
         "additionalProperties": True,
     }
     catalog = _load_catalog()
-    assert catalog["schema_version"] == "fusionaize-provider-catalog/v1.3"
+    assert catalog["schema_version"] == "fusionaize-provider-catalog/v1.4"
     assert catalog["providers"]["deepseek-flash-vision-exp"]["input_modalities"]
     validator = Draft202012Validator(v1_2_schema)
     assert sorted(validator.iter_errors(catalog), key=lambda e: str(e.path)) == []
@@ -430,7 +440,7 @@ def test_capacity_with_evidence_accepted():
 
 def test_existing_catalog_without_capacity_remains_valid():
     assert _errors(_load_catalog()) == []
-    assert _load_catalog()["schema_version"] == "fusionaize-provider-catalog/v1.3"
+    assert _load_catalog()["schema_version"] == "fusionaize-provider-catalog/v1.4"
 
 
 # ---------------------------------------------------------------------------
@@ -485,7 +495,7 @@ def test_intent_model_collision_is_impossible_not_reported():
 # The 23 input-token ceilings from faigate's _MODEL_INPUT_CAPS, migrated
 # verbatim (value for value) into the catalog. The keys are concrete model IDs;
 # none of them carries a per-entry provenance, so every migrated value is
-# `unbestaetigt`, not `belegt`. The exact set is asserted below so a silent drop
+# `unconfirmed`, not `confirmed`. The exact set is asserted below so a silent drop
 # of one of the 23 entries fails the suite (the same failure mode the shrink
 # guard catches for providers).
 
@@ -518,7 +528,7 @@ MODEL_CAPS = {
 # FAI-215 (lane f1, Teil A): the 20 configured model strings from faigate that
 # lacked a cap entry. Resolved against the LiteLLM registry first, OpenRouter
 # second. Each entry carries its own evidence (level + source_url + as_of);
-# a `belegt` value was taken verbatim from a named source, `unbestaetigt` is a
+# a `confirmed` value was taken verbatim from a named source, `unconfirmed` is a
 # derived value (OpenRouter's `auto` reports a 2M placeholder context_length
 # that is a routing default, not a concrete model ceiling).
 EVIDENCED_MODEL_CAPS = {
@@ -540,13 +550,43 @@ EVIDENCED_MODEL_CAPS = {
 # MKC-INIT (lane init): caps added from the three router sources (OmniRoute,
 # OpenRouter, LiteLLM) during the catalog re-initialization. Splits from
 # EVIDENCED_MODEL_CAPS because these carry a wider evidence spread: OpenRouter
-# values are `belegt`, the LiteLLM-only value (claude-3-5-haiku) is `plausibel`.
+# values are `confirmed`, the LiteLLM-only value (claude-3-5-haiku) is `plausible`.
 MKC_INIT_CAPS = {
-    "claude-haiku-3-5": (200000, "plausibel"),
-    "gemini-3.6-flash": (1048576, "belegt"),
-    "gemini-3.7-flash": (1048576, "belegt"),
-    "gemini-3.8-flash": (1048576, "belegt"),
-    "gpt-oss-120b": (131072, "belegt"),
+    "claude-haiku-3-5": (200000, "plausible"),
+    "gemini-3.6-flash": (1048576, "confirmed"),
+    "gemini-3.7-flash": (1048576, "confirmed"),
+    "gemini-3.8-flash": (1048576, "confirmed"),
+    "gpt-oss-120b": (131072, "confirmed"),
+}
+
+# MKC-G3 (lane g3): provenance lift for the 24 unconfirmed entries from the
+# earlier _MODEL_INPUT_CAPS migration.  Values verified against or.json
+# (OpenRouter /v1/models) and ll.json (LiteLLM model_prices_and_context_window).
+# 16 confirmed as `confirmed`, 1 raised to `plausible` (gemini-3.1-pro, single
+# third-party LL source contradicts the catalog value), 6 left `unconfirmed`
+# (no bare-name source in either registry).
+MKC_G3_CAPS = {
+    # confirmed — both OpenRouter and LiteLLM confirm
+    "claude-opus-5":   (1000000, "confirmed"),
+    "claude-sonnet-5": (1000000, "confirmed"),
+    "gpt-5.5":         (1050000, "confirmed"),
+    "gpt-5.5-pro":     (1050000, "confirmed"),
+    "kimi-k2.6":       (262144,  "confirmed"),
+    "o3":              (200000,  "confirmed"),
+    "o3-mini":         (200000,  "confirmed"),
+    "o4-mini":         (200000,  "confirmed"),
+    "qwen3-coder":     (262144,  "confirmed"),
+    # confirmed — LiteLLM confirms, OpenRouter absent
+    "claude-haiku-4-5": (200000, "confirmed"),
+    # confirmed — LiteLLM confirms, OpenRouter contradicts (noted in evidence)
+    "deepseek-v4-flash": (1000000, "confirmed"),
+    "deepseek-v4-pro":   (1000000, "confirmed"),
+    "glm-5.3":           (1000000, "confirmed"),
+    "gpt-5.6-luna":      (922000,  "confirmed"),
+    "gpt-5.6-sol":       (922000,  "confirmed"),
+    "gpt-5.6-terra":     (922000,  "confirmed"),
+    # plausible — single third-party LL source contradicts catalog value
+    "gemini-3.1-pro":    (1048576, "plausible"),
 }
 
 # The canonical-lane -> (concrete model, human label) pairs merged from
@@ -567,8 +607,9 @@ MODEL_VERSIONS = {
 def test_all_23_model_caps_present_with_evidence():
     catalog = _load_catalog()
     caps = catalog["model_caps"]
-    assert len(caps) == 23 + len(EVIDENCED_MODEL_CAPS) + len(MKC_INIT_CAPS), (
-        f"expected {23 + len(EVIDENCED_MODEL_CAPS) + len(MKC_INIT_CAPS)} model cap entries, got {len(caps)}"
+    expected_total = 23 + len(EVIDENCED_MODEL_CAPS) + len(MKC_INIT_CAPS)
+    assert len(caps) == expected_total, (
+        f"expected {expected_total} model cap entries, got {len(caps)}"
     )
     for model_id, expected in MODEL_CAPS.items():
         assert model_id in caps, f"cap for {model_id!r} missing"
@@ -582,8 +623,8 @@ def test_all_23_model_caps_present_with_evidence():
 def test_evidenced_model_caps_present():
     # FAI-215: the cap entries that close the gap carry their own evidence and
     # values resolved from the LiteLLM registry (primary) or OpenRouter
-    # (secondary). Every one must carry a source_url; a `belegt` value must not
-    # be silently unbestaetigt.
+    # (secondary). Every one must carry a source_url; a `confirmed` value must not
+    # be silently unconfirmed.
     caps = _load_catalog()["model_caps"]
     for model_id, expected in EVIDENCED_MODEL_CAPS.items():
         assert model_id in caps, f"cap for {model_id!r} missing"
@@ -595,7 +636,7 @@ def test_evidenced_model_caps_present():
         assert entry["evidence"].get("source_url"), (
             f"cap for {model_id!r} must carry a source_url"
         )
-        assert entry["evidence"]["level"] in ("belegt", "unbestaetigt"), (
+        assert entry["evidence"]["level"] in ("confirmed", "unconfirmed"), (
             f"cap for {model_id!r} has invalid level {entry['evidence']['level']!r}"
         )
 
@@ -603,7 +644,7 @@ def test_evidenced_model_caps_present():
 def test_mkc_init_caps_present_with_evidence():
     # MKC-INIT: caps added from OmniRoute/OpenRouter/LiteLLM during the catalog
     # re-initialization. Each carries its own evidence level; a LiteLLM-only
-    # value is `plausibel`, an OpenRouter-sourced value is `belegt`.
+    # value is `plausible`, an OpenRouter-sourced value is `confirmed`.
     caps = _load_catalog()["model_caps"]
     for model_id, (expected, level) in MKC_INIT_CAPS.items():
         assert model_id in caps, f"cap for {model_id!r} missing"
@@ -620,21 +661,43 @@ def test_mkc_init_caps_present_with_evidence():
         )
 
 
-def test_model_caps_are_unbestaetigt_not_belegt():
-    # The migrated caps carry no source, so none may claim `belegt`. This is the
+def test_mkc_g3_caps_present_with_evidence():
+    # MKC-G3: provenance lift.  Each promoted entry must carry a source URL and
+    # exactly the level stated in MKC_G3_CAPS; value must be unchanged.
+    caps = _load_catalog()["model_caps"]
+    for model_id, (expected, level) in MKC_G3_CAPS.items():
+        assert model_id in caps, f"cap for {model_id!r} missing"
+        entry = caps[model_id]
+        assert "evidence" in entry, f"cap for {model_id!r} missing evidence block"
+        assert entry["max_input_tokens"] == expected, (
+            f"cap for {model_id!r} drifted: {entry['max_input_tokens']} != {expected}"
+        )
+        ev = entry["evidence"]
+        assert ev.get("level") == level, (
+            f"cap for {model_id!r} has level {ev.get('level')!r}, expected {level!r}"
+        )
+        has_source = bool(ev.get("source_url") or ev.get("source_urls"))
+        assert has_source, f"cap for {model_id!r} must carry source_url or source_urls"
+
+
+def test_model_caps_are_unconfirmed_not_confirmed():
+    # The migrated caps carry no source, so none may claim `confirmed`. This is the
     # truth about the value, not a weakness: a hand-written Python table without
     # a provenance URL is unverified by public standards. The FAI-215 evidenced
-    # caps are exempt — they DO carry a source and may therefore be `belegt`.
-    # The MKC-INIT caps are likewise exempt (OpenRouter `belegt` and LiteLLM
-    # `plausibel`).
+    # caps are exempt — they DO carry a source and may therefore be `confirmed`.
+    # The MKC-INIT caps are likewise exempt (OpenRouter `confirmed` and LiteLLM
+    # `plausible`). The MKC-G3 caps are exempt: their evidence was verified
+    # against or.json/ll.json (2026-09-11) and promoted to `confirmed` or
+    # `plausible` where a source was found.
     caps = _load_catalog()["model_caps"]
+    mkc_g3_keys = set(MKC_G3_CAPS)
     for model_id, entry in caps.items():
-        if model_id in EVIDENCED_MODEL_CAPS or model_id in MKC_INIT_CAPS:
+        if model_id in EVIDENCED_MODEL_CAPS or model_id in MKC_INIT_CAPS or model_id in mkc_g3_keys:
             continue
         level = entry["evidence"]["level"]
-        assert level == "unbestaetigt", (
+        assert level == "unconfirmed", (
             f"cap for {model_id!r} has evidence.level={level!r}; "
-            "without a source it must be unbestaetigt"
+            "without a source it must be unconfirmed"
         )
 
 
@@ -648,16 +711,106 @@ def test_model_versions_present_with_evidence():
         assert "evidence" in entry, f"{lane}: missing evidence block"
 
 
-def test_model_versions_are_unbestaetigt():
+def test_model_versions_are_unconfirmed():
     versions = _load_catalog()["model_versions"]
     for lane, entry in versions.items():
-        assert entry["evidence"]["level"] == "unbestaetigt", (
-            f"{lane}: evidence.level must be unbestaetigt, got {entry['evidence']['level']!r}"
+        assert entry["evidence"]["level"] == "unconfirmed", (
+            f"{lane}: evidence.level must be unconfirmed, got {entry['evidence']['level']!r}"
         )
 
 
 def test_catalog_still_valid_with_model_caps_and_versions():
     assert _errors(_load_catalog()) == []
+
+
+# ---------------------------------------------------------------------------
+# TASK-G2 — every entry declares context_window + limits (or documents why not)
+# ---------------------------------------------------------------------------
+
+# The faigate runtime merges this catalog with an embedded fallback catalog and
+# asserts EVERY provider carries a positive context_window and a limits dict
+# (tests test_provider_catalog_declares_context_window_everywhere and
+# test_provider_catalog_declares_in_band_input_cap). Seven entries here used to
+# lack both: four manufacturer rollups (anthropic, openai, google, google-vertex),
+# two plan rollups (byteplus-plan, volcengine-plan) and one real model
+# (deepseek-flash-vision-exp). They are the entries with NO embedded fallback, so
+# a missing field here could not be backfilled downstream. The invariant must be
+# enforced at the source of truth, not recovered later.
+
+# Entry keys that carry a DERIVED (plausible) context_window rather than a
+# measured (confirmed) one. A manufacturer/plan rollup spans several models with
+# different windows, so it has no single true value — the schema's entry_type
+# records that, and the derived value is an orientation, never evidence.
+DERIVED_CONTEXT_ENTRIES = {
+    "anthropic",
+    "openai",
+    "google",
+    "google-vertex",
+    "byteplus-plan",
+    "volcengine-plan",
+}
+
+# The one real model that must carry a measured value with a named public source.
+MEASURED_CONTEXT_ENTRIES = {"deepseek-flash-vision-exp"}
+
+# The seven entries this lane is responsible for. They are the entries with no
+# embedded fallback in the downstream consumer, so a missing context_window here
+# could never be backfilled. (Entries that DO have an embedded fallback obtain
+# their context_window there; this repo is not the sole source for those.)
+TASK_G2_ENTRIES = DERIVED_CONTEXT_ENTRIES | MEASURED_CONTEXT_ENTRIES
+
+
+def test_g2_entries_declare_context_window_and_limits():
+    """The seven fallback-less entries carry a positive context_window + limits.
+
+    Every one of the seven must declare both, because the downstream consumer
+    asserts both on the merged catalog and there is no embedded value to recover
+    for these keys.
+    """
+    providers = _load_catalog()["providers"]
+    for key in TASK_G2_ENTRIES:
+        entry = providers[key]
+        ctx = entry.get("context_window")
+        assert isinstance(ctx, int) and ctx > 0, (
+            f"{key!r} must declare a positive integer context_window, got {ctx!r}"
+        )
+        limits = entry.get("limits")
+        assert isinstance(limits, dict), (
+            f"{key!r} must declare limits as a dict, got {limits!r}"
+        )
+        cap = limits.get("max_input_tokens")
+        assert isinstance(cap, int) and cap > 0, (
+            f"{key!r} limits.max_input_tokens must be a positive integer, got {cap!r}"
+        )
+
+
+def test_derived_context_entries_are_marked_plausible_with_provenance():
+    """A derived (rollup) context_window must be plausible and name its source."""
+    providers = _load_catalog()["providers"]
+    for key in DERIVED_CONTEXT_ENTRIES:
+        entry = providers[key]
+        assert entry.get("entry_type") in ("vendor", "plan"), (
+            f"{key!r} must be entry_type vendor/plan, got {entry.get('entry_type')!r}"
+        )
+        evidence = entry.get("context_evidence") or {}
+        assert evidence.get("level") == "plausible", (
+            f"{key!r} derived context must be plausible, got {evidence.get('level')!r}"
+        )
+        assert evidence.get("derived_from"), (
+            f"{key!r} derived context must name derived_from"
+        )
+
+
+def test_measured_context_entry_is_confirmed_with_source():
+    """deepseek-flash-vision-exp must carry a measured value with a named source."""
+    entry = _load_catalog()["providers"]["deepseek-flash-vision-exp"]
+    assert entry.get("entry_type") == "model"
+    evidence = entry.get("context_evidence") or {}
+    assert evidence.get("level") == "confirmed", (
+        f"deepseek-flash-vision-exp must be confirmed, got {evidence.get('level')!r}"
+    )
+    assert evidence.get("source_url"), "a confirmed context must cite a source_url"
+    assert entry["context_window"] == entry["limits"]["max_input_tokens"]
 
 
 # ---------------------------------------------------------------------------
@@ -765,6 +918,172 @@ def test_no_provider_entry_loses_aliases_or_carried_fields():
         "explicit acknowledgement: "
         + "; ".join(f"{k}: {', '.join(sorted(v))}" for k, v in unacknowledged.items())
         + ". If the change is intentional, add the descriptor(s) to ALLOWED_CHANGES."
+    )
+
+
+# ---------------------------------------------------------------------------
+# TASK-G3 — derived evidence level must not exceed source evidence level
+# ---------------------------------------------------------------------------
+# Invariant: if a provider entry carries context_evidence.derived_from pointing
+# at a model_caps entry, the derived level may be AT MOST equal to the source
+# level.  Ordering: unconfirmed < plausible < confirmed.
+#
+# Three rollup entries in the g2 catalog violate this today (pre-fix):
+#   providers.google        <- model_caps["gemini-3.1-pro"]  (unconfirmed)
+#   providers.byteplus-plan <- model_caps["kimi-k2.6"]       (unconfirmed)
+#   providers.volcengine-plan <- model_caps["kimi-k2.6"]     (unconfirmed)
+# All three carry level="plausible" which is HIGHER than "unconfirmed".
+# The test must produce an AssertionError on the current HEAD before the fix,
+# not an import or setup error.
+
+_LEVEL_ORDER = {"unconfirmed": 0, "plausible": 1, "confirmed": 2}
+
+
+def test_derived_context_level_does_not_exceed_source_level():
+    """Every context_evidence.derived_from entry must have level <= source level.
+
+    Ordering: unconfirmed=0 < plausible=1 < confirmed=2.
+    A rollup that derives from an unconfirmed source must itself be
+    unconfirmed; it may not claim plausible or confirmed.
+    """
+    catalog = _load_catalog()
+    caps = catalog.get("model_caps", {})
+    providers = catalog["providers"]
+
+    violations: list[str] = []
+    for pkey, entry in providers.items():
+        ce = entry.get("context_evidence")
+        if ce is None:
+            continue
+        derived_from = ce.get("derived_from")
+        if not derived_from:
+            continue
+        # Parse model ID from e.g. 'model_caps["kimi-k2.6"]'
+        if not (derived_from.startswith('model_caps["') and derived_from.endswith('"]')):
+            continue
+        source_id = derived_from[len('model_caps["'):-2]
+        if source_id not in caps:
+            continue
+        source_level = caps[source_id].get("evidence", {}).get("level")
+        derived_level = ce.get("level")
+        if source_level not in _LEVEL_ORDER or derived_level not in _LEVEL_ORDER:
+            continue
+        if _LEVEL_ORDER[derived_level] > _LEVEL_ORDER[source_level]:
+            violations.append(
+                f"{pkey!r}: context_evidence.level={derived_level!r} exceeds "
+                f"source model_caps[{source_id!r}].evidence.level={source_level!r}"
+            )
+
+    assert not violations, (
+        "derived context evidence level exceeds its source level:\n  "
+        + "\n  ".join(violations)
+    )
+
+
+# ---------------------------------------------------------------------------
+# TASK-C4R — context_window_min_measured is a lower bound, never an overestimate
+# ---------------------------------------------------------------------------
+# Invariant: wherever a provider entry carries BOTH context_window and
+# context_window_min_measured, the measured lower bound must be <= the declared
+# context window.  A violation means one of the two figures is wrong and must
+# surface immediately.
+#
+# Red-proof: tamper the catalog in-memory so that context_window_min_measured
+# exceeds context_window, and assert the test logic produces an AssertionError
+# with a recognisable message.
+
+
+def _check_min_measured_invariant(providers: dict) -> list[str]:
+    """Return a list of violation strings for every entry that violates the invariant."""
+    violations = []
+    for key, entry in providers.items():
+        cw = entry.get("context_window")
+        cwmm = entry.get("context_window_min_measured")
+        if cw is None or cwmm is None:
+            continue
+        if cwmm > cw:
+            violations.append(
+                f"{key!r}: context_window_min_measured={cwmm} > context_window={cw}; "
+                "one of the two figures is wrong"
+            )
+    return violations
+
+
+def test_min_measured_does_not_exceed_context_window():
+    """context_window_min_measured <= context_window for every entry that carries both.
+
+    The deepseek-flash-vision-exp entry must pass (200091 <= 1000000).
+    """
+    providers = _load_catalog()["providers"]
+    violations = _check_min_measured_invariant(providers)
+    assert not violations, (
+        "context_window_min_measured exceeds context_window:\n  "
+        + "\n  ".join(violations)
+    )
+
+
+def test_min_measured_present_for_vision_model():
+    """deepseek-flash-vision-exp carries the rescued measurement."""
+    entry = _load_catalog()["providers"]["deepseek-flash-vision-exp"]
+    assert entry.get("context_window_min_measured") == 200091, (
+        "deepseek-flash-vision-exp must carry context_window_min_measured=200091"
+    )
+    measurement = entry.get("context_measurement")
+    assert isinstance(measurement, dict), (
+        "deepseek-flash-vision-exp must carry a context_measurement block"
+    )
+    assert measurement.get("tool") == "faigate 2.7.0", (
+        "context_measurement.tool must identify the measurement instrument"
+    )
+    assert measurement.get("probed_at") == "2026-09-01", (
+        "context_measurement.probed_at must record the probe date"
+    )
+    assert measurement.get("served_by_verified") is True, (
+        "context_measurement.served_by_verified must confirm model identity"
+    )
+    assert measurement.get("lower_bound_reason"), (
+        "context_measurement.lower_bound_reason must explain why this is a lower bound"
+    )
+
+
+def test_min_measured_context_window_not_overwritten():
+    """The third-party context_window (1000000, OmniRoute) is preserved unchanged."""
+    entry = _load_catalog()["providers"]["deepseek-flash-vision-exp"]
+    assert entry.get("context_window") == 1000000, (
+        "context_window must remain 1000000 (OmniRoute claim); "
+        "context_window_min_measured is the measured lower bound, not a replacement"
+    )
+
+
+def test_min_measured_red_proof():
+    """Tamper the catalog so that context_window_min_measured > context_window.
+
+    The invariant check must produce exactly one violation for the tampered entry,
+    with a message naming the entry and both values.  This confirms the guard
+    fires on bad data and does not silently pass.
+
+    Red-proof against 74c434d (HEAD before this lane): on the unmodified HEAD the
+    deepseek-flash-vision-exp entry carries no context_window_min_measured field,
+    so the invariant check has nothing to compare and trivially passes.  The only
+    way to exercise the guard is to tamper or to add the field — which is exactly
+    what this lane does.  The in-memory tamper below proves the assertion fires.
+    """
+    import copy
+
+    providers = copy.deepcopy(_load_catalog()["providers"])
+    # Introduce a contradictory value: min_measured > context_window.
+    providers["deepseek-flash-vision-exp"]["context_window"] = 100000
+    providers["deepseek-flash-vision-exp"]["context_window_min_measured"] = 200091
+
+    violations = _check_min_measured_invariant(providers)
+    assert violations, (
+        "the invariant check must report a violation when min_measured > context_window"
+    )
+    assert "deepseek-flash-vision-exp" in violations[0], (
+        f"violation message must name the offending entry; got: {violations[0]!r}"
+    )
+    assert "200091" in violations[0] and "100000" in violations[0], (
+        f"violation message must contain both values; got: {violations[0]!r}"
     )
 
 

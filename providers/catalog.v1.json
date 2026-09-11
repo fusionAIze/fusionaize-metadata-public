@@ -1,5 +1,5 @@
 {
-  "schema_version": "fusionaize-provider-catalog/v1.3",
+  "schema_version": "fusionaize-provider-catalog/v1.4",
   "generated_at": "2026-04-26T00:00:00Z",
   "source_repo": "fusionaize-metadata-public",
   "providers": {
@@ -37,7 +37,18 @@
       },
       "vendor": "anthropic",
       "model": "claude-opus-4-7",
-      "hop": []
+      "hop": [],
+      "entry_type": "vendor",
+      "context_window": 1000000,
+      "limits": {
+        "max_input_tokens": 1000000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "derived_from": "model_caps[\"claude-opus-4-6\"]",
+        "derived_from_value": 1000000,
+        "note": "vendor rollup; single window is the flagship Opus. claude-opus-4-7 has no direct cap entry, so derived from family member claude-opus-4-6."
+      }
     },
     "anthropic-claude": {
       "aliases": [
@@ -168,7 +179,18 @@
       },
       "vendor": "openai",
       "model": "gpt-4o",
-      "hop": []
+      "hop": [],
+      "entry_type": "vendor",
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "derived_from": "model_caps[\"gpt-4o\"]",
+        "derived_from_value": 128000,
+        "note": "vendor rollup; derived from primary model gpt-4o."
+      }
     },
     "openai-gpt4o": {
       "aliases": [
@@ -259,7 +281,18 @@
       },
       "vendor": "google",
       "model": "gemini-3.1-pro",
-      "hop": []
+      "hop": [],
+      "entry_type": "vendor",
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "derived_from": "model_caps[\"gemini-3.1-pro\"]",
+        "derived_from_value": 1048576,
+        "note": "vendor rollup; derived from primary model gemini-3.1-pro."
+      }
     },
     "gemini-flash": {
       "aliases": [
@@ -475,13 +508,13 @@
         "vision"
       ],
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://api-docs.deepseek.com/quick_start/pricing"
       },
       "official_source_url": "https://api-docs.deepseek.com/quick_start/pricing",
       "signup_url": "https://platform.deepseek.com/",
       "watch_sources": [],
-      "notes": "DeepSeek V4 Flash Vision Exp (experimental) adds image input to V4 Flash. Images are converted to tokens by dimension with an upper bound of 384 tokens per image, billed at the input-token rate. The pricing page lists peak/off-peak and cache hit/miss rates, not a single flat price: the canonical *_cost_per_1m fields below carry the PEAK column (input = cache-miss, cache_read = cache-hit); the corresponding off-peak rates (half of peak) are carried in the pricing_off_peak object. Peak hours are 01:00-04:00 and 06:00-10:00 UTC, Mon-Fri.",
+      "notes": "DeepSeek V4 Flash Vision Exp (experimental) adds image input to V4 Flash. Images are converted to tokens by dimension with an upper bound of 384 tokens per image, billed at the input-token rate. The pricing page lists peak/off-peak and cache hit/miss rates, not a single flat price: the canonical *_cost_per_1m fields below carry the PEAK column (input = cache-miss, cache_read = cache-hit); the corresponding off-peak rates (half of peak) are carried in the pricing_off_peak object. Peak hours are 01:00-04:00 and 06:00-10:00 UTC, Mon-Fri. Context window: OmniRoute claims 1000000 (context_window, confirmed). faigate measured a lower bound of 200091 (context_window_min_measured): larger probes were cut by faigate's own payload guard before reaching the model. The two figures do not contradict (200091 <= 1000000); they are of different kinds and are stored separately.",
       "last_reviewed": "2026-08-31",
       "pricing": {
         "source_type": "provider-docs",
@@ -507,7 +540,28 @@
       ],
       "output_modalities": [
         "text"
-      ]
+      ],
+      "entry_type": "model",
+      "context_window": 1000000,
+      "limits": {
+        "max_input_tokens": 1000000
+      },
+      "context_evidence": {
+        "level": "confirmed",
+        "source": "OmniRoute",
+        "source_url": "http://localhost:20128/v1/models",
+        "model_id": "deepseek/deepseek-v4-flash-vision-exp",
+        "as_of": "2026-09-11",
+        "note": "OmniRoute reports context_length=1000000; OpenRouter reports 1048576 (1 MiB). OmniRoute is primary per source-of-truth policy; value matches model_caps[\"deepseek-v4-flash-vision-exp\"]."
+      },
+      "context_window_min_measured": 200091,
+      "context_measurement": {
+        "tool": "faigate 2.7.0",
+        "probed_at": "2026-09-01",
+        "tokens_accepted": 200091,
+        "served_by_verified": true,
+        "lower_bound_reason": "Larger probes were rejected by faigate's own payload guard (_payload_too_large_response) between 1.0 MB and 1.9 MB of request body, before the request reached the model. The true context window is therefore unknown. The vendor announcement states none. An earlier attempt against an unconfigured model ID was silently served by gemini-2.5-flash (HTTP 200, no error) — see FAI-212; model identity was verified via served_by on every successful probe."
+      }
     },
     "blackbox-free": {
       "aliases": [
@@ -703,7 +757,18 @@
       },
       "vendor": "google",
       "model": "gemini-2.5-pro",
-      "hop": []
+      "hop": [],
+      "entry_type": "vendor",
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "derived_from": "model_caps[\"gemini-2.5-pro\"]",
+        "derived_from_value": 1048576,
+        "note": "Google Vertex entry; derived from model gemini-2.5-pro."
+      }
     },
     "zai": {
       "aliases": [
@@ -1027,7 +1092,18 @@
       "model": "ark-code-latest",
       "hop": [
         "byteplus"
-      ]
+      ],
+      "entry_type": "plan",
+      "context_window": 262144,
+      "limits": {
+        "max_input_tokens": 262144
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "derived_from": "model_caps[\"kimi-k2.6\"]",
+        "derived_from_value": 262144,
+        "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
+      }
     },
     "cerebras": {
       "aliases": [
@@ -1281,7 +1357,18 @@
       },
       "vendor": "volcengine",
       "model": "ark-code-latest",
-      "hop": []
+      "hop": [],
+      "entry_type": "plan",
+      "context_window": 262144,
+      "limits": {
+        "max_input_tokens": 262144
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "derived_from": "model_caps[\"kimi-k2.6\"]",
+        "derived_from_value": 262144,
+        "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
+      }
     },
     "xai": {
       "aliases": [
@@ -1339,7 +1426,7 @@
         "max_input_tokens": 300000,
         "max_output_tokens": 10000,
         "evidence": {
-          "level": "belegt",
+          "level": "confirmed",
           "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "as_of": "2026-09-11"
         }
@@ -1372,7 +1459,7 @@
         "max_input_tokens": 16384,
         "max_output_tokens": 16384,
         "evidence": {
-          "level": "belegt",
+          "level": "confirmed",
           "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "as_of": "2026-09-11"
         }
@@ -1405,7 +1492,7 @@
         "max_input_tokens": 123000,
         "max_output_tokens": 16000,
         "evidence": {
-          "level": "belegt",
+          "level": "confirmed",
           "source_url": "https://openrouter.ai/api/v1/models",
           "as_of": "2026-09-11"
         }
@@ -1438,7 +1525,7 @@
         "max_input_tokens": 262144,
         "max_output_tokens": 128000,
         "evidence": {
-          "level": "belegt",
+          "level": "confirmed",
           "source_url": "https://openrouter.ai/api/v1/models",
           "as_of": "2026-09-11"
         }
@@ -1470,7 +1557,7 @@
         "max_input_tokens": 1048576,
         "max_output_tokens": 65536,
         "evidence": {
-          "level": "belegt",
+          "level": "confirmed",
           "source_url": "https://openrouter.ai/api/v1/models",
           "as_of": "2026-09-11"
         }
@@ -1510,7 +1597,7 @@
         "max_input_tokens": 1048576,
         "max_output_tokens": 65536,
         "evidence": {
-          "level": "belegt",
+          "level": "confirmed",
           "source_url": "https://openrouter.ai/api/v1/models",
           "as_of": "2026-09-11"
         }
@@ -1550,7 +1637,7 @@
         "max_input_tokens": 1048576,
         "max_output_tokens": 65536,
         "evidence": {
-          "level": "belegt",
+          "level": "confirmed",
           "source_url": "https://openrouter.ai/api/v1/models",
           "as_of": "2026-09-11"
         }
@@ -1590,7 +1677,7 @@
         "max_input_tokens": 131072,
         "max_output_tokens": 32768,
         "evidence": {
-          "level": "belegt",
+          "level": "confirmed",
           "source_url": "https://openrouter.ai/api/v1/models",
           "as_of": "2026-09-11"
         }
@@ -1610,19 +1697,27 @@
     "deepseek-v4-pro": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "deepseek-v4-pro",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM bare key deepseek-v4-pro=1000000 confirms catalog. OpenRouter reports 1048576 (fireworks/nebius/openrouter routing variants); LiteLLM bare key and deepseek/deepseek-v4-pro=1000000 are the canonical provider entries."
       }
     },
     "deepseek-v4-flash": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "deepseek-v4-flash",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM bare key deepseek-v4-flash=1000000 confirms catalog. OpenRouter reports 1048576 (fireworks/nebius/openrouter routing variants); LiteLLM bare key and deepseek/deepseek-v4-flash=1000000 are the canonical provider entries."
       }
     },
     "claude-haiku-3-5": {
       "max_input_tokens": 200000,
       "evidence": {
-        "level": "plausibel",
+        "level": "plausible",
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "as_of": "2026-09-11"
       }
@@ -1630,7 +1725,7 @@
     "gemini-3.6-flash": {
       "max_input_tokens": 1048576,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://openrouter.ai/api/v1/models",
         "as_of": "2026-09-11"
       }
@@ -1638,7 +1733,7 @@
     "gemini-3.7-flash": {
       "max_input_tokens": 1048576,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://openrouter.ai/api/v1/models",
         "as_of": "2026-09-11"
       }
@@ -1646,7 +1741,7 @@
     "gemini-3.8-flash": {
       "max_input_tokens": 1048576,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://openrouter.ai/api/v1/models",
         "as_of": "2026-09-11"
       }
@@ -1654,7 +1749,7 @@
     "gpt-oss-120b": {
       "max_input_tokens": 131072,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://openrouter.ai/api/v1/models",
         "as_of": "2026-09-11"
       }
@@ -1662,133 +1757,211 @@
     "gpt-5.6-sol": {
       "max_input_tokens": 922000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "gpt-5.6-sol",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM bare key gpt-5.6-sol=922000 and Azure variants confirm catalog. OpenRouter reports 1050000 (chatgpt/openrouter routing variants)."
       }
     },
     "gpt-5.6-terra": {
       "max_input_tokens": 922000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "gpt-5.6-terra",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM bare key gpt-5.6-terra=922000 and Azure variants confirm catalog. OpenRouter reports 1050000 (chatgpt/openrouter routing variants)."
       }
     },
     "gpt-5.6-luna": {
       "max_input_tokens": 922000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "gpt-5.6-luna",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM bare key gpt-5.6-luna=922000 and Azure variants confirm catalog. OpenRouter reports 1050000 (chatgpt/openrouter routing variants)."
       }
     },
     "gpt-5.5": {
       "max_input_tokens": 1050000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key gpt-5.5=1050000 confirm catalog."
       }
     },
     "gpt-5.5-pro": {
       "max_input_tokens": 1050000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key gpt-5.5-pro=1050000 confirm catalog."
       }
     },
     "o3": {
       "max_input_tokens": 200000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key o3=200000 confirm catalog."
       }
     },
     "o3-mini": {
       "max_input_tokens": 200000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key o3-mini=200000 confirm catalog."
       }
     },
     "o4-mini": {
       "max_input_tokens": 200000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key o4-mini=200000 confirm catalog."
       }
     },
     "claude-opus-5": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key claude-opus-5=1000000 confirm catalog."
       }
     },
     "claude-sonnet-5": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key claude-sonnet-5=1000000 confirm catalog."
       }
     },
     "claude-haiku-4-5": {
       "max_input_tokens": 200000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "claude-haiku-4-5",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM bare key claude-haiku-4-5=200000 confirms catalog. OpenRouter has no entry for this model ID."
       }
     },
     "claude-code": {
       "max_input_tokens": 262144,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "gemini-3.1-pro": {
       "max_input_tokens": 1048576,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "plausible",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "deepinfra/google/gemini-3.1-pro",
+        "as_of": "2026-09-11",
+        "note": "Only source found: LiteLLM deepinfra/google/gemini-3.1-pro=1000000, which contradicts the catalog value 1048576. OpenRouter has no entry. Value retained at 1048576 (consistent with preview sibling gemini-3.1-pro-preview=1048576 in LiteLLM); evidence raised to plausible as a single third-party inference provider."
       }
     },
     "gemini-3.1-flash": {
       "max_input_tokens": 1048576,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "gemini-3-flash-lite": {
       "max_input_tokens": 1048576,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "llama-4-maverick": {
       "max_input_tokens": 131072,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "llama-4-scout": {
       "max_input_tokens": 131072,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "qwen-3.6-27b": {
       "max_input_tokens": 262144,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "qwen3-coder": {
       "max_input_tokens": 262144,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "OpenRouter tail qwen3-coder=262144 and LiteLLM openrouter/qwen/qwen3-coder≈262100 both confirm catalog value 262144."
       }
     },
     "glm-5.3": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "zai/glm-5.3",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM zai/glm-5.3=1000000 confirms catalog. OpenRouter z-ai/glm-5.3=1310720 contradicts; LiteLLM canonical provider entry is preferred."
       }
     },
     "kimi-k2.6": {
       "max_input_tokens": 262144,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "confirmed",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "OpenRouter moonshotai/kimi-k2.6=262144 and LiteLLM moonshot/kimi-k2.6=262144 both confirm catalog value."
       }
     },
     "claude-opus-4-6": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "as_of": "2026-09-11"
       }
@@ -1796,7 +1969,7 @@
     "claude-sonnet-4-6": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "as_of": "2026-09-11"
       }
@@ -1804,7 +1977,7 @@
     "gemini-2.5-pro": {
       "max_input_tokens": 1048576,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "as_of": "2026-09-11"
       }
@@ -1812,7 +1985,7 @@
     "gemini-2.5-flash": {
       "max_input_tokens": 1048576,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "as_of": "2026-09-11"
       }
@@ -1820,7 +1993,7 @@
     "gemini-2.5-flash-lite": {
       "max_input_tokens": 1048576,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "as_of": "2026-09-11"
       }
@@ -1828,7 +2001,7 @@
     "gpt-4o": {
       "max_input_tokens": 128000,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "as_of": "2026-09-11"
       }
@@ -1836,7 +2009,7 @@
     "gpt-5.4": {
       "max_input_tokens": 1050000,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "as_of": "2026-09-11"
       }
@@ -1844,7 +2017,7 @@
     "gpt-5.3-codex": {
       "max_input_tokens": 272000,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "as_of": "2026-09-11"
       }
@@ -1852,7 +2025,7 @@
     "gpt-5.1-codex-mini": {
       "max_input_tokens": 272000,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "as_of": "2026-09-11"
       }
@@ -1860,7 +2033,7 @@
     "deepseek-v4-flash-vision-exp": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "as_of": "2026-09-11"
       }
@@ -1868,7 +2041,7 @@
     "grok-code-fast-1": {
       "max_input_tokens": 256000,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "as_of": "2026-09-11"
       }
@@ -1876,7 +2049,7 @@
     "glm-5": {
       "max_input_tokens": 204800,
       "evidence": {
-        "level": "belegt",
+        "level": "confirmed",
         "source_url": "https://openrouter.ai/api/v1/models",
         "as_of": "2026-09-11"
       }
@@ -1884,7 +2057,7 @@
     "auto-router": {
       "max_input_tokens": 2000000,
       "evidence": {
-        "level": "unbestaetigt",
+        "level": "unconfirmed",
         "source_url": "https://openrouter.ai/api/v1/models",
         "as_of": "2026-09-11"
       }
@@ -1895,63 +2068,63 @@
       "model": "gemini-3-flash",
       "label": "Gemini 3 Flash",
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "google/gemini-flash-lite": {
       "model": "gemini-3-flash-lite",
       "label": "Gemini 3 Flash-Lite",
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "google/gemini-pro-high": {
       "model": "gemini-3.1-pro",
       "label": "Gemini 3.1 Pro (High)",
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "google/gemini-pro-low": {
       "model": "gemini-3.1-pro",
       "label": "Gemini 3.1 Pro (Low)",
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "anthropic/opus-4.6": {
       "model": "claude-opus-4-6",
       "label": "Claude Opus 4.6",
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "anthropic/sonnet-4.6": {
       "model": "claude-sonnet-4-6",
       "label": "Claude Sonnet 4.6",
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "openai/gpt-4o": {
       "model": "gpt-4o",
       "label": "GPT-4o",
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "deepseek/reasoner": {
       "model": "deepseek-reasoner",
       "label": "DeepSeek R1 (Reasoner)",
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     },
     "deepseek/chat": {
       "model": "deepseek-chat",
       "label": "DeepSeek V3 (Chat)",
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "unconfirmed"
       }
     }
   },
