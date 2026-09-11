@@ -537,6 +537,18 @@ EVIDENCED_MODEL_CAPS = {
     "auto-router": 2000000,
 }
 
+# MKC-INIT (lane init): caps added from the three router sources (OmniRoute,
+# OpenRouter, LiteLLM) during the catalog re-initialization. Splits from
+# EVIDENCED_MODEL_CAPS because these carry a wider evidence spread: OpenRouter
+# values are `belegt`, the LiteLLM-only value (claude-3-5-haiku) is `plausibel`.
+MKC_INIT_CAPS = {
+    "claude-haiku-3-5": (200000, "plausibel"),
+    "gemini-3.6-flash": (1048576, "belegt"),
+    "gemini-3.7-flash": (1048576, "belegt"),
+    "gemini-3.8-flash": (1048576, "belegt"),
+    "gpt-oss-120b": (131072, "belegt"),
+}
+
 # The canonical-lane -> (concrete model, human label) pairs merged from
 # faigate's _ACTIVE_MODEL_VERSIONS and _MODEL_VERSION_LABELS.
 MODEL_VERSIONS = {
@@ -555,8 +567,8 @@ MODEL_VERSIONS = {
 def test_all_23_model_caps_present_with_evidence():
     catalog = _load_catalog()
     caps = catalog["model_caps"]
-    assert len(caps) == 23 + len(EVIDENCED_MODEL_CAPS), (
-        f"expected {23 + len(EVIDENCED_MODEL_CAPS)} model cap entries, got {len(caps)}"
+    assert len(caps) == 23 + len(EVIDENCED_MODEL_CAPS) + len(MKC_INIT_CAPS), (
+        f"expected {23 + len(EVIDENCED_MODEL_CAPS) + len(MKC_INIT_CAPS)} model cap entries, got {len(caps)}"
     )
     for model_id, expected in MODEL_CAPS.items():
         assert model_id in caps, f"cap for {model_id!r} missing"
@@ -588,14 +600,36 @@ def test_evidenced_model_caps_present():
         )
 
 
+def test_mkc_init_caps_present_with_evidence():
+    # MKC-INIT: caps added from OmniRoute/OpenRouter/LiteLLM during the catalog
+    # re-initialization. Each carries its own evidence level; a LiteLLM-only
+    # value is `plausibel`, an OpenRouter-sourced value is `belegt`.
+    caps = _load_catalog()["model_caps"]
+    for model_id, (expected, level) in MKC_INIT_CAPS.items():
+        assert model_id in caps, f"cap for {model_id!r} missing"
+        entry = caps[model_id]
+        assert "evidence" in entry, f"cap for {model_id!r} missing evidence block"
+        assert entry["max_input_tokens"] == expected, (
+            f"cap for {model_id!r} drifted: {entry['max_input_tokens']} != {expected}"
+        )
+        assert entry["evidence"].get("source_url"), (
+            f"cap for {model_id!r} must carry a source_url"
+        )
+        assert entry["evidence"]["level"] == level, (
+            f"cap for {model_id!r} has level {entry['evidence']['level']!r}, expected {level!r}"
+        )
+
+
 def test_model_caps_are_unbestaetigt_not_belegt():
     # The migrated caps carry no source, so none may claim `belegt`. This is the
     # truth about the value, not a weakness: a hand-written Python table without
     # a provenance URL is unverified by public standards. The FAI-215 evidenced
     # caps are exempt — they DO carry a source and may therefore be `belegt`.
+    # The MKC-INIT caps are likewise exempt (OpenRouter `belegt` and LiteLLM
+    # `plausibel`).
     caps = _load_catalog()["model_caps"]
     for model_id, entry in caps.items():
-        if model_id in EVIDENCED_MODEL_CAPS:
+        if model_id in EVIDENCED_MODEL_CAPS or model_id in MKC_INIT_CAPS:
             continue
         level = entry["evidence"]["level"]
         assert level == "unbestaetigt", (
