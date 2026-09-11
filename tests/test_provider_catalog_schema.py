@@ -557,6 +557,36 @@ MKC_INIT_CAPS = {
     "gpt-oss-120b": (131072, "belegt"),
 }
 
+# MKC-G3 (lane g3): provenance lift for the 24 unbestaetigt entries from the
+# earlier _MODEL_INPUT_CAPS migration.  Values verified against or.json
+# (OpenRouter /v1/models) and ll.json (LiteLLM model_prices_and_context_window).
+# 16 confirmed as `belegt`, 1 raised to `plausibel` (gemini-3.1-pro, single
+# third-party LL source contradicts the catalog value), 6 left `unbestaetigt`
+# (no bare-name source in either registry).
+MKC_G3_CAPS = {
+    # belegt — both OpenRouter and LiteLLM confirm
+    "claude-opus-5":   (1000000, "belegt"),
+    "claude-sonnet-5": (1000000, "belegt"),
+    "gpt-5.5":         (1050000, "belegt"),
+    "gpt-5.5-pro":     (1050000, "belegt"),
+    "kimi-k2.6":       (262144,  "belegt"),
+    "o3":              (200000,  "belegt"),
+    "o3-mini":         (200000,  "belegt"),
+    "o4-mini":         (200000,  "belegt"),
+    "qwen3-coder":     (262144,  "belegt"),
+    # belegt — LiteLLM confirms, OpenRouter absent
+    "claude-haiku-4-5": (200000, "belegt"),
+    # belegt — LiteLLM confirms, OpenRouter contradicts (noted in evidence)
+    "deepseek-v4-flash": (1000000, "belegt"),
+    "deepseek-v4-pro":   (1000000, "belegt"),
+    "glm-5.3":           (1000000, "belegt"),
+    "gpt-5.6-luna":      (922000,  "belegt"),
+    "gpt-5.6-sol":       (922000,  "belegt"),
+    "gpt-5.6-terra":     (922000,  "belegt"),
+    # plausibel — single third-party LL source contradicts catalog value
+    "gemini-3.1-pro":    (1048576, "plausibel"),
+}
+
 # The canonical-lane -> (concrete model, human label) pairs merged from
 # faigate's _ACTIVE_MODEL_VERSIONS and _MODEL_VERSION_LABELS.
 MODEL_VERSIONS = {
@@ -575,8 +605,9 @@ MODEL_VERSIONS = {
 def test_all_23_model_caps_present_with_evidence():
     catalog = _load_catalog()
     caps = catalog["model_caps"]
-    assert len(caps) == 23 + len(EVIDENCED_MODEL_CAPS) + len(MKC_INIT_CAPS), (
-        f"expected {23 + len(EVIDENCED_MODEL_CAPS) + len(MKC_INIT_CAPS)} model cap entries, got {len(caps)}"
+    expected_total = 23 + len(EVIDENCED_MODEL_CAPS) + len(MKC_INIT_CAPS)
+    assert len(caps) == expected_total, (
+        f"expected {expected_total} model cap entries, got {len(caps)}"
     )
     for model_id, expected in MODEL_CAPS.items():
         assert model_id in caps, f"cap for {model_id!r} missing"
@@ -628,16 +659,38 @@ def test_mkc_init_caps_present_with_evidence():
         )
 
 
+def test_mkc_g3_caps_present_with_evidence():
+    # MKC-G3: provenance lift.  Each promoted entry must carry a source URL and
+    # exactly the level stated in MKC_G3_CAPS; value must be unchanged.
+    caps = _load_catalog()["model_caps"]
+    for model_id, (expected, level) in MKC_G3_CAPS.items():
+        assert model_id in caps, f"cap for {model_id!r} missing"
+        entry = caps[model_id]
+        assert "evidence" in entry, f"cap for {model_id!r} missing evidence block"
+        assert entry["max_input_tokens"] == expected, (
+            f"cap for {model_id!r} drifted: {entry['max_input_tokens']} != {expected}"
+        )
+        ev = entry["evidence"]
+        assert ev.get("level") == level, (
+            f"cap for {model_id!r} has level {ev.get('level')!r}, expected {level!r}"
+        )
+        has_source = bool(ev.get("source_url") or ev.get("source_urls"))
+        assert has_source, f"cap for {model_id!r} must carry source_url or source_urls"
+
+
 def test_model_caps_are_unbestaetigt_not_belegt():
     # The migrated caps carry no source, so none may claim `belegt`. This is the
     # truth about the value, not a weakness: a hand-written Python table without
     # a provenance URL is unverified by public standards. The FAI-215 evidenced
     # caps are exempt — they DO carry a source and may therefore be `belegt`.
     # The MKC-INIT caps are likewise exempt (OpenRouter `belegt` and LiteLLM
-    # `plausibel`).
+    # `plausibel`). The MKC-G3 caps are exempt: their evidence was verified
+    # against or.json/ll.json (2026-09-11) and promoted to `belegt` or
+    # `plausibel` where a source was found.
     caps = _load_catalog()["model_caps"]
+    mkc_g3_keys = set(MKC_G3_CAPS)
     for model_id, entry in caps.items():
-        if model_id in EVIDENCED_MODEL_CAPS or model_id in MKC_INIT_CAPS:
+        if model_id in EVIDENCED_MODEL_CAPS or model_id in MKC_INIT_CAPS or model_id in mkc_g3_keys:
             continue
         level = entry["evidence"]["level"]
         assert level == "unbestaetigt", (
@@ -863,6 +916,65 @@ def test_no_provider_entry_loses_aliases_or_carried_fields():
         "explicit acknowledgement: "
         + "; ".join(f"{k}: {', '.join(sorted(v))}" for k, v in unacknowledged.items())
         + ". If the change is intentional, add the descriptor(s) to ALLOWED_CHANGES."
+    )
+
+
+# ---------------------------------------------------------------------------
+# TASK-G3 — derived evidence level must not exceed source evidence level
+# ---------------------------------------------------------------------------
+# Invariant: if a provider entry carries context_evidence.derived_from pointing
+# at a model_caps entry, the derived level may be AT MOST equal to the source
+# level.  Ordering: unbestaetigt < plausibel < belegt.
+#
+# Three rollup entries in the g2 catalog violate this today (pre-fix):
+#   providers.google        <- model_caps["gemini-3.1-pro"]  (unbestaetigt)
+#   providers.byteplus-plan <- model_caps["kimi-k2.6"]       (unbestaetigt)
+#   providers.volcengine-plan <- model_caps["kimi-k2.6"]     (unbestaetigt)
+# All three carry level="plausibel" which is HIGHER than "unbestaetigt".
+# The test must produce an AssertionError on the current HEAD before the fix,
+# not an import or setup error.
+
+_LEVEL_ORDER = {"unbestaetigt": 0, "plausibel": 1, "belegt": 2}
+
+
+def test_derived_context_level_does_not_exceed_source_level():
+    """Every context_evidence.derived_from entry must have level <= source level.
+
+    Ordering: unbestaetigt=0 < plausibel=1 < belegt=2.
+    A rollup that derives from an unbestaetigt source must itself be
+    unbestaetigt; it may not claim plausibel or belegt.
+    """
+    catalog = _load_catalog()
+    caps = catalog.get("model_caps", {})
+    providers = catalog["providers"]
+
+    violations: list[str] = []
+    for pkey, entry in providers.items():
+        ce = entry.get("context_evidence")
+        if ce is None:
+            continue
+        derived_from = ce.get("derived_from")
+        if not derived_from:
+            continue
+        # Parse model ID from e.g. 'model_caps["kimi-k2.6"]'
+        if not (derived_from.startswith('model_caps["') and derived_from.endswith('"]')):
+            continue
+        source_id = derived_from[len('model_caps["'):-2]
+        if source_id not in caps:
+            continue
+        source_level = caps[source_id].get("evidence", {}).get("level")
+        derived_level = ce.get("level")
+        if source_level not in _LEVEL_ORDER or derived_level not in _LEVEL_ORDER:
+            continue
+        if _LEVEL_ORDER[derived_level] > _LEVEL_ORDER[source_level]:
+            violations.append(
+                f"{pkey!r}: context_evidence.level={derived_level!r} exceeds "
+                f"source model_caps[{source_id!r}].evidence.level={source_level!r}"
+            )
+
+    assert not violations, (
+        "derived context evidence level exceeds its source level:\n  "
+        + "\n  ".join(violations)
     )
 
 

@@ -1689,13 +1689,21 @@
     "deepseek-v4-pro": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "deepseek-v4-pro",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM bare key deepseek-v4-pro=1000000 confirms catalog. OpenRouter reports 1048576 (fireworks/nebius/openrouter routing variants); LiteLLM bare key and deepseek/deepseek-v4-pro=1000000 are the canonical provider entries."
       }
     },
     "deepseek-v4-flash": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "deepseek-v4-flash",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM bare key deepseek-v4-flash=1000000 confirms catalog. OpenRouter reports 1048576 (fireworks/nebius/openrouter routing variants); LiteLLM bare key and deepseek/deepseek-v4-flash=1000000 are the canonical provider entries."
       }
     },
     "claude-haiku-3-5": {
@@ -1741,67 +1749,125 @@
     "gpt-5.6-sol": {
       "max_input_tokens": 922000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "gpt-5.6-sol",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM bare key gpt-5.6-sol=922000 and Azure variants confirm catalog. OpenRouter reports 1050000 (chatgpt/openrouter routing variants)."
       }
     },
     "gpt-5.6-terra": {
       "max_input_tokens": 922000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "gpt-5.6-terra",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM bare key gpt-5.6-terra=922000 and Azure variants confirm catalog. OpenRouter reports 1050000 (chatgpt/openrouter routing variants)."
       }
     },
     "gpt-5.6-luna": {
       "max_input_tokens": 922000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "gpt-5.6-luna",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM bare key gpt-5.6-luna=922000 and Azure variants confirm catalog. OpenRouter reports 1050000 (chatgpt/openrouter routing variants)."
       }
     },
     "gpt-5.5": {
       "max_input_tokens": 1050000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key gpt-5.5=1050000 confirm catalog."
       }
     },
     "gpt-5.5-pro": {
       "max_input_tokens": 1050000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key gpt-5.5-pro=1050000 confirm catalog."
       }
     },
     "o3": {
       "max_input_tokens": 200000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key o3=200000 confirm catalog."
       }
     },
     "o3-mini": {
       "max_input_tokens": 200000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key o3-mini=200000 confirm catalog."
       }
     },
     "o4-mini": {
       "max_input_tokens": 200000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key o4-mini=200000 confirm catalog."
       }
     },
     "claude-opus-5": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key claude-opus-5=1000000 confirm catalog."
       }
     },
     "claude-sonnet-5": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "Both OpenRouter and LiteLLM bare key claude-sonnet-5=1000000 confirm catalog."
       }
     },
     "claude-haiku-4-5": {
       "max_input_tokens": 200000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "claude-haiku-4-5",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM bare key claude-haiku-4-5=200000 confirms catalog. OpenRouter has no entry for this model ID."
       }
     },
     "claude-code": {
@@ -1813,7 +1879,11 @@
     "gemini-3.1-pro": {
       "max_input_tokens": 1048576,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "plausibel",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "deepinfra/google/gemini-3.1-pro",
+        "as_of": "2026-09-11",
+        "note": "Only source found: LiteLLM deepinfra/google/gemini-3.1-pro=1000000, which contradicts the catalog value 1048576. OpenRouter has no entry. Value retained at 1048576 (consistent with preview sibling gemini-3.1-pro-preview=1048576 in LiteLLM); evidence raised to plausibel as a single third-party inference provider."
       }
     },
     "gemini-3.1-flash": {
@@ -1849,19 +1919,35 @@
     "qwen3-coder": {
       "max_input_tokens": 262144,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "OpenRouter tail qwen3-coder=262144 and LiteLLM openrouter/qwen/qwen3-coder≈262100 both confirm catalog value 262144."
       }
     },
     "glm-5.3": {
       "max_input_tokens": 1000000,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "zai/glm-5.3",
+        "as_of": "2026-09-11",
+        "note": "LiteLLM zai/glm-5.3=1000000 confirms catalog. OpenRouter z-ai/glm-5.3=1310720 contradicts; LiteLLM canonical provider entry is preferred."
       }
     },
     "kimi-k2.6": {
       "max_input_tokens": 262144,
       "evidence": {
-        "level": "unbestaetigt"
+        "level": "belegt",
+        "source_urls": [
+          "https://openrouter.ai/api/v1/models",
+          "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        ],
+        "as_of": "2026-09-11",
+        "note": "OpenRouter moonshotai/kimi-k2.6=262144 and LiteLLM moonshot/kimi-k2.6=262144 both confirm catalog value."
       }
     },
     "claude-opus-4-6": {
