@@ -548,11 +548,12 @@
       },
       "context_evidence": {
         "level": "confirmed",
-        "source": "OmniRoute",
+        "source": "OmniRoute (operator-local router, not publicly resolvable)",
         "source_url": "http://localhost:20128/v1/models",
         "model_id": "deepseek/deepseek-v4-flash-vision-exp",
         "as_of": "2026-09-11",
-        "note": "OmniRoute reports context_length=1000000; OpenRouter reports 1048576 (1 MiB). OmniRoute is primary per source-of-truth policy; value matches model_caps[\"deepseek-v4-flash-vision-exp\"]."
+        "note": "OmniRoute reports context_length=1000000. The source_url resolves only on the operator's host, so an external reader cannot re-check it; the publicly verifiable cross-reference is OpenRouter's deepseek/deepseek-v4-flash-vision-exp, which reports 1048576 (1 MiB). OmniRoute stays primary per source-of-truth policy; value matches model_caps[\"deepseek-v4-flash-vision-exp\"].",
+        "source_scope": "local"
       },
       "context_window_min_measured": 200091,
       "context_measurement": {
@@ -560,7 +561,7 @@
         "probed_at": "2026-09-01",
         "tokens_accepted": 200091,
         "served_by_verified": true,
-        "lower_bound_reason": "Larger probes were rejected by faigate's own payload guard (_payload_too_large_response) between 1.0 MB and 1.9 MB of request body, before the request reached the model. The true context window is therefore unknown. The vendor announcement states none. An earlier attempt against an unconfigured model ID was silently served by gemini-2.5-flash (HTTP 200, no error) — see FAI-212; model identity was verified via served_by on every successful probe."
+        "lower_bound_reason": "Larger probes were rejected by faigate's own payload guard (_payload_too_large_response) between 1.0 MB and 1.9 MB of request body, before the request reached the model. The true context window is therefore unknown. The vendor announcement states none. An earlier attempt against an unconfigured model ID was silently served by gemini-2.5-flash (HTTP 200, no error) \u2014 see FAI-212; model identity was verified via served_by on every successful probe."
       }
     },
     "blackbox-free": {
@@ -814,7 +815,7 @@
       "official_source_url": "https://console.groq.com/docs/models",
       "signup_url": "https://console.groq.com/",
       "watch_sources": [],
-      "notes": "Groq – ultra-fast inference (LPU), Llama / DeepSeek models.",
+      "notes": "Groq \u2013 ultra-fast inference (LPU), Llama / DeepSeek models.",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "provider-docs",
@@ -846,7 +847,7 @@
       "official_source_url": "https://docs.mistral.ai/",
       "signup_url": "https://console.mistral.ai/",
       "watch_sources": [],
-      "notes": "Mistral AI – Mistral Large, Codestral, etc.",
+      "notes": "Mistral AI \u2013 Mistral Large, Codestral, etc.",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "provider-docs",
@@ -877,7 +878,7 @@
       "official_source_url": "https://platform.moonshot.cn/docs/api/",
       "signup_url": "https://platform.moonshot.cn/",
       "watch_sources": [],
-      "notes": "Moonshot AI – long-context Chinese/English models.",
+      "notes": "Moonshot AI \u2013 long-context Chinese/English models.",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "provider-docs",
@@ -906,7 +907,7 @@
       "official_source_url": "https://github.com/ollama/ollama",
       "signup_url": "https://ollama.com/",
       "watch_sources": [],
-      "notes": "Ollama – local LLM runner, no API key required.",
+      "notes": "Ollama \u2013 local LLM runner, no API key required.",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "free-local",
@@ -936,7 +937,7 @@
       "official_source_url": "https://huggingface.co/docs/inference-endpoints",
       "signup_url": "https://huggingface.co/",
       "watch_sources": [],
-      "notes": "Hugging Face Inference Endpoints – hosted open-weight models.",
+      "notes": "Hugging Face Inference Endpoints \u2013 hosted open-weight models.",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "provider-docs",
@@ -963,7 +964,7 @@
       "official_source_url": "https://lmstudio.ai/",
       "signup_url": "https://lmstudio.ai/",
       "watch_sources": [],
-      "notes": "LM Studio – local LLM GUI with OpenAI-compatible server.",
+      "notes": "LM Studio \u2013 local LLM GUI with OpenAI-compatible server.",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "free-local",
@@ -992,7 +993,7 @@
       "official_source_url": "https://github.com/vllm-project/vllm",
       "signup_url": "https://vllm.ai/",
       "watch_sources": [],
-      "notes": "vLLM – high-throughput local inference engine.",
+      "notes": "vLLM \u2013 high-throughput local inference engine.",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "free-local",
@@ -1022,7 +1023,7 @@
       "official_source_url": "https://docs.litellm.ai/",
       "signup_url": "https://litellm.ai/",
       "watch_sources": [],
-      "notes": "LiteLLM – unified API for 100+ LLM providers.",
+      "notes": "LiteLLM \u2013 unified API for 100+ LLM providers.",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "provider-docs",
@@ -1051,7 +1052,7 @@
       "official_source_url": "https://www.byteplus.com/en/docs/product/ark",
       "signup_url": "https://www.byteplus.com/",
       "watch_sources": [],
-      "notes": "BytePlus ARK – international access to Volcano Engine models",
+      "notes": "BytePlus ARK \u2013 international access to Volcano Engine models",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "unknown",
@@ -1080,7 +1081,7 @@
       "official_source_url": "https://www.byteplus.com/en/docs/product/ark",
       "signup_url": "https://www.byteplus.com/",
       "watch_sources": [],
-      "notes": "BytePlus ARK – coding models (ark-code-latest, doubao-seed-code, kimi-k2.5, kimi-k2-thinking, glm-4.7)",
+      "notes": "BytePlus ARK \u2013 coding models (ark-code-latest, doubao-seed-code, kimi-k2.5, kimi-k2-thinking, glm-4.7)",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "unknown",
@@ -1120,7 +1121,7 @@
       "official_source_url": "https://docs.cerebras.ai/",
       "signup_url": "https://cerebras.ai/",
       "watch_sources": [],
-      "notes": "Cerebras – fast inference, zai-glm-4.7 / zai-glm-4.6 compatible",
+      "notes": "Cerebras \u2013 fast inference, zai-glm-4.7 / zai-glm-4.6 compatible",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "registry-default",
@@ -1152,7 +1153,7 @@
       "official_source_url": "https://docs.github.com/en/copilot",
       "signup_url": "https://github.com/features/copilot",
       "watch_sources": [],
-      "notes": "GitHub Copilot – requires GH_TOKEN / COPILOT_GITHUB_TOKEN",
+      "notes": "GitHub Copilot \u2013 requires GH_TOKEN / COPILOT_GITHUB_TOKEN",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "unknown",
@@ -1181,7 +1182,7 @@
       "official_source_url": "https://platform.moonshot.cn/docs/api/",
       "signup_url": "https://platform.moonshot.cn/",
       "watch_sources": [],
-      "notes": "Kimi Coding – Anthropic-compat endpoint via Moonshot",
+      "notes": "Kimi Coding \u2013 Anthropic-compat endpoint via Moonshot",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "unknown",
@@ -1208,7 +1209,7 @@
       "official_source_url": "https://api.minimax.chat/",
       "signup_url": "https://www.minimaxi.com/",
       "watch_sources": [],
-      "notes": "MiniMax – Anthropic-compat custom endpoint",
+      "notes": "MiniMax \u2013 Anthropic-compat custom endpoint",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "unknown",
@@ -1235,7 +1236,7 @@
       "official_source_url": "https://help.aliyun.com/zh/model-studio/getting-started/what-is-model-studio",
       "signup_url": "https://modelscope.cn/",
       "watch_sources": [],
-      "notes": "Qwen OAuth (free tier) – device-code flow; requires: openclaw plugins enable qwen-portal-auth",
+      "notes": "Qwen OAuth (free tier) \u2013 device-code flow; requires: openclaw plugins enable qwen-portal-auth",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "unknown",
@@ -1262,7 +1263,7 @@
       "official_source_url": "https://synthetic.com/docs",
       "signup_url": "https://synthetic.com/",
       "watch_sources": [],
-      "notes": "Synthetic – Anthropic-compat; exposes HuggingFace models (MiniMax, etc.)",
+      "notes": "Synthetic \u2013 Anthropic-compat; exposes HuggingFace models (MiniMax, etc.)",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "unknown",
@@ -1291,7 +1292,7 @@
       "official_source_url": "https://vercel.com/docs/ai/ai-gateway",
       "signup_url": "https://vercel.com/",
       "watch_sources": [],
-      "notes": "Vercel AI Gateway – multi-model proxy",
+      "notes": "Vercel AI Gateway \u2013 multi-model proxy",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "unknown",
@@ -1320,7 +1321,7 @@
       "official_source_url": "https://www.volcengine.com/docs/82379",
       "signup_url": "https://www.volcengine.com/",
       "watch_sources": [],
-      "notes": "Volcano Engine – Doubao, Kimi K2.5, GLM 4.7, DeepSeek V3.2 (CN)",
+      "notes": "Volcano Engine \u2013 Doubao, Kimi K2.5, GLM 4.7, DeepSeek V3.2 (CN)",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "unknown",
@@ -1347,7 +1348,7 @@
       "official_source_url": "https://www.volcengine.com/docs/82379",
       "signup_url": "https://www.volcengine.com/",
       "watch_sources": [],
-      "notes": "Volcano Engine – coding models (ark-code-latest, doubao-seed-code, kimi-k2.5, kimi-k2-thinking, glm-4.7)",
+      "notes": "Volcano Engine \u2013 coding models (ark-code-latest, doubao-seed-code, kimi-k2.5, kimi-k2-thinking, glm-4.7)",
       "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "unknown",
@@ -1933,7 +1934,7 @@
           "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
         ],
         "as_of": "2026-09-11",
-        "note": "OpenRouter tail qwen3-coder=262144 and LiteLLM openrouter/qwen/qwen3-coder≈262100 both confirm catalog value 262144."
+        "note": "OpenRouter tail qwen3-coder=262144 and LiteLLM openrouter/qwen/qwen3-coder\u2248262100 both confirm catalog value 262144."
       }
     },
     "glm-5.3": {
