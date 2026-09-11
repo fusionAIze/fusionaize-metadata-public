@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fusionaize.local/schemas/provider-catalog.v1.schema.json",
   "title": "fusionAIze Provider Catalog v1.3",
-  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. v1.3 (additive): splits the single fused recommended_model string into separate vendor/model/variant/hop fields (the canonical ID path is generated from these, never parsed from a string), splits modalities into input_modalities/output_modalities, adds capacity fields with mandatory evidence, and reserves the auto/ intent namespace. v1.4 (additive): adds entry_type (model/vendor/plan), context_window, limits, and context_evidence so every entry can declare a context window — measured (belegt) for model entries, derived (plausibel) for manufacturer and plan rollups. Older consumers ignore unknown fields.",
+  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. v1.3 (additive): splits the single fused recommended_model string into separate vendor/model/variant/hop fields (the canonical ID path is generated from these, never parsed from a string), splits modalities into input_modalities/output_modalities, adds capacity fields with mandatory evidence, and reserves the auto/ intent namespace. v1.4 (additive): adds entry_type (model/vendor/plan), context_window, limits, and context_evidence so every entry can declare a context window — measured (confirmed) for model entries, derived (plausible) for manufacturer and plan rollups. Older consumers ignore unknown fields.",
   "type": "object",
   "required": ["schema_version", "providers"],
   "properties": {
@@ -27,7 +27,7 @@
     },
     "model_caps": {
       "type": "object",
-      "$comment": "v1.3: model-keyed input-token ceilings migrated from faigate's hand-written _MODEL_INPUT_CAPS. Keyed by concrete model ID (not provider), because the input ceiling is a property of the model, not of any single provider. Every value carries an evidence block; facts migrated from a source with no provenance are unbestaetigt.",
+      "$comment": "v1.3: model-keyed input-token ceilings migrated from faigate's hand-written _MODEL_INPUT_CAPS. Keyed by concrete model ID (not provider), because the input ceiling is a property of the model, not of any single provider. Every value carries an evidence block; facts migrated from a source with no provenance are unconfirmed.",
       "additionalProperties": {
         "type": "object",
         "required": ["max_input_tokens", "evidence"],
@@ -42,7 +42,7 @@
             "properties": {
               "level": {
                 "type": "string",
-                "enum": ["belegt", "plausibel", "unbestaetigt"]
+                "enum": ["confirmed", "plausible", "unconfirmed"]
               },
               "source_url": { "type": "string" }
             },
@@ -54,7 +54,7 @@
     },
     "model_versions": {
       "type": "object",
-      "$comment": "v1.3: canonical-lane -> concrete model + human label, migrated from faigate's _ACTIVE_MODEL_VERSIONS and _MODEL_VERSION_LABELS. Keyed by canonical lane ID. The two tables are merged here into one record per lane because they always share a key. Migrated values carry no per-entry source, so their evidence is unbestaetigt.",
+      "$comment": "v1.3: canonical-lane -> concrete model + human label, migrated from faigate's _ACTIVE_MODEL_VERSIONS and _MODEL_VERSION_LABELS. Keyed by canonical lane ID. The two tables are merged here into one record per lane because they always share a key. Migrated values carry no per-entry source, so their evidence is unconfirmed.",
       "additionalProperties": {
         "type": "object",
         "required": ["model", "label", "evidence"],
@@ -67,7 +67,7 @@
             "properties": {
               "level": {
                 "type": "string",
-                "enum": ["belegt", "plausibel", "unbestaetigt"]
+                "enum": ["confirmed", "plausible", "unconfirmed"]
               },
               "source_url": { "type": "string" }
             },
@@ -141,12 +141,12 @@
           "entry_type": {
             "type": "string",
             "enum": ["model", "vendor", "plan"],
-            "description": "v1.4: the kind of entry. 'model' is a concrete model with a real context window; 'vendor' is a manufacturer rollup spanning several models with different windows; 'plan' is a subscription/bundle rollup over several coding models. A vendor/plan entry carries a DERIVED context_window (plausibel, from its primary model), not a measured one; a model entry may carry a belegt value."
+            "description": "v1.4: the kind of entry. 'model' is a concrete model with a real context window; 'vendor' is a manufacturer rollup spanning several models with different windows; 'plan' is a subscription/bundle rollup over several coding models. A vendor/plan entry carries a DERIVED context_window (plausible, from its primary model), not a measured one; a model entry may carry a confirmed value."
           },
           "context_window": {
             "type": "integer",
             "minimum": 1,
-            "description": "v1.4: the context window size in tokens. For a model entry this is the model's real window (belegt when sourced); for a vendor/plan entry it is DERIVED from the entry's primary model and must be plausibel, with provenance in context_evidence.derived_from."
+            "description": "v1.4: the context window size in tokens. For a model entry this is the model's real window (confirmed when sourced); for a vendor/plan entry it is DERIVED from the entry's primary model and must be plausible, with provenance in context_evidence.derived_from."
           },
           "limits": {
             "type": "object",
@@ -164,7 +164,7 @@
             "properties": {
               "level": {
                 "type": "string",
-                "enum": ["belegt", "plausibel", "unbestaetigt"]
+                "enum": ["confirmed", "plausible", "unconfirmed"]
               },
               "source": { "type": "string" },
               "source_url": { "type": "string" },
@@ -175,7 +175,7 @@
               "note": { "type": "string" }
             },
             "additionalProperties": true,
-            "description": "v1.4: provenance for context_window/limits. A belegt value cites source + source_url + as_of; a derived value carries level plausibel and derived_from naming the source model/cap."
+            "description": "v1.4: provenance for context_window/limits. A confirmed value cites source + source_url + as_of; a derived value carries level plausible and derived_from naming the source model/cap."
           },
           "vendor": {
             "type": "string",
@@ -235,7 +235,7 @@
             "properties": {
               "level": {
                 "type": "string",
-                "enum": ["belegt", "plausibel", "unbestaetigt"]
+                "enum": ["confirmed", "plausible", "unconfirmed"]
               },
               "source_url": { "type": "string" }
             },

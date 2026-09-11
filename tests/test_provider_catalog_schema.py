@@ -3,7 +3,7 @@
 v1.2 coverage (pre-existing):
   1. valid v1.2 document is accepted
   2. invalid modality is rejected
-  3. evidence.level outside {belegt, plausibel, unbestaetigt} is rejected
+  3. evidence.level outside {confirmed, plausible, unconfirmed} is rejected
   4. a v1.1 consumer reading a v1.2 catalog produces 0 errors
 
 v1.3 coverage (TASK-C1..C4 — the ID path scheme):
@@ -35,8 +35,8 @@ v1.3 coverage (TASK-C1..C4 — the ID path scheme):
   Round 5 (TASK-G2 — context_window/limits for the seven fallback-less entries):
    Every entry that has no downstream embedded fallback (four manufacturer
    rollups, two plan rollups, one experiment model) now declares a positive
-   context_window and a limits dict. Model entries are measured (belegt);
-   manufacturer/plan rollups are derived (plausibel) with provenance. The
+   context_window and a limits dict. Model entries are measured (confirmed);
+   manufacturer/plan rollups are derived (plausible) with provenance. The
    entry_type field (model/vendor/plan) records why a rollup has a derived
    value rather than a single true window.
 
@@ -89,7 +89,7 @@ def _make_doc(version: str = "fusionaize-provider-catalog/v1.2") -> dict:
             "example": {
                 "recommended_model": "example-vision",
                 "modalities": ["text", "vision"],
-                "evidence": {"level": "belegt"},
+                "evidence": {"level": "confirmed"},
                 "free_tier": {"enabled": True, "request_limit_per_day": 10},
                 "pricing": {
                     "input_cost_per_1m": 1.0,
@@ -130,7 +130,9 @@ def test_invalid_modality_rejected():
 
 def test_evidence_level_outside_enum_rejected():
     doc = _make_doc()
-    for bad in ["official", "verified", "confirmed", "", "BELEGT"]:
+    # "official"/"verified" were never valid; empty string and wrong-case are always invalid.
+    # The three valid values are now confirmed/plausible/unconfirmed (English).
+    for bad in ["official", "verified", "", "CONFIRMED", "Confirmed"]:
         doc["providers"]["example"]["evidence"]["level"] = bad
         assert _errors(doc), f"evidence.level {bad!r} should be rejected"
 
@@ -493,7 +495,7 @@ def test_intent_model_collision_is_impossible_not_reported():
 # The 23 input-token ceilings from faigate's _MODEL_INPUT_CAPS, migrated
 # verbatim (value for value) into the catalog. The keys are concrete model IDs;
 # none of them carries a per-entry provenance, so every migrated value is
-# `unbestaetigt`, not `belegt`. The exact set is asserted below so a silent drop
+# `unconfirmed`, not `confirmed`. The exact set is asserted below so a silent drop
 # of one of the 23 entries fails the suite (the same failure mode the shrink
 # guard catches for providers).
 
@@ -526,7 +528,7 @@ MODEL_CAPS = {
 # FAI-215 (lane f1, Teil A): the 20 configured model strings from faigate that
 # lacked a cap entry. Resolved against the LiteLLM registry first, OpenRouter
 # second. Each entry carries its own evidence (level + source_url + as_of);
-# a `belegt` value was taken verbatim from a named source, `unbestaetigt` is a
+# a `confirmed` value was taken verbatim from a named source, `unconfirmed` is a
 # derived value (OpenRouter's `auto` reports a 2M placeholder context_length
 # that is a routing default, not a concrete model ceiling).
 EVIDENCED_MODEL_CAPS = {
@@ -548,43 +550,43 @@ EVIDENCED_MODEL_CAPS = {
 # MKC-INIT (lane init): caps added from the three router sources (OmniRoute,
 # OpenRouter, LiteLLM) during the catalog re-initialization. Splits from
 # EVIDENCED_MODEL_CAPS because these carry a wider evidence spread: OpenRouter
-# values are `belegt`, the LiteLLM-only value (claude-3-5-haiku) is `plausibel`.
+# values are `confirmed`, the LiteLLM-only value (claude-3-5-haiku) is `plausible`.
 MKC_INIT_CAPS = {
-    "claude-haiku-3-5": (200000, "plausibel"),
-    "gemini-3.6-flash": (1048576, "belegt"),
-    "gemini-3.7-flash": (1048576, "belegt"),
-    "gemini-3.8-flash": (1048576, "belegt"),
-    "gpt-oss-120b": (131072, "belegt"),
+    "claude-haiku-3-5": (200000, "plausible"),
+    "gemini-3.6-flash": (1048576, "confirmed"),
+    "gemini-3.7-flash": (1048576, "confirmed"),
+    "gemini-3.8-flash": (1048576, "confirmed"),
+    "gpt-oss-120b": (131072, "confirmed"),
 }
 
-# MKC-G3 (lane g3): provenance lift for the 24 unbestaetigt entries from the
+# MKC-G3 (lane g3): provenance lift for the 24 unconfirmed entries from the
 # earlier _MODEL_INPUT_CAPS migration.  Values verified against or.json
 # (OpenRouter /v1/models) and ll.json (LiteLLM model_prices_and_context_window).
-# 16 confirmed as `belegt`, 1 raised to `plausibel` (gemini-3.1-pro, single
-# third-party LL source contradicts the catalog value), 6 left `unbestaetigt`
+# 16 confirmed as `confirmed`, 1 raised to `plausible` (gemini-3.1-pro, single
+# third-party LL source contradicts the catalog value), 6 left `unconfirmed`
 # (no bare-name source in either registry).
 MKC_G3_CAPS = {
-    # belegt — both OpenRouter and LiteLLM confirm
-    "claude-opus-5":   (1000000, "belegt"),
-    "claude-sonnet-5": (1000000, "belegt"),
-    "gpt-5.5":         (1050000, "belegt"),
-    "gpt-5.5-pro":     (1050000, "belegt"),
-    "kimi-k2.6":       (262144,  "belegt"),
-    "o3":              (200000,  "belegt"),
-    "o3-mini":         (200000,  "belegt"),
-    "o4-mini":         (200000,  "belegt"),
-    "qwen3-coder":     (262144,  "belegt"),
-    # belegt — LiteLLM confirms, OpenRouter absent
-    "claude-haiku-4-5": (200000, "belegt"),
-    # belegt — LiteLLM confirms, OpenRouter contradicts (noted in evidence)
-    "deepseek-v4-flash": (1000000, "belegt"),
-    "deepseek-v4-pro":   (1000000, "belegt"),
-    "glm-5.3":           (1000000, "belegt"),
-    "gpt-5.6-luna":      (922000,  "belegt"),
-    "gpt-5.6-sol":       (922000,  "belegt"),
-    "gpt-5.6-terra":     (922000,  "belegt"),
-    # plausibel — single third-party LL source contradicts catalog value
-    "gemini-3.1-pro":    (1048576, "plausibel"),
+    # confirmed — both OpenRouter and LiteLLM confirm
+    "claude-opus-5":   (1000000, "confirmed"),
+    "claude-sonnet-5": (1000000, "confirmed"),
+    "gpt-5.5":         (1050000, "confirmed"),
+    "gpt-5.5-pro":     (1050000, "confirmed"),
+    "kimi-k2.6":       (262144,  "confirmed"),
+    "o3":              (200000,  "confirmed"),
+    "o3-mini":         (200000,  "confirmed"),
+    "o4-mini":         (200000,  "confirmed"),
+    "qwen3-coder":     (262144,  "confirmed"),
+    # confirmed — LiteLLM confirms, OpenRouter absent
+    "claude-haiku-4-5": (200000, "confirmed"),
+    # confirmed — LiteLLM confirms, OpenRouter contradicts (noted in evidence)
+    "deepseek-v4-flash": (1000000, "confirmed"),
+    "deepseek-v4-pro":   (1000000, "confirmed"),
+    "glm-5.3":           (1000000, "confirmed"),
+    "gpt-5.6-luna":      (922000,  "confirmed"),
+    "gpt-5.6-sol":       (922000,  "confirmed"),
+    "gpt-5.6-terra":     (922000,  "confirmed"),
+    # plausible — single third-party LL source contradicts catalog value
+    "gemini-3.1-pro":    (1048576, "plausible"),
 }
 
 # The canonical-lane -> (concrete model, human label) pairs merged from
@@ -621,8 +623,8 @@ def test_all_23_model_caps_present_with_evidence():
 def test_evidenced_model_caps_present():
     # FAI-215: the cap entries that close the gap carry their own evidence and
     # values resolved from the LiteLLM registry (primary) or OpenRouter
-    # (secondary). Every one must carry a source_url; a `belegt` value must not
-    # be silently unbestaetigt.
+    # (secondary). Every one must carry a source_url; a `confirmed` value must not
+    # be silently unconfirmed.
     caps = _load_catalog()["model_caps"]
     for model_id, expected in EVIDENCED_MODEL_CAPS.items():
         assert model_id in caps, f"cap for {model_id!r} missing"
@@ -634,7 +636,7 @@ def test_evidenced_model_caps_present():
         assert entry["evidence"].get("source_url"), (
             f"cap for {model_id!r} must carry a source_url"
         )
-        assert entry["evidence"]["level"] in ("belegt", "unbestaetigt"), (
+        assert entry["evidence"]["level"] in ("confirmed", "unconfirmed"), (
             f"cap for {model_id!r} has invalid level {entry['evidence']['level']!r}"
         )
 
@@ -642,7 +644,7 @@ def test_evidenced_model_caps_present():
 def test_mkc_init_caps_present_with_evidence():
     # MKC-INIT: caps added from OmniRoute/OpenRouter/LiteLLM during the catalog
     # re-initialization. Each carries its own evidence level; a LiteLLM-only
-    # value is `plausibel`, an OpenRouter-sourced value is `belegt`.
+    # value is `plausible`, an OpenRouter-sourced value is `confirmed`.
     caps = _load_catalog()["model_caps"]
     for model_id, (expected, level) in MKC_INIT_CAPS.items():
         assert model_id in caps, f"cap for {model_id!r} missing"
@@ -678,24 +680,24 @@ def test_mkc_g3_caps_present_with_evidence():
         assert has_source, f"cap for {model_id!r} must carry source_url or source_urls"
 
 
-def test_model_caps_are_unbestaetigt_not_belegt():
-    # The migrated caps carry no source, so none may claim `belegt`. This is the
+def test_model_caps_are_unconfirmed_not_confirmed():
+    # The migrated caps carry no source, so none may claim `confirmed`. This is the
     # truth about the value, not a weakness: a hand-written Python table without
     # a provenance URL is unverified by public standards. The FAI-215 evidenced
-    # caps are exempt — they DO carry a source and may therefore be `belegt`.
-    # The MKC-INIT caps are likewise exempt (OpenRouter `belegt` and LiteLLM
-    # `plausibel`). The MKC-G3 caps are exempt: their evidence was verified
-    # against or.json/ll.json (2026-09-11) and promoted to `belegt` or
-    # `plausibel` where a source was found.
+    # caps are exempt — they DO carry a source and may therefore be `confirmed`.
+    # The MKC-INIT caps are likewise exempt (OpenRouter `confirmed` and LiteLLM
+    # `plausible`). The MKC-G3 caps are exempt: their evidence was verified
+    # against or.json/ll.json (2026-09-11) and promoted to `confirmed` or
+    # `plausible` where a source was found.
     caps = _load_catalog()["model_caps"]
     mkc_g3_keys = set(MKC_G3_CAPS)
     for model_id, entry in caps.items():
         if model_id in EVIDENCED_MODEL_CAPS or model_id in MKC_INIT_CAPS or model_id in mkc_g3_keys:
             continue
         level = entry["evidence"]["level"]
-        assert level == "unbestaetigt", (
+        assert level == "unconfirmed", (
             f"cap for {model_id!r} has evidence.level={level!r}; "
-            "without a source it must be unbestaetigt"
+            "without a source it must be unconfirmed"
         )
 
 
@@ -709,11 +711,11 @@ def test_model_versions_present_with_evidence():
         assert "evidence" in entry, f"{lane}: missing evidence block"
 
 
-def test_model_versions_are_unbestaetigt():
+def test_model_versions_are_unconfirmed():
     versions = _load_catalog()["model_versions"]
     for lane, entry in versions.items():
-        assert entry["evidence"]["level"] == "unbestaetigt", (
-            f"{lane}: evidence.level must be unbestaetigt, got {entry['evidence']['level']!r}"
+        assert entry["evidence"]["level"] == "unconfirmed", (
+            f"{lane}: evidence.level must be unconfirmed, got {entry['evidence']['level']!r}"
         )
 
 
@@ -735,8 +737,8 @@ def test_catalog_still_valid_with_model_caps_and_versions():
 # a missing field here could not be backfilled downstream. The invariant must be
 # enforced at the source of truth, not recovered later.
 
-# Entry keys that carry a DERIVED (plausibel) context_window rather than a
-# measured (belegt) one. A manufacturer/plan rollup spans several models with
+# Entry keys that carry a DERIVED (plausible) context_window rather than a
+# measured (confirmed) one. A manufacturer/plan rollup spans several models with
 # different windows, so it has no single true value — the schema's entry_type
 # records that, and the derived value is an orientation, never evidence.
 DERIVED_CONTEXT_ENTRIES = {
@@ -782,8 +784,8 @@ def test_g2_entries_declare_context_window_and_limits():
         )
 
 
-def test_derived_context_entries_are_marked_plausibel_with_provenance():
-    """A derived (rollup) context_window must be plausibel and name its source."""
+def test_derived_context_entries_are_marked_plausible_with_provenance():
+    """A derived (rollup) context_window must be plausible and name its source."""
     providers = _load_catalog()["providers"]
     for key in DERIVED_CONTEXT_ENTRIES:
         entry = providers[key]
@@ -791,23 +793,23 @@ def test_derived_context_entries_are_marked_plausibel_with_provenance():
             f"{key!r} must be entry_type vendor/plan, got {entry.get('entry_type')!r}"
         )
         evidence = entry.get("context_evidence") or {}
-        assert evidence.get("level") == "plausibel", (
-            f"{key!r} derived context must be plausibel, got {evidence.get('level')!r}"
+        assert evidence.get("level") == "plausible", (
+            f"{key!r} derived context must be plausible, got {evidence.get('level')!r}"
         )
         assert evidence.get("derived_from"), (
             f"{key!r} derived context must name derived_from"
         )
 
 
-def test_measured_context_entry_is_belegt_with_source():
+def test_measured_context_entry_is_confirmed_with_source():
     """deepseek-flash-vision-exp must carry a measured value with a named source."""
     entry = _load_catalog()["providers"]["deepseek-flash-vision-exp"]
     assert entry.get("entry_type") == "model"
     evidence = entry.get("context_evidence") or {}
-    assert evidence.get("level") == "belegt", (
-        f"deepseek-flash-vision-exp must be belegt, got {evidence.get('level')!r}"
+    assert evidence.get("level") == "confirmed", (
+        f"deepseek-flash-vision-exp must be confirmed, got {evidence.get('level')!r}"
     )
-    assert evidence.get("source_url"), "a belegt context must cite a source_url"
+    assert evidence.get("source_url"), "a confirmed context must cite a source_url"
     assert entry["context_window"] == entry["limits"]["max_input_tokens"]
 
 
@@ -924,25 +926,25 @@ def test_no_provider_entry_loses_aliases_or_carried_fields():
 # ---------------------------------------------------------------------------
 # Invariant: if a provider entry carries context_evidence.derived_from pointing
 # at a model_caps entry, the derived level may be AT MOST equal to the source
-# level.  Ordering: unbestaetigt < plausibel < belegt.
+# level.  Ordering: unconfirmed < plausible < confirmed.
 #
 # Three rollup entries in the g2 catalog violate this today (pre-fix):
-#   providers.google        <- model_caps["gemini-3.1-pro"]  (unbestaetigt)
-#   providers.byteplus-plan <- model_caps["kimi-k2.6"]       (unbestaetigt)
-#   providers.volcengine-plan <- model_caps["kimi-k2.6"]     (unbestaetigt)
-# All three carry level="plausibel" which is HIGHER than "unbestaetigt".
+#   providers.google        <- model_caps["gemini-3.1-pro"]  (unconfirmed)
+#   providers.byteplus-plan <- model_caps["kimi-k2.6"]       (unconfirmed)
+#   providers.volcengine-plan <- model_caps["kimi-k2.6"]     (unconfirmed)
+# All three carry level="plausible" which is HIGHER than "unconfirmed".
 # The test must produce an AssertionError on the current HEAD before the fix,
 # not an import or setup error.
 
-_LEVEL_ORDER = {"unbestaetigt": 0, "plausibel": 1, "belegt": 2}
+_LEVEL_ORDER = {"unconfirmed": 0, "plausible": 1, "confirmed": 2}
 
 
 def test_derived_context_level_does_not_exceed_source_level():
     """Every context_evidence.derived_from entry must have level <= source level.
 
-    Ordering: unbestaetigt=0 < plausibel=1 < belegt=2.
-    A rollup that derives from an unbestaetigt source must itself be
-    unbestaetigt; it may not claim plausibel or belegt.
+    Ordering: unconfirmed=0 < plausible=1 < confirmed=2.
+    A rollup that derives from an unconfirmed source must itself be
+    unconfirmed; it may not claim plausible or confirmed.
     """
     catalog = _load_catalog()
     caps = catalog.get("model_caps", {})
