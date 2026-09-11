@@ -213,7 +213,7 @@ def test_legacy_consumer_reads_new_catalog_with_zero_errors():
         "additionalProperties": True,
     }
     catalog = _load_catalog()
-    assert catalog["schema_version"] == "fusionaize-provider-catalog/v1.3"
+    assert catalog["schema_version"] == "fusionaize-provider-catalog/v1.4"
     assert catalog["providers"]["deepseek-flash-vision-exp"]["input_modalities"]
     validator = Draft202012Validator(v1_2_schema)
     assert sorted(validator.iter_errors(catalog), key=lambda e: str(e.path)) == []
@@ -440,7 +440,7 @@ def test_capacity_with_evidence_accepted():
 
 def test_existing_catalog_without_capacity_remains_valid():
     assert _errors(_load_catalog()) == []
-    assert _load_catalog()["schema_version"] == "fusionaize-provider-catalog/v1.3"
+    assert _load_catalog()["schema_version"] == "fusionaize-provider-catalog/v1.4"
 
 
 # ---------------------------------------------------------------------------
@@ -977,6 +977,113 @@ def test_derived_context_level_does_not_exceed_source_level():
     assert not violations, (
         "derived context evidence level exceeds its source level:\n  "
         + "\n  ".join(violations)
+    )
+
+
+# ---------------------------------------------------------------------------
+# TASK-C4R — context_window_min_measured is a lower bound, never an overestimate
+# ---------------------------------------------------------------------------
+# Invariant: wherever a provider entry carries BOTH context_window and
+# context_window_min_measured, the measured lower bound must be <= the declared
+# context window.  A violation means one of the two figures is wrong and must
+# surface immediately.
+#
+# Red-proof: tamper the catalog in-memory so that context_window_min_measured
+# exceeds context_window, and assert the test logic produces an AssertionError
+# with a recognisable message.
+
+
+def _check_min_measured_invariant(providers: dict) -> list[str]:
+    """Return a list of violation strings for every entry that violates the invariant."""
+    violations = []
+    for key, entry in providers.items():
+        cw = entry.get("context_window")
+        cwmm = entry.get("context_window_min_measured")
+        if cw is None or cwmm is None:
+            continue
+        if cwmm > cw:
+            violations.append(
+                f"{key!r}: context_window_min_measured={cwmm} > context_window={cw}; "
+                "one of the two figures is wrong"
+            )
+    return violations
+
+
+def test_min_measured_does_not_exceed_context_window():
+    """context_window_min_measured <= context_window for every entry that carries both.
+
+    The deepseek-flash-vision-exp entry must pass (200091 <= 1000000).
+    """
+    providers = _load_catalog()["providers"]
+    violations = _check_min_measured_invariant(providers)
+    assert not violations, (
+        "context_window_min_measured exceeds context_window:\n  "
+        + "\n  ".join(violations)
+    )
+
+
+def test_min_measured_present_for_vision_model():
+    """deepseek-flash-vision-exp carries the rescued measurement."""
+    entry = _load_catalog()["providers"]["deepseek-flash-vision-exp"]
+    assert entry.get("context_window_min_measured") == 200091, (
+        "deepseek-flash-vision-exp must carry context_window_min_measured=200091"
+    )
+    measurement = entry.get("context_measurement")
+    assert isinstance(measurement, dict), (
+        "deepseek-flash-vision-exp must carry a context_measurement block"
+    )
+    assert measurement.get("tool") == "faigate 2.7.0", (
+        "context_measurement.tool must identify the measurement instrument"
+    )
+    assert measurement.get("probed_at") == "2026-09-01", (
+        "context_measurement.probed_at must record the probe date"
+    )
+    assert measurement.get("served_by_verified") is True, (
+        "context_measurement.served_by_verified must confirm model identity"
+    )
+    assert measurement.get("lower_bound_reason"), (
+        "context_measurement.lower_bound_reason must explain why this is a lower bound"
+    )
+
+
+def test_min_measured_context_window_not_overwritten():
+    """The third-party context_window (1000000, OmniRoute) is preserved unchanged."""
+    entry = _load_catalog()["providers"]["deepseek-flash-vision-exp"]
+    assert entry.get("context_window") == 1000000, (
+        "context_window must remain 1000000 (OmniRoute claim); "
+        "context_window_min_measured is the measured lower bound, not a replacement"
+    )
+
+
+def test_min_measured_red_proof():
+    """Tamper the catalog so that context_window_min_measured > context_window.
+
+    The invariant check must produce exactly one violation for the tampered entry,
+    with a message naming the entry and both values.  This confirms the guard
+    fires on bad data and does not silently pass.
+
+    Red-proof against 74c434d (HEAD before this lane): on the unmodified HEAD the
+    deepseek-flash-vision-exp entry carries no context_window_min_measured field,
+    so the invariant check has nothing to compare and trivially passes.  The only
+    way to exercise the guard is to tamper or to add the field — which is exactly
+    what this lane does.  The in-memory tamper below proves the assertion fires.
+    """
+    import copy
+
+    providers = copy.deepcopy(_load_catalog()["providers"])
+    # Introduce a contradictory value: min_measured > context_window.
+    providers["deepseek-flash-vision-exp"]["context_window"] = 100000
+    providers["deepseek-flash-vision-exp"]["context_window_min_measured"] = 200091
+
+    violations = _check_min_measured_invariant(providers)
+    assert violations, (
+        "the invariant check must report a violation when min_measured > context_window"
+    )
+    assert "deepseek-flash-vision-exp" in violations[0], (
+        f"violation message must name the offending entry; got: {violations[0]!r}"
+    )
+    assert "200091" in violations[0] and "100000" in violations[0], (
+        f"violation message must contain both values; got: {violations[0]!r}"
     )
 
 

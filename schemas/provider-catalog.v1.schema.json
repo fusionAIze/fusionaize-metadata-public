@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fusionaize.local/schemas/provider-catalog.v1.schema.json",
-  "title": "fusionAIze Provider Catalog v1.3",
-  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. v1.3 (additive): splits the single fused recommended_model string into separate vendor/model/variant/hop fields (the canonical ID path is generated from these, never parsed from a string), splits modalities into input_modalities/output_modalities, adds capacity fields with mandatory evidence, and reserves the auto/ intent namespace. v1.4 (additive): adds entry_type (model/vendor/plan), context_window, limits, and context_evidence so every entry can declare a context window — measured (confirmed) for model entries, derived (plausible) for manufacturer and plan rollups. Older consumers ignore unknown fields.",
+  "title": "fusionAIze Provider Catalog v1.4",
+  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. v1.3 (additive): splits the single fused recommended_model string into separate vendor/model/variant/hop fields (the canonical ID path is generated from these, never parsed from a string), splits modalities into input_modalities/output_modalities, adds capacity fields with mandatory evidence, and reserves the auto/ intent namespace. v1.4 (additive): adds entry_type (model/vendor/plan), context_window, limits, and context_evidence so every entry can declare a context window — measured (confirmed) for model entries, derived (plausible) for manufacturer and plan rollups. Also adds context_window_min_measured + context_measurement to record a directly observed lower bound separately from any third-party claim. Older consumers ignore unknown fields.",
   "type": "object",
   "required": ["schema_version", "providers"],
   "properties": {
@@ -176,6 +176,23 @@
             },
             "additionalProperties": true,
             "description": "v1.4: provenance for context_window/limits. A confirmed value cites source + source_url + as_of; a derived value carries level plausible and derived_from naming the source model/cap."
+          },
+          "context_window_min_measured": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "v1.4: a directly measured lower bound for the context window, in tokens. This is NOT a context_window replacement — it is a separate, independently sourced observation. Must be <= context_window when both are present. Provenance lives in context_measurement."
+          },
+          "context_measurement": {
+            "type": "object",
+            "properties": {
+              "tool": { "type": "string", "description": "The tool or component that performed the measurement, e.g. 'faigate 2.7.0'." },
+              "probed_at": { "type": "string", "description": "ISO date (YYYY-MM-DD) when the probe was conducted." },
+              "tokens_accepted": { "type": "integer", "minimum": 1, "description": "The highest prompt_token count accepted by the model in the probe." },
+              "served_by_verified": { "type": "boolean", "description": "Whether the served_by field was verified on every probe to confirm model identity." },
+              "lower_bound_reason": { "type": "string", "description": "Why this is a lower bound and not the true context window. E.g. a gateway payload guard capped the probe before the model limit was reached." }
+            },
+            "additionalProperties": true,
+            "description": "v1.4: provenance for context_window_min_measured. Records the measurement tool, date, and the reason the observed value is a lower bound rather than the true window."
           },
           "vendor": {
             "type": "string",

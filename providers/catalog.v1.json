@@ -1,5 +1,5 @@
 {
-  "schema_version": "fusionaize-provider-catalog/v1.3",
+  "schema_version": "fusionaize-provider-catalog/v1.4",
   "generated_at": "2026-04-26T00:00:00Z",
   "source_repo": "fusionaize-metadata-public",
   "providers": {
@@ -514,7 +514,7 @@
       "official_source_url": "https://api-docs.deepseek.com/quick_start/pricing",
       "signup_url": "https://platform.deepseek.com/",
       "watch_sources": [],
-      "notes": "DeepSeek V4 Flash Vision Exp (experimental) adds image input to V4 Flash. Images are converted to tokens by dimension with an upper bound of 384 tokens per image, billed at the input-token rate. The pricing page lists peak/off-peak and cache hit/miss rates, not a single flat price: the canonical *_cost_per_1m fields below carry the PEAK column (input = cache-miss, cache_read = cache-hit); the corresponding off-peak rates (half of peak) are carried in the pricing_off_peak object. Peak hours are 01:00-04:00 and 06:00-10:00 UTC, Mon-Fri.",
+      "notes": "DeepSeek V4 Flash Vision Exp (experimental) adds image input to V4 Flash. Images are converted to tokens by dimension with an upper bound of 384 tokens per image, billed at the input-token rate. The pricing page lists peak/off-peak and cache hit/miss rates, not a single flat price: the canonical *_cost_per_1m fields below carry the PEAK column (input = cache-miss, cache_read = cache-hit); the corresponding off-peak rates (half of peak) are carried in the pricing_off_peak object. Peak hours are 01:00-04:00 and 06:00-10:00 UTC, Mon-Fri. Context window: OmniRoute claims 1000000 (context_window, confirmed). faigate measured a lower bound of 200091 (context_window_min_measured): larger probes were cut by faigate's own payload guard before reaching the model. The two figures do not contradict (200091 <= 1000000); they are of different kinds and are stored separately.",
       "last_reviewed": "2026-08-31",
       "pricing": {
         "source_type": "provider-docs",
@@ -553,6 +553,14 @@
         "model_id": "deepseek/deepseek-v4-flash-vision-exp",
         "as_of": "2026-09-11",
         "note": "OmniRoute reports context_length=1000000; OpenRouter reports 1048576 (1 MiB). OmniRoute is primary per source-of-truth policy; value matches model_caps[\"deepseek-v4-flash-vision-exp\"]."
+      },
+      "context_window_min_measured": 200091,
+      "context_measurement": {
+        "tool": "faigate 2.7.0",
+        "probed_at": "2026-09-01",
+        "tokens_accepted": 200091,
+        "served_by_verified": true,
+        "lower_bound_reason": "Larger probes were rejected by faigate's own payload guard (_payload_too_large_response) between 1.0 MB and 1.9 MB of request body, before the request reached the model. The true context window is therefore unknown. The vendor announcement states none. An earlier attempt against an unconfigured model ID was silently served by gemini-2.5-flash (HTTP 200, no error) — see FAI-212; model identity was verified via served_by on every successful probe."
       }
     },
     "blackbox-free": {
