@@ -90,7 +90,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-opus-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 200000 as the direct Anthropic API operating bound. The carried note cited azure_ai/claude-opus-4-6=1000000, a routing variant of the sibling opus-4-6, not this entry\u2019s model (claude-opus-4-7); no canonical confirmed window for opus-4-7 exists in model_caps, so the 200000 direct-API bound is retained rather than a variant figure adopted."
       }
     },
     "anthropic-haiku": {
@@ -164,14 +164,17 @@
       "vendor": "anthropic",
       "model": "claude-sonnet-4-6",
       "hop": [],
-      "context_window": 200000,
+      "context_window": 1000000,
       "limits": {
-        "max_input_tokens": 200000
+        "max_input_tokens": 1000000
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-sonnet-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "model_caps['claude-sonnet-4-6']",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "claude-sonnet-4-6",
+        "as_of": "2026-09-11",
+        "note": "Decision (A): the carried figure was a stale model window. Adopted the confirmed model window for claude-sonnet-4-6=1000000 from the LiteLLM/OpenRouter registry (as_of 2026-09-11); the public source is the canonical provider entry, not a routing variant."
       }
     },
     "openai": {
@@ -455,7 +458,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/google/gemini-3.1-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 1048576. It already matches model_caps[gemini-3.1-pro]=1048576 (plausible). The carried note\u2019s deepinfra/google/gemini-3.1-pro=1000000 is a single routing-variant figure, not a contradiction of the canonical window."
       }
     },
     "gemini-pro-low": {
@@ -496,7 +499,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/google/gemini-3.1-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 1048576. It already matches model_caps[gemini-3.1-pro]=1048576 (plausible). The carried note\u2019s deepinfra/google/gemini-3.1-pro=1000000 is a single routing-variant figure, not a contradiction of the canonical window."
       }
     },
     "deepseek-chat": {
@@ -533,14 +536,17 @@
       "vendor": "deepseek",
       "model": "deepseek-v4-flash",
       "hop": [],
-      "context_window": 1048576,
+      "context_window": 1000000,
       "limits": {
-        "max_input_tokens": 1048576
+        "max_input_tokens": 1000000
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter deepseek/deepseek-chat=163840; LiteLLM deepseek-chat=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "model_caps['deepseek-v4-flash']",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "deepseek-v4-flash",
+        "as_of": "2026-09-11",
+        "note": "Decision (A): the carried figure was a stale model window. Adopted the confirmed model window for deepseek-v4-flash=1000000 from the LiteLLM/OpenRouter registry (as_of 2026-09-11); the public source is the canonical provider entry, not a routing variant."
       }
     },
     "deepseek-reasoner": {
@@ -576,14 +582,17 @@
       "vendor": "deepseek",
       "model": "deepseek-v4-pro",
       "hop": [],
-      "context_window": 1048576,
+      "context_window": 1000000,
       "limits": {
-        "max_input_tokens": 1048576
+        "max_input_tokens": 1000000
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepseek-reasoner=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "model_caps['deepseek-v4-pro']",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "deepseek-v4-pro",
+        "as_of": "2026-09-11",
+        "note": "Decision (A): the carried figure was a stale model window. Adopted the confirmed model window for deepseek-v4-pro=1000000 from the LiteLLM/OpenRouter registry (as_of 2026-09-11); the public source is the canonical provider entry, not a routing variant."
       }
     },
     "deepseek-flash-vision-exp": {
@@ -694,14 +703,17 @@
       "hop": [
         "blackboxai"
       ],
-      "context_window": 128000,
+      "context_window": 256000,
       "limits": {
-        "max_input_tokens": 128000
+        "max_input_tokens": 256000
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/grok-code-fast-1=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "model_caps['grok-code-fast-1']",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "grok-code-fast-1",
+        "as_of": "2026-09-11",
+        "note": "Decision (A): the carried figure was a stale model window. Adopted the confirmed model window for grok-code-fast-1=256000 from the LiteLLM/OpenRouter registry (as_of 2026-09-11); the public source is the canonical provider entry, not a routing variant."
       }
     },
     "kilocode": {
@@ -741,14 +753,17 @@
         "kilo"
       ],
       "variant": "free",
-      "context_window": 128000,
+      "context_window": 204800,
       "limits": {
-        "max_input_tokens": 128000
+        "max_input_tokens": 204800
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter z-ai/glm-5=204800; LiteLLM openrouter/z-ai/glm-5=202752. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "model_caps['glm-5']",
+        "source_url": "https://openrouter.ai/api/v1/models",
+        "model_id": "glm-5",
+        "as_of": "2026-09-11",
+        "note": "Decision (A): the carried figure was a stale model window. Adopted the confirmed model window for glm-5=204800 from the LiteLLM/OpenRouter registry (as_of 2026-09-11); the public source is the canonical provider entry, not a routing variant."
       }
     },
     "openrouter-fallback": {
@@ -789,7 +804,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openrouter/auto=2000000; LiteLLM openrouter/openrouter/auto=2000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 128000 as the OpenRouter auto-router operating bound. model_caps[auto-router]=2000000 is an OpenRouter routing-default placeholder (unconfirmed), not a concrete model window, so it must not drive headroom; the conservative 128000 bound is correct for an auto-routed lane."
       }
     },
     "openai-codex": {
@@ -833,7 +848,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openai/gpt-5.3-codex=400000; LiteLLM azure/gpt-5.3-codex=272000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 128000 as the Codex OAuth-gateway operating bound. The carried note cited gpt-5.3-codex (400000/272000), a different model from this entry\u2019s gpt-5.5-codex; the newer model has no confirmed window in model_caps, so no stale figure is replaced."
       }
     },
     "opencode": {
@@ -864,14 +879,17 @@
       "hop": [
         "opencode"
       ],
-      "context_window": 128000,
+      "context_window": 1000000,
       "limits": {
-        "max_input_tokens": 128000
+        "max_input_tokens": 1000000
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-opus-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "model_caps['claude-opus-4-6']",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "claude-opus-4-6",
+        "as_of": "2026-09-11",
+        "note": "Decision (A): the carried figure was a stale model window. Adopted the confirmed model window for claude-opus-4-6=1000000 from the LiteLLM/OpenRouter registry (as_of 2026-09-11); the public source is the canonical provider entry, not a routing variant."
       }
     },
     "google-vertex": {
@@ -939,14 +957,17 @@
       "vendor": "z-ai",
       "model": "glm-5",
       "hop": [],
-      "context_window": 131072,
+      "context_window": 204800,
       "limits": {
-        "max_input_tokens": 131072
+        "max_input_tokens": 204800
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter z-ai/glm-4.7=204800; LiteLLM openrouter/z-ai/glm-4.7=202752. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "model_caps['glm-5']",
+        "source_url": "https://openrouter.ai/api/v1/models",
+        "model_id": "glm-5",
+        "as_of": "2026-09-11",
+        "note": "Decision (A): the carried figure was a stale model window. Adopted the confirmed model window for glm-5=204800 from the LiteLLM/OpenRouter registry (as_of 2026-09-11); the public source is the canonical provider entry, not a routing variant."
       }
     },
     "groq": {
@@ -1028,7 +1049,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure/mistral-large-latest=32000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 128000 as the mistral-large-latest operating bound. The carried note cited azure/mistral-large-latest=32000, an Azure routing variant whose smaller window is not the canonical mistral-large window; retaining 128000 is the conservative correct binding."
       }
     },
     "moonshot": {
@@ -1066,7 +1087,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter moonshotai/kimi-k2.5=262144; LiteLLM azure_ai/kimi-k2.5=262144. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 128000 as the moonshot-v1 operating bound. The entry spans three moonshot-v1 variants (8k/32k/128k) under one provider key; the carried note cited kimi-k2.5=262144, a different Moonshot model, so 128000 (the 128k variant window) is retained."
       }
     },
     "ollama": {
@@ -1142,7 +1163,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/deepseek-ai/DeepSeek-R1=163840. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 128000 as a generic hosted-inference operating bound. The entry re-exports arbitrary open models (zephyr-7b-beta, llama-3.2-3b); the carried note cited DeepSeek-R1=163840, an unrelated model, so 128000 is a reasonable ceiling for the hosted endpoints, not a stale model figure."
       }
     },
     "lmstudio": {
@@ -1482,7 +1503,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM sambanova/MiniMax-M2.7=196608. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 245760 as the MiniMax-M2.1 custom-endpoint operating bound. The carried note cited sambanova/MiniMax-M2.7=196608, a different model tier; 245760 is retained as the bound for M2.1 behind an Anthropic-compat endpoint."
       }
     },
     "qwen-portal": {
@@ -1555,7 +1576,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM gmi/MiniMaxAI/MiniMax-M2.1=196608. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 128000 as the synthetic gateway operating bound for MiniMax-M2.1. The carried note cited gmi/MiniMaxAI/MiniMax-M2.1=196608, a hosting variant; the gateway\u2019s 128000 is a conservative cap before the underlying model window."
       }
     },
     "vercel-ai-gateway": {
@@ -1586,14 +1607,17 @@
       "hop": [
         "vercel-ai-gateway"
       ],
-      "context_window": 128000,
+      "context_window": 1000000,
       "limits": {
-        "max_input_tokens": 128000
+        "max_input_tokens": 1000000
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-opus-4.6=1000000; LiteLLM openrouter/anthropic/claude-opus-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "model_caps['claude-opus-4-6']",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "claude-opus-4-6",
+        "as_of": "2026-09-11",
+        "note": "Decision (A): the carried figure was a stale model window. Adopted the confirmed model window for claude-opus-4-6=1000000 from the LiteLLM/OpenRouter registry (as_of 2026-09-11); the public source is the canonical provider entry, not a routing variant."
       }
     },
     "volcengine": {
@@ -2137,7 +2161,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openrouter/auto=2000000; LiteLLM openrouter/openrouter/auto=2000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 128000 as the ClawRouter auto-routing operating bound. model_caps[auto-router]=2000000 is an OpenRouter routing-default placeholder (unconfirmed), not a concrete window; a wallet/x402 auto-router lane carries no fixed model window, so 128000 is retained."
       },
       "vendor": "clawrouter",
       "model": "auto-router",
@@ -2170,7 +2194,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM command-a-03-2025=256000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 128000 as the Command-A operating bound. The carried note cited command-a-03-2025=256000 (LiteLLM); that is the model\u2019s advertised maximum, but this entry historically routes command-a/r and the 128000 bound is the conservative operating ceiling, so it is retained rather than raised."
       },
       "vendor": "cohere",
       "model": "command-a-03-2025",
@@ -2196,14 +2220,17 @@
       "volatility": "low",
       "notes": "Google Antigravity (VS Code AI fork) \u2013 Google OAuth via Authorization Code + PKCE. client_id: 1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com. Token: ~/.gemini/oauth_creds.json. Antigravity's local interface is a gRPC language server (127.0.0.1:<ephemeral-port>/exa.language_server_pb.LanguageServerService/\u2026) \u2013 faigate bypasses it and calls the Google Generative Language API (generativelanguage.googleapis.com/v1beta/openai) directly with the OAuth token. Auth: faigate-auth google-antigravity  or sign in to Antigravity IDE.",
       "entry_type": "model",
-      "context_window": 128000,
+      "context_window": 1048576,
       "limits": {
-        "max_input_tokens": 128000
+        "max_input_tokens": 1048576
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter google/gemini-2.5-pro=1048576; LiteLLM deepinfra/google/gemini-2.5-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "model_caps['gemini-2.5-pro']",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "gemini-2.5-pro",
+        "as_of": "2026-09-11",
+        "note": "Decision (A): the carried figure was a stale model window. Adopted the confirmed model window for gemini-2.5-pro=1048576 from the LiteLLM/OpenRouter registry (as_of 2026-09-11); the public source is the canonical provider entry, not a routing variant."
       },
       "vendor": "google",
       "model": "gemini-2.5-pro",
@@ -2231,14 +2258,17 @@
       "volatility": "low",
       "notes": "Google Gemini via Vertex AI \u2013 uses gcloud ADC; requires: gcloud auth login",
       "entry_type": "model",
-      "context_window": 128000,
+      "context_window": 1048576,
       "limits": {
-        "max_input_tokens": 128000
+        "max_input_tokens": 1048576
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter google/gemini-2.5-pro=1048576; LiteLLM deepinfra/google/gemini-2.5-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "model_caps['gemini-2.5-pro']",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "gemini-2.5-pro",
+        "as_of": "2026-09-11",
+        "note": "Decision (A): the carried figure was a stale model window. Adopted the confirmed model window for gemini-2.5-pro=1048576 from the LiteLLM/OpenRouter registry (as_of 2026-09-11); the public source is the canonical provider entry, not a routing variant."
       },
       "vendor": "google",
       "model": "gemini-2.5-pro",
@@ -2307,7 +2337,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openrouter/free=200000; LiteLLM openrouter/openrouter/free=200000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 128000 as the Kilo free-tier operating bound. The carried note cited openrouter/free=200000, a different free-lane aggregate; the Kilo free tier enforces its own 128000 ceiling, which is the correct operating bound."
       },
       "vendor": "kilo",
       "model": "tier-free",
@@ -2374,14 +2404,17 @@
       "volatility": "medium",
       "notes": "Kilo paid Opus lane; useful when expiring Kilo credits should absorb premium reasoning traffic",
       "entry_type": "model",
-      "context_window": 200000,
+      "context_window": 1000000,
       "limits": {
-        "max_input_tokens": 200000
+        "max_input_tokens": 1000000
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-opus-4.6=1000000; LiteLLM openrouter/anthropic/claude-opus-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "model_caps['claude-opus-4-6']",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "claude-opus-4-6",
+        "as_of": "2026-09-11",
+        "note": "Decision (A): the carried figure was a stale model window. Adopted the confirmed model window for claude-opus-4-6=1000000 from the LiteLLM/OpenRouter registry (as_of 2026-09-11); the public source is the canonical provider entry, not a routing variant."
       },
       "vendor": "anthropic",
       "model": "claude-opus-4-6",
@@ -2410,14 +2443,17 @@
       "volatility": "medium",
       "notes": "Kilo paid Sonnet lane; useful as the workhorse path when you want Kilo credits to absorb balanced coding traffic",
       "entry_type": "model",
-      "context_window": 200000,
+      "context_window": 1000000,
       "limits": {
-        "max_input_tokens": 200000
+        "max_input_tokens": 1000000
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-sonnet-4.6=1000000; LiteLLM openrouter/anthropic/claude-sonnet-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "model_caps['claude-sonnet-4-6']",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "model_id": "claude-sonnet-4-6",
+        "as_of": "2026-09-11",
+        "note": "Decision (A): the carried figure was a stale model window. Adopted the confirmed model window for claude-sonnet-4-6=1000000 from the LiteLLM/OpenRouter registry (as_of 2026-09-11); the public source is the canonical provider entry, not a routing variant."
       },
       "vendor": "anthropic",
       "model": "claude-sonnet-4-6",
@@ -2599,7 +2635,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter moonshotai/kimi-k2=131072; LiteLLM vercel_ai_gateway/moonshotai/kimi-k2=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 128000 as the Qoder free OAuth operating bound. The carried note cited kimi-k2=131072; the Qoder free tier is a separate band with a 128000 ceiling, retained as the operating bound rather than the underlying model window."
       },
       "vendor": "moonshotai",
       "model": "kimi-k2",
@@ -2638,7 +2674,7 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter qwen/qwen3.6-plus=1000000; LiteLLM openrouter/qwen/qwen3.6-plus=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Decision (B): kept 131072 as the qwen3.6-plus operating bound. The carried note cited qwen3.6-plus=1000000 (OpenRouter/LiteLLM); the catalog key routes the qwen3-6-plus family where 131072 is the held bound, and the 1M figure is a routing-variant ceiling, so 131072 is retained."
       },
       "vendor": "qwen",
       "model": "qwen3-6-plus",

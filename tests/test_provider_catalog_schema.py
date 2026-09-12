@@ -1087,6 +1087,145 @@ def test_min_measured_red_proof():
     )
 
 
+# ---------------------------------------------------------------------------
+# FAI-222 — the 27 contested context windows are now decided
+# ---------------------------------------------------------------------------
+# 27 entries were carried over from faigate with context_evidence.level ==
+# 'plausible' AND 'sources disagree' in the note: the catalog value and a public
+# source named different numbers. The product decision (per entry) is now made:
+#
+#   (A) adopt the confirmed model window — the carried figure was a stale model
+#       window; the window is replaced, evidence rises to 'confirmed' with a
+#       source_url + as_of.
+#   (B) keep as operating bound — the carried figure is a conscious conservative
+#       bound (free tier, gateway, aggregator auto-router, multi-variant
+#       rollup); the value is retained, the note re-states why.
+#
+# The invariant asserted here: NO entry may remain in the unresolved state
+# (plausible + 'sources disagree'), and every adopted entry must be 'confirmed'
+# with a source_url + as_of and have limits.max_input_tokens kept equal to
+# context_window.
+
+# Keys whose decision is (A): adopt a confirmed model window. value -> adopted
+# context_window; model_id is the confirming model_caps key.
+FAI222_ADOPTED: dict[str, int] = {
+    "anthropic-sonnet": 1000000,    # claude-sonnet-4-6
+    "deepseek-chat": 1000000,       # deepseek-v4-flash
+    "deepseek-reasoner": 1000000,   # deepseek-v4-pro
+    "blackbox-free": 256000,        # grok-code-fast-1
+    "kilocode": 204800,             # glm-5
+    "opencode": 1000000,            # claude-opus-4-6
+    "zai": 204800,                  # glm-5
+    "vercel-ai-gateway": 1000000,   # claude-opus-4-6
+    "kilo-opus": 1000000,           # claude-opus-4-6
+    "kilo-sonnet": 1000000,         # claude-sonnet-4-6
+    "google-antigravity": 1048576,  # gemini-2.5-pro
+    "google-gemini-cli": 1048576,   # gemini-2.5-pro
+}
+
+# Keys whose decision is (B): keep the carried value as an operating bound.
+# key -> the retained context_window (asserted unchanged from the migration).
+FAI222_KEPT: dict[str, int] = {
+    "anthropic-claude": 200000,
+    "gemini-pro-high": 1048576,
+    "gemini-pro-low": 1048576,
+    "openrouter-fallback": 128000,
+    "openai-codex": 128000,
+    "mistral": 128000,
+    "moonshot": 128000,
+    "huggingface": 128000,
+    "minimax": 245760,
+    "synthetic": 128000,
+    "clawrouter": 128000,
+    "cohere": 128000,
+    "kilo-auto-free": 128000,
+    "qoder": 128000,
+    "qwen": 131072,
+}
+
+# The 27 contested keys must be exactly FAI222_ADOPTED | FAI222_KEPT.
+FAI222_CONTESTED_KEYS = set(FAI222_ADOPTED) | set(FAI222_KEPT)
+
+
+def _contested_keys(catalog: dict) -> set[str]:
+    return {
+        key for key, entry in catalog["providers"].items()
+        if (entry.get("context_evidence") or {}).get("level") == "plausible"
+        and "sources disagree" in ((entry.get("context_evidence") or {}).get("note") or "")
+    }
+
+
+def test_no_entry_remains_in_contested_state():
+    """No provider may still carry the unresolved plausible+'sources disagree' flag.
+
+    The 27 contested entries were each decided (A adopt or B keep). Any entry
+    still flagged as contested means a decision was missed.
+    """
+    catalog = _load_catalog()
+    unresolved = _contested_keys(catalog)
+    assert unresolved == set(), (
+        "entries left in unresolved 'sources disagree' state: "
+        + ", ".join(sorted(unresolved))
+    )
+
+
+def test_adopted_entries_are_confirmed_with_source_and_date():
+    """Every (A) decision raises evidence to confirmed with source_url + as_of,
+    replaces the value, and keeps limits.max_input_tokens equal."""
+    providers = _load_catalog()["providers"]
+    for key, expected in FAI222_ADOPTED.items():
+        entry = providers[key]
+        assert entry["context_window"] == expected, (
+            f"{key}: expected adopted context_window={expected}, "
+            f"got {entry['context_window']}"
+        )
+        assert entry["limits"]["max_input_tokens"] == expected, (
+            f"{key}: limits.max_input_tokens must follow context_window"
+        )
+        evidence = entry.get("context_evidence") or {}
+        assert evidence.get("level") == "confirmed", (
+            f"{key}: adopted value must be confirmed, got {evidence.get('level')!r}"
+        )
+        assert evidence.get("source_url"), f"{key}: confirmed value must cite source_url"
+        assert evidence.get("as_of"), f"{key}: confirmed value must cite as_of"
+
+
+def test_kept_entries_are_operating_bounds_with_decision_note():
+    """Every (B) decision keeps the carried value, stays plausible, and records
+    the decision in the note (never leaves the 'sources disagree' wording)."""
+    providers = _load_catalog()["providers"]
+    for key, expected in FAI222_KEPT.items():
+        entry = providers[key]
+        assert entry["context_window"] == expected, (
+            f"{key}: kept operating bound must equal {expected}, "
+            f"got {entry['context_window']}"
+        )
+        assert entry["limits"]["max_input_tokens"] == expected, (
+            f"{key}: limits.max_input_tokens must follow context_window"
+        )
+        evidence = entry.get("context_evidence") or {}
+        assert evidence.get("level") == "plausible", (
+            f"{key}: kept operating bound must stay plausible, got {evidence.get('level')!r}"
+        )
+        note = evidence.get("note") or ""
+        assert "Decision (B)" in note, (
+            f"{key}: the kept value must record its decision in the note"
+        )
+        assert "sources disagree" not in note, (
+            f"{key}: the note must not keep the unresolved 'sources disagree' wording"
+        )
+
+
+def test_contested_keys_are_exactly_the_27_decided():
+    """The decided set covers exactly the 27 contested entries, no more, no less."""
+    catalog = _load_catalog()
+    providers = catalog["providers"]
+    assert FAI222_CONTESTED_KEYS == set(FAI222_ADOPTED) | set(FAI222_KEPT)
+    assert len(FAI222_CONTESTED_KEYS) == 27
+    for key in FAI222_CONTESTED_KEYS:
+        assert key in providers, f"{key}: a decided entry must exist in the catalog"
+
+
 if __name__ == "__main__":
     tests = [
         name for name, fn in sorted(globals().items())
