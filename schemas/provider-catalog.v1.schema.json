@@ -2,9 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fusionaize.local/schemas/provider-catalog.v1.schema.json",
   "title": "fusionAIze Provider Catalog v1.4",
-  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. v1.3 (additive): splits the single fused recommended_model string into separate vendor/model/variant/hop fields (the canonical ID path is generated from these, never parsed from a string), splits modalities into input_modalities/output_modalities, adds capacity fields with mandatory evidence, and reserves the auto/ intent namespace. v1.4 (additive): adds entry_type (model/vendor/plan), context_window, limits, and context_evidence so every entry can declare a context window — measured (confirmed) for model entries, derived (plausible) for manufacturer and plan rollups. Also adds context_window_min_measured + context_measurement to record a directly observed lower bound separately from any third-party claim. Older consumers ignore unknown fields.",
+  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. v1.3 (additive): splits the single fused recommended_model string into separate vendor/model/variant/hop fields (the canonical ID path is generated from these, never parsed from a string), splits modalities into input_modalities/output_modalities, adds capacity fields with mandatory evidence, and reserves the auto/ intent namespace. v1.4 (additive): adds entry_type (model/vendor/plan), context_window, limits, and context_evidence so every entry can declare a context window \u2014 measured (confirmed) for model entries, derived (plausible) for manufacturer and plan rollups. Also adds context_window_min_measured + context_measurement to record a directly observed lower bound separately from any third-party claim. v1.5 (additive): watch_sources accepts an object with label and url alongside the bare string form. Older consumers ignore unknown fields.",
   "type": "object",
-  "required": ["schema_version", "providers"],
+  "required": [
+    "schema_version",
+    "providers"
+  ],
   "properties": {
     "schema_version": {
       "type": "string",
@@ -30,7 +33,10 @@
       "$comment": "v1.3: model-keyed input-token ceilings migrated from faigate's hand-written _MODEL_INPUT_CAPS. Keyed by concrete model ID (not provider), because the input ceiling is a property of the model, not of any single provider. Every value carries an evidence block; facts migrated from a source with no provenance are unconfirmed.",
       "additionalProperties": {
         "type": "object",
-        "required": ["max_input_tokens", "evidence"],
+        "required": [
+          "max_input_tokens",
+          "evidence"
+        ],
         "properties": {
           "max_input_tokens": {
             "type": "integer",
@@ -38,13 +44,21 @@
           },
           "evidence": {
             "type": "object",
-            "required": ["level"],
+            "required": [
+              "level"
+            ],
             "properties": {
               "level": {
                 "type": "string",
-                "enum": ["confirmed", "plausible", "unconfirmed"]
+                "enum": [
+                  "confirmed",
+                  "plausible",
+                  "unconfirmed"
+                ]
               },
-              "source_url": { "type": "string" }
+              "source_url": {
+                "type": "string"
+              }
             },
             "additionalProperties": true
           }
@@ -57,19 +71,35 @@
       "$comment": "v1.3: canonical-lane -> concrete model + human label, migrated from faigate's _ACTIVE_MODEL_VERSIONS and _MODEL_VERSION_LABELS. Keyed by canonical lane ID. The two tables are merged here into one record per lane because they always share a key. Migrated values carry no per-entry source, so their evidence is unconfirmed.",
       "additionalProperties": {
         "type": "object",
-        "required": ["model", "label", "evidence"],
+        "required": [
+          "model",
+          "label",
+          "evidence"
+        ],
         "properties": {
-          "model": { "type": "string" },
-          "label": { "type": "string" },
+          "model": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
           "evidence": {
             "type": "object",
-            "required": ["level"],
+            "required": [
+              "level"
+            ],
             "properties": {
               "level": {
                 "type": "string",
-                "enum": ["confirmed", "plausible", "unconfirmed"]
+                "enum": [
+                  "confirmed",
+                  "plausible",
+                  "unconfirmed"
+                ]
               },
-              "source_url": { "type": "string" }
+              "source_url": {
+                "type": "string"
+              }
             },
             "additionalProperties": true
           }
@@ -87,18 +117,33 @@
           },
           "aliases": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
-          "track": { "type": "string" },
-          "offer_track": { "type": "string" },
-          "provider_type": { "type": "string" },
+          "track": {
+            "type": "string"
+          },
+          "offer_track": {
+            "type": "string"
+          },
+          "provider_type": {
+            "type": "string"
+          },
           "auth_modes": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "tier_status": {
             "type": "string",
-            "enum": ["active", "deprecated", "expired", "preview"],
+            "enum": [
+              "active",
+              "deprecated",
+              "expired",
+              "preview"
+            ],
             "description": "v1.1: lifecycle state of this provider tier. Defaults to 'active' when absent."
           },
           "expires_at": {
@@ -108,17 +153,33 @@
           },
           "volatility": {
             "type": "string",
-            "enum": ["low", "medium", "high"]
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
           },
           "evidence_level": {
             "type": "string",
-            "enum": ["official", "mixed", "unofficial"]
+            "enum": [
+              "official",
+              "mixed",
+              "unofficial"
+            ]
           },
           "modalities": {
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["text", "vision", "audio", "image_generation", "tool_use", "function_calling", "json_mode"],
+              "enum": [
+                "text",
+                "vision",
+                "audio",
+                "image_generation",
+                "tool_use",
+                "function_calling",
+                "json_mode"
+              ],
               "$comment": "Divergence: provider-catalog.v1.schema.json accepts 'image_generation' in its modalities enum while model-catalog.v1.schema.json does not. Reconciling the two vocabularies is an open decision, not resolved here."
             }
           },
@@ -126,7 +187,11 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["text", "image", "audio"]
+              "enum": [
+                "text",
+                "image",
+                "audio"
+              ]
             },
             "$comment": "v1.3: what the model RECEIVES. Split from the flat 'modalities' list so a model can take image input and produce text output (e.g. the vision model). 'vision' migrated to input 'image'; 'image_generation' migrated to output 'image'."
           },
@@ -134,13 +199,20 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["text", "image"]
+              "enum": [
+                "text",
+                "image"
+              ]
             },
             "$comment": "v1.3: what the model PRODUCES. Split from the flat 'modalities' list. 'text' stays text on both sides; 'image_generation' becomes output 'image'."
           },
           "entry_type": {
             "type": "string",
-            "enum": ["model", "vendor", "plan"],
+            "enum": [
+              "model",
+              "vendor",
+              "plan"
+            ],
             "description": "v1.4: the kind of entry. 'model' is a concrete model with a real context window; 'vendor' is a manufacturer rollup spanning several models with different windows; 'plan' is a subscription/bundle rollup over several coding models. A vendor/plan entry carries a DERIVED context_window (plausible, from its primary model), not a measured one; a model entry may carry a confirmed value."
           },
           "context_window": {
@@ -164,15 +236,33 @@
             "properties": {
               "level": {
                 "type": "string",
-                "enum": ["confirmed", "plausible", "unconfirmed"]
+                "enum": [
+                  "confirmed",
+                  "plausible",
+                  "unconfirmed"
+                ]
               },
-              "source": { "type": "string" },
-              "source_url": { "type": "string" },
-              "derived_from": { "type": "string" },
-              "derived_from_value": { "type": "integer" },
-              "model_id": { "type": "string" },
-              "as_of": { "type": "string" },
-              "note": { "type": "string" }
+              "source": {
+                "type": "string"
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "derived_from": {
+                "type": "string"
+              },
+              "derived_from_value": {
+                "type": "integer"
+              },
+              "model_id": {
+                "type": "string"
+              },
+              "as_of": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              }
             },
             "additionalProperties": true,
             "description": "v1.4: provenance for context_window/limits. A confirmed value cites source + source_url + as_of; a derived value carries level plausible and derived_from naming the source model/cap."
@@ -180,16 +270,32 @@
           "context_window_min_measured": {
             "type": "integer",
             "minimum": 1,
-            "description": "v1.4: a directly measured lower bound for the context window, in tokens. This is NOT a context_window replacement — it is a separate, independently sourced observation. Must be <= context_window when both are present. Provenance lives in context_measurement."
+            "description": "v1.4: a directly measured lower bound for the context window, in tokens. This is NOT a context_window replacement \u2014 it is a separate, independently sourced observation. Must be <= context_window when both are present. Provenance lives in context_measurement."
           },
           "context_measurement": {
             "type": "object",
             "properties": {
-              "tool": { "type": "string", "description": "The tool or component that performed the measurement, e.g. 'faigate 2.7.0'." },
-              "probed_at": { "type": "string", "description": "ISO date (YYYY-MM-DD) when the probe was conducted." },
-              "tokens_accepted": { "type": "integer", "minimum": 1, "description": "The highest prompt_token count accepted by the model in the probe." },
-              "served_by_verified": { "type": "boolean", "description": "Whether the served_by field was verified on every probe to confirm model identity." },
-              "lower_bound_reason": { "type": "string", "description": "Why this is a lower bound and not the true context window. E.g. a gateway payload guard capped the probe before the model limit was reached." }
+              "tool": {
+                "type": "string",
+                "description": "The tool or component that performed the measurement, e.g. 'faigate 2.7.0'."
+              },
+              "probed_at": {
+                "type": "string",
+                "description": "ISO date (YYYY-MM-DD) when the probe was conducted."
+              },
+              "tokens_accepted": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "The highest prompt_token count accepted by the model in the probe."
+              },
+              "served_by_verified": {
+                "type": "boolean",
+                "description": "Whether the served_by field was verified on every probe to confirm model identity."
+              },
+              "lower_bound_reason": {
+                "type": "string",
+                "description": "Why this is a lower bound and not the true context window. E.g. a gateway payload guard capped the probe before the model limit was reached."
+              }
             },
             "additionalProperties": true,
             "description": "v1.4: provenance for context_window_min_measured. Records the measurement tool, date, and the reason the observed value is a lower bound rather than the true window."
@@ -238,12 +344,28 @@
             "additionalProperties": true,
             "allOf": [
               {
-                "if": { "required": ["max_input_tokens"] },
-                "then": { "required": ["evidence"] }
+                "if": {
+                  "required": [
+                    "max_input_tokens"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "evidence"
+                  ]
+                }
               },
               {
-                "if": { "required": ["max_output_tokens"] },
-                "then": { "required": ["evidence"] }
+                "if": {
+                  "required": [
+                    "max_output_tokens"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "evidence"
+                  ]
+                }
               }
             ]
           },
@@ -252,42 +374,102 @@
             "properties": {
               "level": {
                 "type": "string",
-                "enum": ["confirmed", "plausible", "unconfirmed"]
+                "enum": [
+                  "confirmed",
+                  "plausible",
+                  "unconfirmed"
+                ]
               },
-              "source_url": { "type": "string" }
+              "source_url": {
+                "type": "string"
+              }
             },
             "additionalProperties": true
           },
           "free_tier": {
             "type": "object",
             "properties": {
-              "enabled": { "type": "boolean" },
-              "request_limit_per_day": { "type": "integer", "minimum": 0 },
-              "notes": { "type": "string" }
+              "enabled": {
+                "type": "boolean"
+              },
+              "request_limit_per_day": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "notes": {
+                "type": "string"
+              }
             },
             "additionalProperties": true
           },
-          "official_source_url": { "type": "string" },
-          "signup_url": { "type": "string" },
+          "official_source_url": {
+            "type": "string"
+          },
+          "signup_url": {
+            "type": "string"
+          },
           "watch_sources": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "url"
+                  ],
+                  "additionalProperties": true
+                }
+              ]
+            },
+            "description": "v1.5 (additive): a watch source is either a bare URL string or an object carrying label and url. The object form is kept because a label says what the source is, which a URL alone does not."
           },
-          "notes": { "type": "string" },
-          "last_reviewed": { "type": "string" },
+          "notes": {
+            "type": "string"
+          },
+          "last_reviewed": {
+            "type": "string"
+          },
           "pricing": {
             "type": "object",
             "properties": {
-              "source_type": { "type": "string" },
-              "source_url": { "type": "string" },
-              "refreshed_at": { "type": "string" },
+              "source_type": {
+                "type": "string"
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "refreshed_at": {
+                "type": "string"
+              },
               "freshness_status": {
                 "type": "string",
-                "enum": ["fresh", "stale", "unknown"]
+                "enum": [
+                  "fresh",
+                  "stale",
+                  "unknown"
+                ]
               },
-              "input_cost_per_1m": { "type": "number" },
-              "output_cost_per_1m": { "type": "number" },
-              "cache_read_cost_per_1m": { "type": "number" },
+              "input_cost_per_1m": {
+                "type": "number"
+              },
+              "output_cost_per_1m": {
+                "type": "number"
+              },
+              "cache_read_cost_per_1m": {
+                "type": "number"
+              },
               "image_tokens_max": {
                 "type": "integer",
                 "minimum": 0,
@@ -301,12 +483,28 @@
         "allOf": [
           {
             "$comment": "v1.3: vendor and model are a coupled pair. Either both are present (physical ID path) or neither (legacy/other entry). A model without a vendor would re-fuse identity into a single string.",
-            "if": { "required": ["vendor"] },
-            "then": { "required": ["model"] }
+            "if": {
+              "required": [
+                "vendor"
+              ]
+            },
+            "then": {
+              "required": [
+                "model"
+              ]
+            }
           },
           {
-            "if": { "required": ["model"] },
-            "then": { "required": ["vendor"] }
+            "if": {
+              "required": [
+                "model"
+              ]
+            },
+            "then": {
+              "required": [
+                "vendor"
+              ]
+            }
           }
         ]
       }
