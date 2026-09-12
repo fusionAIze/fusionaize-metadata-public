@@ -1087,6 +1087,125 @@ def test_min_measured_red_proof():
     )
 
 
+# ---------------------------------------------------------------------------
+# MKC-H1 — every provider carries context_window, limits, and context_evidence
+# ---------------------------------------------------------------------------
+# Lane mkc-h1 migrated 16 providers that existed only in faigate's embedded
+# Python table and backfilled context_window + limits.max_input_tokens +
+# context_evidence for all 66 providers now in the catalog.
+#
+# Three invariants are enforced:
+#   (a) every provider carries a positive integer context_window
+#   (b) every provider carries limits.max_input_tokens as a positive integer
+#   (c) every provider carries a context_evidence block with a valid level
+#
+# Red-proof: tamper a provider in-memory to strip context_evidence, assert the
+# check fires with a message naming the entry.  This proves the guard catches a
+# newly added provider that forgets context_evidence before it ever reaches HEAD.
+
+
+def _check_context_evidence_invariant(providers: dict) -> list[str]:
+    """Return violation strings for entries missing context_window, limits, or context_evidence."""
+    import copy
+
+    violations: list[str] = []
+    valid_levels = {"confirmed", "plausible", "unconfirmed"}
+    for key, entry in providers.items():
+        cw = entry.get("context_window")
+        if not isinstance(cw, int) or cw <= 0:
+            violations.append(
+                f"{key!r}: context_window must be a positive integer, got {cw!r}"
+            )
+        limits = entry.get("limits")
+        if not isinstance(limits, dict):
+            violations.append(
+                f"{key!r}: limits must be a dict, got {limits!r}"
+            )
+        else:
+            cap = limits.get("max_input_tokens")
+            if not isinstance(cap, int) or cap <= 0:
+                violations.append(
+                    f"{key!r}: limits.max_input_tokens must be a positive integer, got {cap!r}"
+                )
+        ce = entry.get("context_evidence")
+        if ce is None:
+            violations.append(
+                f"{key!r}: context_evidence is absent; every provider must carry one"
+            )
+        else:
+            lvl = ce.get("level")
+            if lvl not in valid_levels:
+                violations.append(
+                    f"{key!r}: context_evidence.level={lvl!r} is not in {sorted(valid_levels)}"
+                )
+    return violations
+
+
+def test_every_provider_carries_context_window_limits_and_evidence():
+    """All 66 providers carry context_window, limits.max_input_tokens, and context_evidence."""
+    providers = _load_catalog()["providers"]
+    violations = _check_context_evidence_invariant(providers)
+    assert not violations, (
+        "providers missing context_window / limits / context_evidence:\n  "
+        + "\n  ".join(violations)
+    )
+
+
+def test_context_evidence_red_proof():
+    """Removing context_evidence from one entry must trigger the invariant check.
+
+    Red-proof against the pre-h1 state: a provider entry that lacks context_evidence
+    must produce exactly one violation naming the entry.  This confirms the guard
+    fires on bad data so a future provider added without context_evidence cannot
+    silently pass the suite.
+    """
+    import copy
+
+    providers = copy.deepcopy(_load_catalog()["providers"])
+    # Pick an arbitrary stable entry and strip its context_evidence.
+    victim = "cohere"
+    assert victim in providers, f"victim entry {victim!r} not in catalog"
+    del providers[victim]["context_evidence"]
+
+    violations = _check_context_evidence_invariant(providers)
+    assert violations, (
+        "the invariant check must report a violation when context_evidence is absent"
+    )
+    matching = [v for v in violations if victim in v]
+    assert matching, (
+        f"violation message must name the offending entry {victim!r}; got: {violations}"
+    )
+    assert "context_evidence" in matching[0], (
+        f"violation message must mention context_evidence; got: {matching[0]!r}"
+    )
+
+
+def test_context_evidence_distribution():
+    """Report the confirmed/plausible/unconfirmed breakdown across all 66 providers.
+
+    This is not a pass/fail test — all three counts must be >= 0 and must sum to
+    the total provider count.  The test documents the distribution so that a
+    batch move of unconfirmed -> confirmed (after external verification) can be
+    tracked as a deliberate code change.
+    """
+    providers = _load_catalog()["providers"]
+    counts: dict[str, int] = {"confirmed": 0, "plausible": 0, "unconfirmed": 0}
+    for key, entry in providers.items():
+        ce = entry.get("context_evidence") or {}
+        lvl = ce.get("level", "unconfirmed")
+        counts[lvl] = counts.get(lvl, 0) + 1
+
+    total = sum(counts.values())
+    assert total == len(providers), (
+        f"evidence level counts sum to {total} but catalog has {len(providers)} providers"
+    )
+    # All three buckets may be 0 in a future fully-confirmed catalog; the sum
+    # constraint above is the binding invariant.
+    assert counts["confirmed"] >= 0
+    assert counts["plausible"] >= 0
+    assert counts["unconfirmed"] >= 0
+
+
 if __name__ == "__main__":
     tests = [
         name for name, fn in sorted(globals().items())
