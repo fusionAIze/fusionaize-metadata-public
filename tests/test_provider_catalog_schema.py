@@ -1104,3 +1104,49 @@ if __name__ == "__main__":
         print(f"{len(failures)} failure(s)")
         sys.exit(1)
     print(f"{len(tests)} tests passed")
+
+
+# ---------------------------------------------------------------------------
+# Context defaults — every unconfirmed window says WHY it is unconfirmed
+# ---------------------------------------------------------------------------
+
+_UNKNOWN_KINDS = {"derivable", "runtime_dependent", "not_applicable", "unlisted"}
+_EVIDENCE_RANK = {"unconfirmed": 0, "plausible": 1, "confirmed": 2}
+
+
+def test_every_unconfirmed_window_names_its_kind_of_unknown():
+    """An unconfirmed window must say which of the four situations it is in.
+
+    Without this, "unconfirmed" means both "nobody has published it yet" and
+    "this cannot be known from a catalog at all" — and a consumer cannot tell a
+    gap that will close from one that never will. `scripts/classify-context-defaults.py`
+    assigns these; the test is what keeps a hand-written entry from skipping it.
+    """
+    providers = _load_catalog()["providers"]
+    missing = [
+        name
+        for name, entry in providers.items()
+        if (entry.get("context_evidence") or {}).get("level") == "unconfirmed"
+        and (entry.get("context_evidence") or {}).get("unknown_kind") not in _UNKNOWN_KINDS
+    ]
+    assert missing == [], (
+        f"these entries are unconfirmed without saying why: {sorted(missing)}. "
+        "Run scripts/classify-context-defaults.py --write, or set unknown_kind by hand."
+    )
+
+
+def test_a_derived_window_never_outranks_the_cap_it_came_from():
+    """A window derived from a model cap cannot claim more certainty than that cap."""
+    catalog = _load_catalog()
+    providers, caps = catalog["providers"], catalog.get("model_caps", {})
+    violations = []
+    for name, entry in providers.items():
+        evidence = entry.get("context_evidence") or {}
+        derived_from = evidence.get("derived_from") or ""
+        if not (derived_from.startswith('model_caps["') and derived_from.endswith('"]')):
+            continue
+        source = derived_from[len('model_caps["'):-2]
+        source_level = (caps.get(source, {}).get("evidence") or {}).get("level", "unconfirmed")
+        if _EVIDENCE_RANK[evidence.get("level", "unconfirmed")] > _EVIDENCE_RANK[source_level]:
+            violations.append(f"{name}: {evidence.get('level')} derived from {source} ({source_level})")
+    assert violations == [], "a derived window outranks its source: " + "; ".join(violations)

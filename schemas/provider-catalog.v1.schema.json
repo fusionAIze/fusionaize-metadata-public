@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fusionaize.local/schemas/provider-catalog.v1.schema.json",
   "title": "fusionAIze Provider Catalog v1.4",
-  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. v1.3 (additive): splits the single fused recommended_model string into separate vendor/model/variant/hop fields (the canonical ID path is generated from these, never parsed from a string), splits modalities into input_modalities/output_modalities, adds capacity fields with mandatory evidence, and reserves the auto/ intent namespace. v1.4 (additive): adds entry_type (model/vendor/plan), context_window, limits, and context_evidence so every entry can declare a context window \u2014 measured (confirmed) for model entries, derived (plausible) for manufacturer and plan rollups. Also adds context_window_min_measured + context_measurement to record a directly observed lower bound separately from any third-party claim. v1.5 (additive): watch_sources accepts an object with label and url alongside the bare string form. Older consumers ignore unknown fields.",
+  "description": "Provider catalog with pricing, capabilities, and freshness metadata. v1.1 (additive): adds tier_status and expires_at per-provider fields. v1.2 (additive): adds modalities, image token pricing, free_tier, and evidence metadata. v1.3 (additive): splits the single fused recommended_model string into separate vendor/model/variant/hop fields (the canonical ID path is generated from these, never parsed from a string), splits modalities into input_modalities/output_modalities, adds capacity fields with mandatory evidence, and reserves the auto/ intent namespace. v1.4 (additive): adds entry_type (model/vendor/plan), context_window, limits, and context_evidence so every entry can declare a context window \u2014 measured (confirmed) for model entries, derived (plausible) for manufacturer and plan rollups. Also adds context_window_min_measured + context_measurement to record a directly observed lower bound separately from any third-party claim. v1.5 (additive): watch_sources accepts an object with label and url alongside the bare string form. v1.6 (additive): context_evidence carries unknown_kind, which says why a window is not confirmed. Older consumers ignore unknown fields.",
   "type": "object",
   "required": [
     "schema_version",
@@ -262,6 +262,22 @@
               },
               "note": {
                 "type": "string"
+              },
+              "unknown_kind": {
+                "type": "string",
+                "enum": [
+                  "derivable",
+                  "runtime_dependent",
+                  "not_applicable",
+                  "unlisted"
+                ],
+                "description": "v1.6: why this entry has no confirmed window. 'unconfirmed' alone collapses four different situations, and a number attached to one that can never be resolved reads as knowledge. 'derivable' \u2014 the entry names a model whose cap is recorded here. 'runtime_dependent' \u2014 a local runner or router whose window belongs to the model loaded or picked per request, so no catalog value can be correct. 'not_applicable' \u2014 not a text model. 'unlisted' \u2014 a real model no consulted source publishes."
+              },
+              "unknown_reason": {
+                "type": "string"
+              },
+              "superseded_value": {
+                "type": "integer"
               }
             },
             "additionalProperties": true,
