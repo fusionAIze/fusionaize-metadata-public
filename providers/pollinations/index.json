@@ -1,0 +1,62 @@
+{
+  "id": "pollinations",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [
+    {
+      "label": "free-llm-api-resources",
+      "url": "https://github.com/cheahjs/free-llm-api-resources"
+    }
+  ],
+  "official_source_url": "https://pollinations.ai/",
+  "track": "free",
+  "signup_url": "https://enter.pollinations.ai",
+  "last_reviewed": "2026-08-20",
+  "offer_track": "free",
+  "notes": "Pollinations free text+image+video+audio — no API key required",
+  "auth_modes": [
+    "none"
+  ],
+  "volatility": "high",
+  "hop": [
+    "pollinations"
+  ],
+  "provider_type": "aggregator",
+  "aliases": [
+    "pollinations",
+    "pol",
+    "pollinations/openai"
+  ],
+  "models": [
+    {
+      "id": "gpt-4o",
+      "vendor": "openai",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "pollinations",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'pollinations/openai', so the figure stays unverified.",
+          "unknown_kind": "derivable",
+          "unknown_reason": "the entry names 'gpt-4o', whose cap this catalog already records",
+          "derived_from": "model_caps[\"gpt-4o\"]",
+          "derived_from_value": 128000
+        }
+      }
+    }
+  ]
+}

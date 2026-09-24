@@ -1,0 +1,63 @@
+{
+  "id": "microsoft-phi",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://azure.microsoft.com/en-us/products/phi",
+  "track": "stable",
+  "signup_url": "https://azure.microsoft.com/",
+  "last_reviewed": "2026-09-11",
+  "offer_track": "direct",
+  "notes": "Microsoft Phi family. Phi-4 (16k input) is the current flagship small model; Phi-4-mini raises the window to 131k. Context sourced from the LiteLLM registry entry azure_ai/Phi-4.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "microsoft/phi-4",
+    "azure_ai/Phi-4",
+    "phi-4"
+  ],
+  "models": [
+    {
+      "id": "phi-4",
+      "vendor": "microsoft",
+      "contextLength": 16384,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "microsoft-phi",
+      "_original": {
+        "tier_status": "active",
+        "capacity": {
+          "max_input_tokens": 16384,
+          "max_output_tokens": 16384,
+          "evidence": {
+            "level": "confirmed",
+            "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+            "as_of": "2026-09-11"
+          }
+        },
+        "limits": {
+          "max_input_tokens": 16384
+        },
+        "context_evidence": {
+          "level": "confirmed",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "source_model_id": "microsoft/phi-4",
+          "as_of": "2026-09-12"
+        }
+      }
+    }
+  ]
+}

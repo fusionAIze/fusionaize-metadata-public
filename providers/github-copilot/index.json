@@ -1,0 +1,60 @@
+{
+  "id": "github-copilot",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://docs.github.com/en/copilot",
+  "track": "stable",
+  "signup_url": "https://github.com/features/copilot",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "GitHub Copilot – requires GH_TOKEN / COPILOT_GITHUB_TOKEN",
+  "auth_modes": [
+    "oauth",
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [
+    "github-copilot"
+  ],
+  "provider_type": "direct",
+  "aliases": [
+    "gpt-4o"
+  ],
+  "models": [
+    {
+      "id": "gpt-4o",
+      "vendor": "openai",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "github-copilot",
+      "_original": {
+        "pricing": {
+          "source_type": "unknown",
+          "source_url": "",
+          "refreshed_at": "2026-04-01T02:22:11Z",
+          "freshness_status": "unknown"
+        },
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "confirmed",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "source_model_id": "openai/gpt-4o",
+          "as_of": "2026-09-12"
+        }
+      }
+    }
+  ]
+}

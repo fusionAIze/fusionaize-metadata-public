@@ -1,0 +1,161 @@
+{
+  "id": "deepseek",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://api-docs.deepseek.com/",
+  "track": "stable",
+  "signup_url": "https://platform.deepseek.com/",
+  "last_reviewed": "2026-04-26",
+  "offer_track": "direct",
+  "notes": "DeepSeek V4 Flash pricing verified from official DeepSeek API pricing on 2026-04-26; OpenAI-format base URL remains https://api.deepseek.com.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "medium",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "deepseek-chat",
+    "ds-v4",
+    "ds-v3",
+    "deepseek-v4-flash",
+    "deepseek:chat",
+    "deepseek-reasoner",
+    "r1",
+    "deepseek-v4-pro",
+    "deepseek:reasoner",
+    "deepseek-v4-flash-vision-exp",
+    "deepseek:flash-vision-exp"
+  ],
+  "models": [
+    {
+      "id": "deepseek-v4-flash",
+      "vendor": "deepseek",
+      "contextLength": 1048576,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "deepseek-chat",
+      "_original": {
+        "tier_status": "active",
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+          "refreshed_at": "2026-04-26T00:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 0.14,
+          "output_cost_per_1m": 0.28,
+          "cache_read_cost_per_1m": 0.028
+        },
+        "limits": {
+          "max_input_tokens": 1048576
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter deepseek/deepseek-chat=163840; LiteLLM deepseek-chat=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      }
+    },
+    {
+      "id": "deepseek-v4-pro",
+      "vendor": "deepseek",
+      "contextLength": 1048576,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "deepseek-reasoner",
+      "_original": {
+        "tier_status": "active",
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+          "refreshed_at": "2026-04-26T00:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 1.74,
+          "output_cost_per_1m": 3.48,
+          "cache_read_cost_per_1m": 0.145
+        },
+        "limits": {
+          "max_input_tokens": 1048576
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepseek-reasoner=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      }
+    },
+    {
+      "id": "deepseek-v4-flash-vision-exp",
+      "vendor": "deepseek",
+      "contextLength": 1000000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "deepseek-flash-vision-exp",
+      "_original": {
+        "tier_status": "preview",
+        "modalities": [
+          "text",
+          "vision"
+        ],
+        "evidence": {
+          "level": "confirmed",
+          "source_url": "https://api-docs.deepseek.com/quick_start/pricing"
+        },
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+          "refreshed_at": "2026-08-31T00:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 0.44,
+          "output_cost_per_1m": 1.32,
+          "cache_read_cost_per_1m": 0.014,
+          "image_tokens_max": 384,
+          "pricing_off_peak": {
+            "input_cost_per_1m": 0.22,
+            "output_cost_per_1m": 0.66,
+            "cache_read_cost_per_1m": 0.007
+          }
+        },
+        "input_modalities": [
+          "text",
+          "image"
+        ],
+        "output_modalities": [
+          "text"
+        ],
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 1000000
+        },
+        "context_evidence": {
+          "level": "confirmed",
+          "source": "OmniRoute (operator-local router, not publicly resolvable)",
+          "source_url": "http://localhost:20128/v1/models",
+          "model_id": "deepseek/deepseek-v4-flash-vision-exp",
+          "as_of": "2026-09-11",
+          "note": "OmniRoute reports context_length=1000000. The source_url resolves only on the operator's host, so an external reader cannot re-check it; the publicly verifiable cross-reference is OpenRouter's deepseek/deepseek-v4-flash-vision-exp, which reports 1048576 (1 MiB). OmniRoute stays primary per source-of-truth policy; value matches model_caps[\"deepseek-v4-flash-vision-exp\"].",
+          "source_scope": "local"
+        },
+        "context_window_min_measured": 200091,
+        "context_measurement": {
+          "tool": "faigate 2.7.0",
+          "probed_at": "2026-09-01",
+          "tokens_accepted": 200091,
+          "served_by_verified": true,
+          "lower_bound_reason": "Larger probes were rejected by faigate's own payload guard (_payload_too_large_response) between 1.0 MB and 1.9 MB of request body, before the request reached the model. The true context window is therefore unknown. The vendor announcement states none. An earlier attempt against an unconfigured model ID was silently served by gemini-2.5-flash (HTTP 200, no error) — see FAI-212; model identity was verified via served_by on every successful probe."
+        }
+      }
+    }
+  ]
+}

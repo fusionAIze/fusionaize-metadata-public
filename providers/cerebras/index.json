@@ -1,0 +1,60 @@
+{
+  "id": "cerebras",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://docs.cerebras.ai/",
+  "track": "stable",
+  "signup_url": "https://cerebras.ai/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "Cerebras – fast inference, zai-glm-4.7 / zai-glm-4.6 compatible",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [
+    "cerebras"
+  ],
+  "provider_type": "direct",
+  "aliases": [
+    "llama3.3-70b"
+  ],
+  "models": [
+    {
+      "id": "llama3.3-70b",
+      "vendor": "meta",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "cerebras",
+      "_original": {
+        "pricing": {
+          "source_type": "registry-default",
+          "source_url": "",
+          "refreshed_at": "2026-04-01T02:22:11Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 0.1,
+          "output_cost_per_1m": 0.1
+        },
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "unconfirmed",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'qwen-3-235b-a22b-instruct-2507', so the figure stays unverified.",
+          "unknown_kind": "unlisted",
+          "unknown_reason": "no consulted source publishes a window for this model"
+        }
+      }
+    }
+  ]
+}

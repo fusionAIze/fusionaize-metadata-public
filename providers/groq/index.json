@@ -1,0 +1,62 @@
+{
+  "id": "groq",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://console.groq.com/docs/models",
+  "track": "stable",
+  "signup_url": "https://console.groq.com/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "Groq – ultra-fast inference (LPU), Llama / DeepSeek models.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [
+    "groq"
+  ],
+  "provider_type": "direct",
+  "aliases": [
+    "llama-3.3-70b-versatile",
+    "groq/llama",
+    "mixtral-8x7b"
+  ],
+  "models": [
+    {
+      "id": "llama-3.3-70b-versatile",
+      "vendor": "meta",
+      "contextLength": 131072,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "groq",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://console.groq.com/docs/pricing",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 0.05,
+          "output_cost_per_1m": 0.1
+        },
+        "limits": {
+          "max_input_tokens": 131072
+        },
+        "context_evidence": {
+          "level": "confirmed",
+          "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "source_model_id": "groq/llama-3.3-70b-versatile",
+          "as_of": "2026-09-12"
+        }
+      }
+    }
+  ]
+}

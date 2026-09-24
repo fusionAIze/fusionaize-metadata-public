@@ -1,0 +1,58 @@
+{
+  "id": "longcat",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [
+    {
+      "label": "free-llm-api-resources",
+      "url": "https://github.com/cheahjs/free-llm-api-resources"
+    }
+  ],
+  "official_source_url": "https://longcat.ai/",
+  "track": "free",
+  "signup_url": "https://longcat.ai/",
+  "last_reviewed": "2026-08-20",
+  "offer_track": "free",
+  "notes": "LongCat AI free tier: Flash-Lite, 50M tokens/day",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "high",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "longcat",
+    "lc",
+    "longcat/flash-lite"
+  ],
+  "models": [
+    {
+      "id": "flash-lite",
+      "vendor": "longcat",
+      "contextLength": 131072,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "longcat",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 131072
+        },
+        "context_evidence": {
+          "level": "unconfirmed",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'longcat/flash-lite', so the figure stays unverified.",
+          "unknown_kind": "unlisted",
+          "unknown_reason": "no consulted source publishes a window for this model"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "id": "vllm",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://github.com/vllm-project/vllm",
+  "track": "stable",
+  "signup_url": "https://vllm.ai/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "local",
+  "notes": "vLLM – high-throughput local inference engine.",
+  "auth_modes": [
+    "none"
+  ],
+  "volatility": "low",
+  "hop": [
+    "vllm"
+  ],
+  "provider_type": "local",
+  "aliases": [
+    "local-model"
+  ],
+  "models": [
+    {
+      "id": "local-model",
+      "vendor": "local",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "vllm",
+      "_original": {
+        "pricing": {
+          "source_type": "free-local",
+          "source_url": "",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh"
+        },
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "unconfirmed",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'vllm/your-model-id', so the figure stays unverified.",
+          "unknown_kind": "runtime_dependent",
+          "unknown_reason": "local runner — the window is whatever model the operator loaded"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "id": "kilo-auto",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
+  "track": "stable",
+  "signup_url": "https://kilo.ai/",
+  "last_reviewed": "2026-08-20",
+  "offer_track": "gateway-paid",
+  "notes": "Kilo Auto Balanced lane – balanced routing through Kilo gateway",
+  "auth_modes": [
+    "api_key",
+    "byok"
+  ],
+  "volatility": "medium",
+  "hop": [
+    "kilo-auto"
+  ],
+  "provider_type": "aggregator",
+  "aliases": [
+    "kilo-auto/balanced",
+    "kilo-balanced",
+    "kilo-auto/free",
+    "kilo-free",
+    "kilo-auto/frontier",
+    "kilo-frontier"
+  ],
+  "models": [
+    {
+      "id": "tier-balanced",
+      "vendor": "kilo",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "kilo-auto-balanced",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "unconfirmed",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kilo-auto/balanced', so the figure stays unverified.",
+          "unknown_kind": "runtime_dependent",
+          "unknown_reason": "router tier — the window belongs to the model picked per request"
+        }
+      }
+    },
+    {
+      "id": "tier-free",
+      "vendor": "kilo",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "kilo-auto-free",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openrouter/free=200000; LiteLLM openrouter/openrouter/free=200000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      }
+    },
+    {
+      "id": "tier-frontier",
+      "vendor": "kilo",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "kilo-auto-frontier",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "unconfirmed",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kilo-auto/frontier', so the figure stays unverified.",
+          "unknown_kind": "runtime_dependent",
+          "unknown_reason": "router tier — the window belongs to the model picked per request"
+        }
+      }
+    }
+  ]
+}

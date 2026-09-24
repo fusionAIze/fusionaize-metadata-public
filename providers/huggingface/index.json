@@ -1,0 +1,56 @@
+{
+  "id": "huggingface",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://huggingface.co/docs/inference-endpoints",
+  "track": "stable",
+  "signup_url": "https://huggingface.co/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "Hugging Face Inference Endpoints – hosted open-weight models.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "medium",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "HuggingFaceH4/zephyr-7b-beta",
+    "meta-llama/Llama-3.2-3B-Instruct"
+  ],
+  "models": [
+    {
+      "id": "zephyr-7b-beta",
+      "vendor": "huggingface",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "huggingface",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://huggingface.co/pricing",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh"
+        },
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/deepseek-ai/DeepSeek-R1=163840. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      }
+    }
+  ]
+}

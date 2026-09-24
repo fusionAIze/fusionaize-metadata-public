@@ -1,0 +1,59 @@
+{
+  "id": "qoder",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [
+    {
+      "label": "free-llm-api-resources",
+      "url": "https://github.com/cheahjs/free-llm-api-resources"
+    }
+  ],
+  "official_source_url": "https://qoder.ai/",
+  "track": "free",
+  "signup_url": "https://qoder.ai/",
+  "last_reviewed": "2026-08-20",
+  "offer_track": "free",
+  "notes": "Qoder free via Google OAuth — kimi-k2-thinking unlimited",
+  "auth_modes": [
+    "oauth"
+  ],
+  "volatility": "high",
+  "hop": [
+    "qoder"
+  ],
+  "provider_type": "aggregator",
+  "aliases": [
+    "qoder",
+    "qd",
+    "qoder/kimi-k2"
+  ],
+  "models": [
+    {
+      "id": "kimi-k2",
+      "vendor": "moonshotai",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "qoder",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter moonshotai/kimi-k2=131072; LiteLLM vercel_ai_gateway/moonshotai/kimi-k2=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "id": "openai-codex",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://platform.openai.com/docs/models",
+  "track": "stable",
+  "signup_url": "https://platform.openai.com/",
+  "last_reviewed": "2026-04-26",
+  "offer_track": "oauth",
+  "notes": "OpenAI Codex GPT-5.5 pricing verified from the official GPT-5.5 release page on 2026-04-26. Low/medium/high are reasoning-effort profiles with the same base text-token API price; reasoning tokens are billed as output tokens.",
+  "auth_modes": [
+    "oauth"
+  ],
+  "volatility": "medium",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "openai-codex/gpt-5.5-codex:low",
+    "openai-codex/gpt-5.5-codex:medium",
+    "openai-codex/gpt-5.5-codex:high",
+    "openai-codex/gpt-5.5-codex",
+    "openai-codex/gpt-5.3-codex"
+  ],
+  "models": [
+    {
+      "id": "gpt-5.5-codex",
+      "vendor": "openai",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "openai-codex",
+      "_original": {
+        "tier_status": "active",
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://openai.com/index/introducing-gpt-5-5/",
+          "refreshed_at": "2026-04-26T00:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 5.0,
+          "output_cost_per_1m": 30.0
+        },
+        "variant": "medium",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openai/gpt-5.3-codex=400000; LiteLLM azure/gpt-5.3-codex=272000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "id": "moonshot",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://platform.moonshot.cn/docs/api/",
+  "track": "stable",
+  "signup_url": "https://platform.moonshot.cn/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "Moonshot AI – long-context Chinese/English models.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "moonshot-v1-8k",
+    "moonshot-v1-32k",
+    "moonshot-v1-128k",
+    "kimi-coding/k2p5"
+  ],
+  "models": [
+    {
+      "id": "moonshot-v1-8k",
+      "vendor": "moonshot",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "moonshot",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://platform.moonshot.cn/pricing",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh"
+        },
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter moonshotai/kimi-k2.5=262144; LiteLLM azure_ai/kimi-k2.5=262144. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      }
+    },
+    {
+      "id": "k2p5",
+      "vendor": "moonshot",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "kimi-coding",
+      "_original": {
+        "pricing": {
+          "source_type": "unknown",
+          "source_url": "",
+          "refreshed_at": "2026-04-01T02:22:11Z",
+          "freshness_status": "unknown"
+        },
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "unconfirmed",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kimi-coding/k2p5', so the figure stays unverified.",
+          "unknown_kind": "unlisted",
+          "unknown_reason": "no consulted source publishes a window for this model"
+        }
+      }
+    }
+  ]
+}

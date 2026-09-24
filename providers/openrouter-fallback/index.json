@@ -1,0 +1,60 @@
+{
+  "id": "openrouter-fallback",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://openrouter.ai/openrouter/auto",
+  "track": "stable",
+  "signup_url": "https://openrouter.ai/",
+  "last_reviewed": "2026-04-26",
+  "offer_track": "byok",
+  "notes": "OpenRouter Auto Router pricing audited 2026-04-26: openrouter/auto is billed at the routed model rate; OpenRouter states posted model pricing is not marked up and failed/fallback attempts are not billed.",
+  "auth_modes": [
+    "api_key",
+    "byok"
+  ],
+  "volatility": "medium",
+  "hop": [],
+  "provider_type": "aggregator",
+  "aliases": [
+    "openrouter/auto",
+    "openrouter:auto",
+    "auto-router"
+  ],
+  "models": [
+    {
+      "id": "auto-router",
+      "vendor": "openrouter",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "openrouter-fallback",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://openrouter.ai/openrouter/auto",
+          "refreshed_at": "2026-04-26T00:00:00Z",
+          "freshness_status": "fresh",
+          "routed_model_pricing": true,
+          "platform_fee": "Pay-as-you-go lists a 5.5% platform fee; BYOK has monthly included request allowances, then OpenRouter fee policy applies."
+        },
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openrouter/auto=2000000; LiteLLM openrouter/openrouter/auto=2000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      }
+    }
+  ]
+}

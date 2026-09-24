@@ -1,0 +1,58 @@
+{
+  "id": "mistral",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://docs.mistral.ai/",
+  "track": "stable",
+  "signup_url": "https://console.mistral.ai/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "Mistral AI – Mistral Large, Codestral, etc.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "mistral-large-latest",
+    "codestral-latest"
+  ],
+  "models": [
+    {
+      "id": "mistral-large-latest",
+      "vendor": "mistral",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "mistral",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://mistral.ai/pricing",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 2.0,
+          "output_cost_per_1m": 6.0
+        },
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure/mistral-large-latest=32000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      }
+    }
+  ]
+}

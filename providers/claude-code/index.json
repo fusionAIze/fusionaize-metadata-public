@@ -1,0 +1,51 @@
+{
+  "id": "claude-code",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
+  "track": "stable",
+  "signup_url": "https://console.anthropic.com/",
+  "last_reviewed": "2026-08-20",
+  "offer_track": "oauth",
+  "notes": "Claude Code – special coding model via Anthropic OAuth",
+  "auth_modes": [
+    "oauth"
+  ],
+  "volatility": "low",
+  "hop": [],
+  "provider_type": "oauth",
+  "aliases": [
+    "claude-code"
+  ],
+  "models": [
+    {
+      "id": "claude-code",
+      "vendor": "anthropic",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "claude-code",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "unconfirmed",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'claude-code', so the figure stays unverified.",
+          "unknown_kind": "runtime_dependent",
+          "unknown_reason": "oauth harness, not a model endpoint"
+        }
+      }
+    }
+  ]
+}

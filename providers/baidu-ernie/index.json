@@ -1,0 +1,63 @@
+{
+  "id": "baidu-ernie",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://cloud.baidu.com/product/wenxinworkshop",
+  "track": "stable",
+  "signup_url": "https://cloud.baidu.com/",
+  "last_reviewed": "2026-09-11",
+  "offer_track": "direct",
+  "notes": "Baidu ERNIE 4.5 (Wenxin). Context window of 123000 input tokens sourced from the OpenRouter entry baidu/ernie-4.5-vl-424b-a47b.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "medium",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "baidu/ernie-4.5-vl-424b-a47b",
+    "ernie-4.5",
+    "ernie-4.5-vl"
+  ],
+  "models": [
+    {
+      "id": "ernie-4.5-vl-424b-a47b",
+      "vendor": "baidu",
+      "contextLength": 123000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "baidu-ernie",
+      "_original": {
+        "tier_status": "active",
+        "capacity": {
+          "max_input_tokens": 123000,
+          "max_output_tokens": 16000,
+          "evidence": {
+            "level": "confirmed",
+            "source_url": "https://openrouter.ai/api/v1/models",
+            "as_of": "2026-09-11"
+          }
+        },
+        "limits": {
+          "max_input_tokens": 123000
+        },
+        "context_evidence": {
+          "level": "confirmed",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "source_model_id": "baidu/ernie-4.5-vl-424b-a47b",
+          "as_of": "2026-09-12"
+        }
+      }
+    }
+  ]
+}

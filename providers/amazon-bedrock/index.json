@@ -1,0 +1,66 @@
+{
+  "id": "amazon-bedrock",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://docs.aws.amazon.com/nova/latest/userguide/what-is-nova.html",
+  "track": "stable",
+  "signup_url": "https://aws.amazon.com/bedrock/",
+  "last_reviewed": "2026-09-11",
+  "offer_track": "direct",
+  "notes": "Amazon Bedrock Nova family. Nova Pro context window (300k input) sourced from the LiteLLM registry entry amazon.nova-pro-v1; Nova 2 (Lite/Pro) raises the window to 1M tokens.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "amazon/nova-pro-v1",
+    "amazon.nova-pro-v1",
+    "nova-pro",
+    "amazon/nova-lite-v1",
+    "amazon/nova-micro-v1",
+    "amazon/nova-2-lite-v1"
+  ],
+  "models": [
+    {
+      "id": "nova-pro-v1",
+      "vendor": "amazon",
+      "contextLength": 300000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "amazon-bedrock",
+      "_original": {
+        "tier_status": "active",
+        "capacity": {
+          "max_input_tokens": 300000,
+          "max_output_tokens": 10000,
+          "evidence": {
+            "level": "confirmed",
+            "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+            "as_of": "2026-09-11"
+          }
+        },
+        "limits": {
+          "max_input_tokens": 300000
+        },
+        "context_evidence": {
+          "level": "confirmed",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "source_model_id": "amazon/nova-pro-v1",
+          "as_of": "2026-09-12"
+        }
+      }
+    }
+  ]
+}

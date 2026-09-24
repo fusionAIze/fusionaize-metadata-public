@@ -1,0 +1,64 @@
+{
+  "id": "litellm",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://docs.litellm.ai/",
+  "track": "stable",
+  "signup_url": "https://litellm.ai/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "aggregator",
+  "notes": "LiteLLM – unified API for 100+ LLM providers.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "medium",
+  "hop": [
+    "litellm"
+  ],
+  "provider_type": "aggregator",
+  "aliases": [
+    "gpt-3.5-turbo",
+    "claude-3-haiku"
+  ],
+  "models": [
+    {
+      "id": "gpt-3.5-turbo",
+      "vendor": "openai",
+      "contextLength": 16385,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "litellm",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://litellm.ai/pricing",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh"
+        },
+        "limits": {
+          "max_input_tokens": 16385
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "unknown_kind": "runtime_dependent",
+          "unknown_reason": "proxy — the window belongs to the model it is pointed at",
+          "source": "LiteLLM model map",
+          "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "source_model_id": "gpt-3.5-turbo",
+          "as_of": "2026-09-22",
+          "superseded_value": 128000,
+          "note": "LiteLLM publishes no default window for a model it does not know: it is a proxy, and the window belongs to the target. The figure is therefore taken from the model this entry itself names, gpt-3.5-turbo, which LiteLLM's own map and OpenRouter both put at 16385. It stays plausible because it describes that named model rather than whatever an operator actually points the proxy at. The 128000 it replaces had no source."
+        }
+      }
+    }
+  ]
+}
