@@ -1,0 +1,58 @@
+{
+  "id": "volcengine",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://www.volcengine.com/docs/82379",
+  "track": "stable",
+  "signup_url": "https://www.volcengine.com/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "Volcano Engine – Doubao, Kimi K2.5, GLM 4.7, DeepSeek V3.2 (CN)",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "volcengine/doubao-seed-1-8-251228",
+    "volcengine-plan/ark-code-latest"
+  ],
+  "models": [
+    {
+      "id": "doubao-seed-1-8-251228",
+      "vendor": "volcengine",
+      "contextLength": 245760,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "volcengine",
+      "_original": {
+        "pricing": {
+          "source_type": "unknown",
+          "source_url": "",
+          "refreshed_at": "2026-04-01T02:22:11Z",
+          "freshness_status": "unknown"
+        },
+        "limits": {
+          "max_input_tokens": 245760
+        },
+        "context_evidence": {
+          "level": "unconfirmed",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'volcengine/doubao-seed-1-8-251228', so the figure stays unverified.",
+          "unknown_kind": "unlisted",
+          "unknown_reason": "no consulted source publishes a window for this model"
+        }
+      },
+      "variant": null
+    }
+  ]
+}

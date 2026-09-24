@@ -1,0 +1,62 @@
+{
+  "id": "tencent-hunyuan",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://cloud.tencent.com/product/hunyuan",
+  "track": "stable",
+  "signup_url": "https://cloud.tencent.com/",
+  "last_reviewed": "2026-09-11",
+  "offer_track": "direct",
+  "notes": "Tencent Hunyuan 3 (hy3). Context window of 262144 input tokens sourced from the OpenRouter entry tencent/hy3; the hy4 preview raises it to 1048576.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "medium",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "tencent/hy3",
+    "hunyuan-3",
+    "tencent/hunyuan-a13b-instruct"
+  ],
+  "models": [
+    {
+      "id": "hunyuan-3",
+      "vendor": "tencent",
+      "contextLength": 262144,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "tencent-hunyuan",
+      "_original": {
+        "tier_status": "active",
+        "capacity": {
+          "max_input_tokens": 262144,
+          "max_output_tokens": 128000,
+          "evidence": {
+            "level": "confirmed",
+            "source_url": "https://openrouter.ai/api/v1/models",
+            "as_of": "2026-09-11"
+          }
+        },
+        "limits": {
+          "max_input_tokens": 262144
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "No public listing found for 'hunyuan-3' in OpenRouter or LiteLLM. The entry's own notes cite the OpenRouter entry tencent/hy3 at 262144 input tokens; that figure is carried here as an orientation, not as a verified fact for hunyuan-3 itself."
+        }
+      },
+      "variant": null
+    }
+  ]
+}

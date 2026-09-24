@@ -1,0 +1,65 @@
+{
+  "id": "byteplus",
+  "format": "openai",
+  "baseUrl": "https://ark.ap-southeast.bytepluses.com/api/v3",
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://www.byteplus.com/en/docs/product/ark",
+  "track": "stable",
+  "signup_url": "https://www.byteplus.com/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "BytePlus ARK – international access to Volcano Engine models",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [
+    "byteplus"
+  ],
+  "provider_type": "direct",
+  "aliases": [
+    "byteplus/seed-1-8-251228",
+    "byteplus-plan/ark-code-latest"
+  ],
+  "models": [
+    {
+      "id": "seed-1-8-251228",
+      "vendor": "volcengine",
+      "contextLength": 245760,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "byteplus",
+      "_original": {
+        "pricing": {
+          "source_type": "unknown",
+          "source_url": "",
+          "refreshed_at": "2026-04-01T02:22:11Z",
+          "freshness_status": "unknown"
+        },
+        "limits": {
+          "max_input_tokens": 245760
+        },
+        "context_evidence": {
+          "level": "unconfirmed",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'byteplus/seed-1-8-251228', so the figure stays unverified.",
+          "unknown_kind": "unlisted",
+          "unknown_reason": "no consulted source publishes a window for this model"
+        }
+      },
+      "variant": null
+    }
+  ],
+  "baseUrl_evidence": {
+    "level": "confirmed",
+    "measured_at": "2026-09-24",
+    "note": "probed live; /api/v3 is pay-per-token, /api/coding/v3 is the plan path"
+  }
+}

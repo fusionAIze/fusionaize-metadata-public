@@ -1,0 +1,51 @@
+{
+  "id": "clawrouter",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://blockrun.ai/docs/products/routing/clawrouter",
+  "track": "stable",
+  "signup_url": "https://blockrun.ai/",
+  "last_reviewed": "2026-08-20",
+  "offer_track": "marketplace",
+  "notes": "BlockRun ClawRouter uses wallet/x402 routing modes rather than a classic API key",
+  "auth_modes": [
+    "wallet_x402"
+  ],
+  "volatility": "medium",
+  "hop": [],
+  "provider_type": "wallet-router",
+  "aliases": [
+    "clawrouter"
+  ],
+  "models": [
+    {
+      "id": "auto-router",
+      "vendor": "clawrouter",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "clawrouter",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openrouter/auto=2000000; LiteLLM openrouter/openrouter/auto=2000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": null
+    }
+  ]
+}

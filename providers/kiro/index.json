@@ -1,0 +1,61 @@
+{
+  "id": "kiro",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [
+    {
+      "label": "free-llm-api-resources",
+      "url": "https://github.com/cheahjs/free-llm-api-resources"
+    }
+  ],
+  "official_source_url": "https://kiro.dev/",
+  "track": "free",
+  "signup_url": "https://kiro.dev/",
+  "last_reviewed": "2026-08-20",
+  "offer_track": "free",
+  "notes": "Kiro free via AWS Builder ID OAuth — Claude Sonnet 4.5 unlimited",
+  "auth_modes": [
+    "oauth"
+  ],
+  "volatility": "high",
+  "hop": [
+    "kiro"
+  ],
+  "provider_type": "aggregator",
+  "aliases": [
+    "kiro",
+    "kr",
+    "kiro/claude-sonnet"
+  ],
+  "models": [
+    {
+      "id": "claude-sonnet",
+      "vendor": "anthropic",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "kiro",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "unconfirmed",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kiro/claude-sonnet', so the figure stays unverified.",
+          "unknown_kind": "runtime_dependent",
+          "unknown_reason": "aggregator — the window belongs to the model picked per request"
+        }
+      },
+      "variant": null
+    }
+  ]
+}

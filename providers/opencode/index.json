@@ -1,0 +1,58 @@
+{
+  "id": "opencode",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://api.opencode.ai/docs",
+  "track": "stable",
+  "signup_url": "https://opencode.ai/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "OpenCode Zen - Anthropic-compatible gateway.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [
+    "opencode"
+  ],
+  "provider_type": "direct",
+  "aliases": [
+    "opencode/claude-opus-4-6"
+  ],
+  "models": [
+    {
+      "id": "claude-opus-4-6",
+      "vendor": "anthropic",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "opencode",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://opencode.ai/pricing",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh"
+        },
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-opus-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": null
+    }
+  ]
+}

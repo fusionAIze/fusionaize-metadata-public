@@ -1,0 +1,56 @@
+{
+  "id": "zai",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://docs.z.ai/",
+  "track": "stable",
+  "signup_url": "https://z.ai/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "Z-AI GLM models.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "z-ai/glm-5"
+  ],
+  "models": [
+    {
+      "id": "glm-5",
+      "vendor": "z-ai",
+      "contextLength": 131072,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "zai",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://z.ai/pricing",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh"
+        },
+        "limits": {
+          "max_input_tokens": 131072
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter z-ai/glm-4.7=204800; LiteLLM openrouter/z-ai/glm-4.7=202752. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": null
+    }
+  ]
+}

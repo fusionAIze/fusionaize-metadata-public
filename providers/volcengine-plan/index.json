@@ -1,0 +1,60 @@
+{
+  "format": "openai",
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://www.volcengine.com/docs/82379",
+  "track": "stable",
+  "signup_url": "https://www.volcengine.com/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "Volcano Engine – Doubao, Kimi K2.5, GLM 4.7, DeepSeek V3.2 (CN)",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [],
+  "provider_type": "direct",
+  "id": "volcengine-plan",
+  "aliases": [
+    "volcengine-plan/ark-code-latest"
+  ],
+  "entry_type": "plan",
+  "offer_of": "volcengine",
+  "baseUrl": null,
+  "models": [
+    {
+      "id": "ark-code-latest",
+      "vendor": "volcengine",
+      "contextLength": 262144,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "volcengine-plan",
+      "_original": {
+        "pricing": {
+          "source_type": "unknown",
+          "source_url": "",
+          "refreshed_at": "2026-04-01T02:22:11Z",
+          "freshness_status": "unknown"
+        },
+        "entry_type": "plan",
+        "limits": {
+          "max_input_tokens": 262144
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "derived_from": "model_caps[\"kimi-k2.6\"]",
+          "derived_from_value": 262144,
+          "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
+        }
+      },
+      "variant": null
+    }
+  ]
+}

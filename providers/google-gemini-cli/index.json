@@ -1,0 +1,54 @@
+{
+  "id": "google-gemini-cli",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini",
+  "track": "stable",
+  "signup_url": "https://cloud.google.com/vertex-ai",
+  "last_reviewed": "2026-08-20",
+  "offer_track": "oauth",
+  "notes": "Google Gemini via Vertex AI – uses gcloud ADC; requires: gcloud auth login",
+  "auth_modes": [
+    "oauth"
+  ],
+  "volatility": "low",
+  "hop": [
+    "gemini-cli"
+  ],
+  "provider_type": "oauth",
+  "aliases": [
+    "google-gemini-cli",
+    "google-vertex"
+  ],
+  "models": [
+    {
+      "id": "gemini-2.5-pro",
+      "vendor": "google",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "google-gemini-cli",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter google/gemini-2.5-pro=1048576; LiteLLM deepinfra/google/gemini-2.5-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": null
+    }
+  ]
+}

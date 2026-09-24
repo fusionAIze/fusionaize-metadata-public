@@ -1,0 +1,63 @@
+{
+  "id": "blackbox-free",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "mixed",
+  "watch_sources": [
+    "community"
+  ],
+  "official_source_url": "https://docs.blackbox.ai/api-reference/authentication",
+  "track": "free",
+  "signup_url": "https://cloud.blackbox.ai/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "credit",
+  "notes": "BLACKBOX free tier with Grok Code Fast - volatile pricing and model availability.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "high",
+  "hop": [
+    "blackboxai"
+  ],
+  "provider_type": "aggregator",
+  "aliases": [
+    "blackboxai/x-ai/grok-code-fast-1"
+  ],
+  "models": [
+    {
+      "id": "grok-code-fast-1",
+      "vendor": "x-ai",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "blackbox-free",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://api-docs.deepseek.com/pricing",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 0.0,
+          "output_cost_per_1m": 0.0,
+          "cache_read_cost_per_1m": 0.0
+        },
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/grok-code-fast-1=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": null
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "id": "kilocode",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [
+    "community"
+  ],
+  "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
+  "track": "free",
+  "signup_url": "https://kilo.ai/",
+  "last_reviewed": "2026-04-26",
+  "offer_track": "free",
+  "notes": "Kilo free tier with GLM-5 expired 2026-04-26. Aliases retained for back-compat; do not auto-select.",
+  "auth_modes": [
+    "api_key",
+    "byok"
+  ],
+  "volatility": "high",
+  "hop": [
+    "kilo"
+  ],
+  "provider_type": "aggregator",
+  "aliases": [
+    "z-ai/glm-5:free",
+    "anthropic/claude-opus-4.6",
+    "kilo-auto/frontier",
+    "anthropic/claude-sonnet-4.6",
+    "kilo-auto/balanced"
+  ],
+  "models": [
+    {
+      "id": "glm-5",
+      "vendor": "z-ai",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "kilocode",
+      "_original": {
+        "tier_status": "expired",
+        "expires_at": "2026-04-26",
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://kilo.ai/pricing",
+          "refreshed_at": "2026-04-26T00:00:00Z",
+          "freshness_status": "stale",
+          "input_cost_per_1m": 0.0,
+          "output_cost_per_1m": 0.0,
+          "cache_read_cost_per_1m": 0.0
+        },
+        "variant": "free",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter z-ai/glm-5=204800; LiteLLM openrouter/z-ai/glm-5=202752. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": "free"
+    },
+    {
+      "id": "claude-opus-4-6",
+      "vendor": "anthropic",
+      "contextLength": 200000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "kilo-opus",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 200000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-opus-4.6=1000000; LiteLLM openrouter/anthropic/claude-opus-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": null
+    },
+    {
+      "id": "claude-sonnet-4-6",
+      "vendor": "anthropic",
+      "contextLength": 200000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "kilo-sonnet",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 200000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-sonnet-4.6=1000000; LiteLLM openrouter/anthropic/claude-sonnet-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": null
+    }
+  ]
+}

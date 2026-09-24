@@ -1,0 +1,52 @@
+{
+  "id": "qwen",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://help.aliyun.com/zh/model-studio/developer-reference/quick-start",
+  "track": "stable",
+  "signup_url": "https://dashscope.aliyun.com/",
+  "last_reviewed": "2026-08-20",
+  "offer_track": "direct",
+  "notes": "Qwen models via Alibaba Cloud",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "medium",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "qwen",
+    "qwen3.6-plus"
+  ],
+  "models": [
+    {
+      "id": "qwen3-6-plus",
+      "vendor": "qwen",
+      "contextLength": 131072,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "qwen",
+      "_original": {
+        "entry_type": "model",
+        "limits": {
+          "max_input_tokens": 131072
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter qwen/qwen3.6-plus=1000000; LiteLLM openrouter/qwen/qwen3.6-plus=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": null
+    }
+  ]
+}

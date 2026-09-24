@@ -1,0 +1,56 @@
+{
+  "id": "minimax",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://api.minimax.chat/",
+  "track": "stable",
+  "signup_url": "https://www.minimaxi.com/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "MiniMax – Anthropic-compat custom endpoint",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "minimax/MiniMax-M2.1"
+  ],
+  "models": [
+    {
+      "id": "MiniMax-M2.1",
+      "vendor": "minimax",
+      "contextLength": 245760,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "minimax",
+      "_original": {
+        "pricing": {
+          "source_type": "unknown",
+          "source_url": "",
+          "refreshed_at": "2026-04-01T02:22:11Z",
+          "freshness_status": "unknown"
+        },
+        "limits": {
+          "max_input_tokens": 245760
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM sambanova/MiniMax-M2.7=196608. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": null
+    }
+  ]
+}

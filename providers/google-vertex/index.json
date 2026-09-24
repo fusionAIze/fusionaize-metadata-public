@@ -1,0 +1,59 @@
+{
+  "id": "google-vertex",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference",
+  "track": "stable",
+  "signup_url": "https://cloud.google.com/vertex-ai",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "Google Vertex AI - uses gcloud ADC; interactive setup required.",
+  "auth_modes": [
+    "oauth",
+    "adc"
+  ],
+  "volatility": "low",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "google-vertex/gemini-2.5-pro"
+  ],
+  "models": [
+    {
+      "id": "gemini-2.5-pro",
+      "vendor": "google",
+      "contextLength": 1048576,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "google-vertex",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://cloud.google.com/vertex-ai/pricing",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh"
+        },
+        "entry_type": "vendor",
+        "limits": {
+          "max_input_tokens": 1048576
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "derived_from": "model_caps[\"gemini-2.5-pro\"]",
+          "derived_from_value": 1048576,
+          "note": "Google Vertex entry; derived from model gemini-2.5-pro."
+        }
+      },
+      "variant": null
+    }
+  ]
+}

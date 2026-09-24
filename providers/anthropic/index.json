@@ -1,0 +1,162 @@
+{
+  "id": "anthropic",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
+  "track": "stable",
+  "signup_url": "https://console.anthropic.com/",
+  "last_reviewed": "2026-04-26",
+  "offer_track": "direct",
+  "notes": "Anthropic Claude Opus 4.7 direct API pricing verified from the official Opus page on 2026-04-26.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "claude-opus-4-7",
+    "claude-opus-4-6",
+    "anthropic:opus",
+    "claude-sonnet-4-6",
+    "claude-haiku-4-5",
+    "claude-haiku-3-5",
+    "anthropic:haiku",
+    "anthropic:sonnet"
+  ],
+  "models": [
+    {
+      "id": "claude-opus-4-7",
+      "vendor": "anthropic",
+      "contextLength": 1000000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "anthropic",
+      "_original": {
+        "tier_status": "active",
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://www.anthropic.com/claude/opus",
+          "refreshed_at": "2026-04-26T00:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 5.0,
+          "output_cost_per_1m": 25.0,
+          "cache_read_cost_per_1m": 0.5
+        },
+        "entry_type": "vendor",
+        "limits": {
+          "max_input_tokens": 1000000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "derived_from": "model_caps[\"claude-opus-4-6\"]",
+          "derived_from_value": 1000000,
+          "note": "vendor rollup; single window is the flagship Opus. claude-opus-4-7 has no direct cap entry, so derived from family member claude-opus-4-6."
+        }
+      },
+      "variant": null
+    },
+    {
+      "id": "claude-opus-4-7",
+      "vendor": "anthropic",
+      "contextLength": 200000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "anthropic-claude",
+      "_original": {
+        "tier_status": "active",
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://www.anthropic.com/claude/opus",
+          "refreshed_at": "2026-04-26T00:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 5.0,
+          "output_cost_per_1m": 25.0,
+          "cache_read_cost_per_1m": 0.5
+        },
+        "variant": "claude",
+        "limits": {
+          "max_input_tokens": 200000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-opus-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": "claude"
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "vendor": "anthropic",
+      "contextLength": 200000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "anthropic-haiku",
+      "_original": {
+        "tier_status": "active",
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://www.anthropic.com/claude/haiku",
+          "refreshed_at": "2026-04-26T00:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 1.0,
+          "output_cost_per_1m": 5.0,
+          "cache_read_cost_per_1m": 0.1
+        },
+        "limits": {
+          "max_input_tokens": 200000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'haiku-4.5', so the figure stays unverified.",
+          "unknown_kind": "derivable",
+          "unknown_reason": "the entry names 'claude-haiku-4-5', whose cap this catalog already records",
+          "derived_from": "model_caps[\"claude-haiku-4-5\"]",
+          "derived_from_value": 200000
+        }
+      },
+      "variant": null
+    },
+    {
+      "id": "claude-sonnet-4-6",
+      "vendor": "anthropic",
+      "contextLength": 200000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "anthropic-sonnet",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://www.anthropic.com/pricing#api",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 3.0,
+          "output_cost_per_1m": 15.0,
+          "cache_read_cost_per_1m": 0.3
+        },
+        "limits": {
+          "max_input_tokens": 200000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-sonnet-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": null
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "format": "openai",
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://www.byteplus.com/en/docs/product/ark",
+  "track": "stable",
+  "signup_url": "https://www.byteplus.com/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "BytePlus ARK – international access to Volcano Engine models",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [
+    "byteplus"
+  ],
+  "provider_type": "direct",
+  "id": "byteplus-plan",
+  "aliases": [
+    "byteplus-plan/ark-code-latest"
+  ],
+  "entry_type": "plan",
+  "offer_of": "byteplus",
+  "baseUrl": "https://ark.ap-southeast.bytepluses.com/api/coding/v3",
+  "models": [
+    {
+      "id": "ark-code-latest",
+      "vendor": "volcengine",
+      "contextLength": 262144,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "byteplus-plan",
+      "_original": {
+        "pricing": {
+          "source_type": "unknown",
+          "source_url": "",
+          "refreshed_at": "2026-04-01T02:22:11Z",
+          "freshness_status": "unknown"
+        },
+        "entry_type": "plan",
+        "limits": {
+          "max_input_tokens": 262144
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "derived_from": "model_caps[\"kimi-k2.6\"]",
+          "derived_from_value": 262144,
+          "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
+        }
+      },
+      "variant": null
+    }
+  ],
+  "baseUrl_evidence": {
+    "level": "confirmed",
+    "measured_at": "2026-09-24",
+    "note": "probed live; /api/v3 is pay-per-token, /api/coding/v3 is the plan path"
+  }
+}

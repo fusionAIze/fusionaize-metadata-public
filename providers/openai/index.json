@@ -1,0 +1,163 @@
+{
+  "id": "openai",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://platform.openai.com/docs/models",
+  "track": "stable",
+  "signup_url": "https://platform.openai.com/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "OpenAI GPT models including GPT-4o, GPT-4.1 series, and image generation.",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [],
+  "provider_type": "direct",
+  "aliases": [
+    "gpt-4o",
+    "gpt-4o-mini",
+    "gpt-4.1",
+    "gpt-image-1",
+    "openai/gpt-oss-120b",
+    "gpt-oss-120b"
+  ],
+  "models": [
+    {
+      "id": "gpt-4o",
+      "vendor": "openai",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "openai",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://openai.com/api/pricing/",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 2.5,
+          "output_cost_per_1m": 10.0,
+          "cache_read_cost_per_1m": 1.25
+        },
+        "entry_type": "vendor",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "derived_from": "model_caps[\"gpt-4o\"]",
+          "derived_from_value": 128000,
+          "note": "vendor rollup; derived from primary model gpt-4o."
+        }
+      },
+      "variant": null
+    },
+    {
+      "id": "gpt-4o",
+      "vendor": "openai",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "openai-gpt4o",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://openai.com/api/pricing/",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh",
+          "input_cost_per_1m": 2.5,
+          "output_cost_per_1m": 10.0,
+          "cache_read_cost_per_1m": 1.25
+        },
+        "variant": "gpt4o",
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "confirmed",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "source_model_id": "openai/gpt-4o",
+          "as_of": "2026-09-12"
+        }
+      },
+      "variant": "gpt4o"
+    },
+    {
+      "id": "gpt-image-1",
+      "vendor": "openai",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "openai-images",
+      "_original": {
+        "pricing": {
+          "source_type": "provider-docs",
+          "source_url": "https://openai.com/api/pricing/",
+          "refreshed_at": "2026-04-01T12:00:00Z",
+          "freshness_status": "fresh"
+        },
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "unconfirmed",
+          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'gpt-image-1', so the figure stays unverified.",
+          "unknown_kind": "not_applicable",
+          "unknown_reason": "image generation — there is no text context window"
+        }
+      },
+      "variant": null
+    },
+    {
+      "id": "gpt-oss-120b",
+      "vendor": "openai",
+      "contextLength": 131072,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "openai-gpt-oss-120b",
+      "_original": {
+        "tier_status": "active",
+        "capacity": {
+          "max_input_tokens": 131072,
+          "max_output_tokens": 32768,
+          "evidence": {
+            "level": "confirmed",
+            "source_url": "https://openrouter.ai/api/v1/models",
+            "as_of": "2026-09-11"
+          }
+        },
+        "input_modalities": [
+          "text"
+        ],
+        "output_modalities": [
+          "text"
+        ],
+        "limits": {
+          "max_input_tokens": 131072
+        },
+        "context_evidence": {
+          "level": "confirmed",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "source_model_id": "openai/gpt-oss-120b",
+          "as_of": "2026-09-12"
+        }
+      },
+      "variant": null
+    }
+  ]
+}

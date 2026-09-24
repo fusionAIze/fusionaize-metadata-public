@@ -1,0 +1,58 @@
+{
+  "id": "vercel-ai-gateway",
+  "format": "openai",
+  "baseUrl": null,
+  "modelsUrl": null,
+  "authType": "bearer",
+  "authHeader": "authorization",
+  "defaultContextLength": 200000,
+  "alternateFormats": [],
+  "passthroughModels": false,
+  "evidence_level": "official",
+  "watch_sources": [],
+  "official_source_url": "https://vercel.com/docs/ai/ai-gateway",
+  "track": "stable",
+  "signup_url": "https://vercel.com/",
+  "last_reviewed": "2026-04-01",
+  "offer_track": "direct",
+  "notes": "Vercel AI Gateway – multi-model proxy",
+  "auth_modes": [
+    "api_key"
+  ],
+  "volatility": "low",
+  "hop": [
+    "vercel-ai-gateway"
+  ],
+  "provider_type": "direct",
+  "aliases": [
+    "vercel-ai-gateway/anthropic/claude-opus-4.6"
+  ],
+  "models": [
+    {
+      "id": "claude-opus-4.6",
+      "vendor": "anthropic",
+      "contextLength": 128000,
+      "maxOutputTokens": null,
+      "supportsReasoning": false,
+      "toolCalling": true,
+      "_source": "vercel-ai-gateway",
+      "_original": {
+        "pricing": {
+          "source_type": "unknown",
+          "source_url": "",
+          "refreshed_at": "2026-04-01T02:22:11Z",
+          "freshness_status": "unknown"
+        },
+        "limits": {
+          "max_input_tokens": 128000
+        },
+        "context_evidence": {
+          "level": "plausible",
+          "as_of": "2026-09-12",
+          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-opus-4.6=1000000; LiteLLM openrouter/anthropic/claude-opus-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        }
+      },
+      "variant": null
+    }
+  ]
+}
