@@ -63,7 +63,8 @@
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter deepseek/deepseek-chat=163840; LiteLLM deepseek-chat=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
         }
-      }
+      },
+      "variant": null
     },
     {
       "id": "deepseek-v4-pro",
@@ -92,7 +93,8 @@
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepseek-reasoner=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
         }
-      }
+      },
+      "variant": null
     },
     {
       "id": "deepseek-v4-flash-vision-exp",
@@ -155,7 +157,8 @@
           "served_by_verified": true,
           "lower_bound_reason": "Larger probes were rejected by faigate's own payload guard (_payload_too_large_response) between 1.0 MB and 1.9 MB of request body, before the request reached the model. The true context window is therefore unknown. The vendor announcement states none. An earlier attempt against an unconfigured model ID was silently served by gemini-2.5-flash (HTTP 200, no error) — see FAI-212; model identity was verified via served_by on every successful probe."
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

@@ -56,7 +56,8 @@
           "derived_from": "model_caps[\"gpt-4o\"]",
           "derived_from_value": 128000
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

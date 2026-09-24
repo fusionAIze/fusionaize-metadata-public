@@ -55,7 +55,8 @@
           "as_of": "2026-09-12",
           "note": "No public listing found for 'hunyuan-3' in OpenRouter or LiteLLM. The entry's own notes cite the OpenRouter entry tencent/hy3 at 262144 input tokens; that figure is carried here as an orientation, not as a verified fact for hunyuan-3 itself."
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

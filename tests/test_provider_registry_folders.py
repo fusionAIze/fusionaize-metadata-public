@@ -77,7 +77,14 @@ def _entry_to_folder_and_index(old_entry_name: str, registry: dict, catalog: dic
         ("https://kilo.ai/", ("kilo-auto",), ("api_key", "byok")): "kilo-auto",
         ("https://platform.moonshot.cn/", (), ("api_key",)): "moonshot",
     }
-    folder_name = FOLDER_NAMES.get(key, old_entry_name)
+    # A plan is an offer, not a model list: it answers on a different endpoint
+    # and is billed differently, so it keeps its own folder even though it
+    # shares signup url, hop and auth with its pay-per-token sibling. Grouping
+    # it in would lose exactly the distinction FAI-240 established.
+    if entry.get("entry_type") == "plan":
+        folder_name = old_entry_name
+    else:
+        folder_name = FOLDER_NAMES.get(key, old_entry_name)
 
     assert folder_name in registry, (
         f"Riegel: old entry {old_entry_name!r} should map to folder "
@@ -471,3 +478,104 @@ if __name__ == "__main__":
         print(f"\n{failures} failure(s)")
         sys.exit(1)
     print(f"\n{len(tests)} tests passed")
+
+
+# --- FAI-245-A, the three points completed by hand ---------------------------
+#
+# The lane produced the right structure and left three defects: duplicate model
+# ids inside one folder, the plan offers folded into their pay-per-token
+# sibling, and no baseUrl anywhere. All three are fixed; these tests hold them.
+
+import json as _json
+import pathlib as _pathlib
+from collections import Counter as _Counter
+
+_PROVIDERS = _pathlib.Path(__file__).resolve().parents[1] / "providers"
+
+
+def _folders() -> dict:
+    out = {}
+    for p in sorted(_PROVIDERS.iterdir()):
+        f = p / "index.json"
+        if p.is_dir() and f.exists():
+            out[p.name] = _json.loads(f.read_text())
+    return out
+
+
+def test_there_are_folders_to_check():
+    """Without this an empty providers/ would let every assertion below pass."""
+    assert len(_folders()) > 40, "expected the full provider set, got almost nothing"
+
+
+def test_a_model_is_unique_within_a_provider():
+    """``(id, variant)`` addresses one model. Twice means the address is ambiguous.
+
+    The catalog already carried ``variant`` — ``high``/``low`` for the Gemini Pro
+    routes, ``claude`` for the second Anthropic entry, ``gpt4o`` for the second
+    OpenAI one. Carrying it onto the model is what makes those distinct rather
+    than duplicated.
+    """
+    offenders = []
+    for name, entry in _folders().items():
+        counts = _Counter((str(m.get("id")), m.get("variant")) for m in entry.get("models", []) or [])
+        offenders += [(name, key, n) for key, n in counts.items() if n > 1]
+    assert not offenders, f"the same (id, variant) appears twice in one folder: {offenders}"
+
+
+def test_a_plan_offer_has_its_own_folder():
+    """A plan is a billing surface, not a model list.
+
+    The BytePlus coding plan answers on ``/api/coding/v3`` and is covered by the
+    subscription; ``/api/v3`` on the same host is billed per token. Folding the
+    plan into its sibling loses exactly that distinction.
+    """
+    folders = _folders()
+    for plan in ("byteplus-plan", "volcengine-plan"):
+        assert plan in folders, f"{plan} must be its own folder, not a model of its sibling"
+        assert folders[plan].get("entry_type") == "plan"
+        assert folders[plan].get("offer_of"), f"{plan} must name the provider it is an offer of"
+
+
+def test_a_base_url_is_measured_or_absent():
+    """An endpoint is either probed or left open — never guessed.
+
+    A lane invented a Volcano Engine coding path by analogy on 2026-09-24 and
+    that work was rejected. Only the two BytePlus endpoints are probed, so only
+    they carry a baseUrl, and each carries the evidence with it.
+    """
+    for name, entry in _folders().items():
+        url = entry.get("baseUrl")
+        if url:
+            assert entry.get("baseUrl_evidence"), f"{name} carries a baseUrl without saying where it comes from"
+    byteplus = _folders()["byteplus-plan"]
+    assert "/api/coding/v3" in byteplus["baseUrl"], "the plan must point at the plan path, not the billed one"
+
+
+def test_contradictory_context_windows_are_named():
+    """Where two routes to one model disagree, the disagreement is recorded.
+
+    ``claude-opus-4-7`` is carried by two catalog entries with 1000000 and
+    200000 tokens. Both cannot be right. Picking one silently would turn a
+    known contradiction into a fact, so it is listed here until someone decides.
+    """
+    # Measured 2026-09-24. Four of these are plausibly real - an aggregator may
+    # serve a model with a capped window - and are recorded, not resolved.
+    # claude-opus-4-7 contradicts itself inside ONE provider and cannot be both.
+    #
+    #   MiniMax-M2.1     128000 synthetic          | 245760 minimax
+    #   claude-opus-4-6  128000 opencode           | 200000 kilocode
+    #   claude-opus-4-7  200000 anthropic          | 1000000 anthropic   <- same provider
+    #   gemini-2.5-pro   128000 antigravity, cli   | 1048576 vertex
+    #   glm-5            128000 kilocode           | 131072 zai
+    known = {"MiniMax-M2.1", "claude-opus-4-6", "claude-opus-4-7", "gemini-2.5-pro", "glm-5"}
+    windows: dict[str, set] = {}
+    for entry in _folders().values():
+        for m in entry.get("models", []) or []:
+            cw = m.get("contextLength")
+            if cw is not None:
+                windows.setdefault(str(m.get("id")), set()).add(cw)
+    conflicting = {mid for mid, vals in windows.items() if len(vals) > 1}
+    assert conflicting <= known, f"a new contradiction appeared and is not recorded: {sorted(conflicting - known)}"
+    assert known <= conflicting, (
+        f"{sorted(known - conflicting)} no longer contradicts itself — remove it from the list"
+    )

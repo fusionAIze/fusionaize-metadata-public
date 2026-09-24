@@ -57,7 +57,8 @@
           "source_model_id": "baidu/ernie-4.5-vl-424b-a47b",
           "as_of": "2026-09-12"
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

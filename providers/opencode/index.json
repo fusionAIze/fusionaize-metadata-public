@@ -51,7 +51,8 @@
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-opus-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

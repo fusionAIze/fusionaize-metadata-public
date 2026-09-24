@@ -47,7 +47,8 @@
           "unknown_kind": "unlisted",
           "unknown_reason": "no consulted source publishes a window for this model"
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

@@ -1,7 +1,5 @@
 {
-  "id": "byteplus",
   "format": "openai",
-  "baseUrl": "https://ark.ap-southeast.bytepluses.com/api/v3",
   "modelsUrl": null,
   "authType": "bearer",
   "authHeader": "authorization",
@@ -24,19 +22,22 @@
     "byteplus"
   ],
   "provider_type": "direct",
+  "id": "byteplus-plan",
   "aliases": [
-    "byteplus/seed-1-8-251228",
     "byteplus-plan/ark-code-latest"
   ],
+  "entry_type": "plan",
+  "offer_of": "byteplus",
+  "baseUrl": "https://ark.ap-southeast.bytepluses.com/api/coding/v3",
   "models": [
     {
-      "id": "seed-1-8-251228",
+      "id": "ark-code-latest",
       "vendor": "volcengine",
-      "contextLength": 245760,
+      "contextLength": 262144,
       "maxOutputTokens": null,
       "supportsReasoning": false,
       "toolCalling": true,
-      "_source": "byteplus",
+      "_source": "byteplus-plan",
       "_original": {
         "pricing": {
           "source_type": "unknown",
@@ -44,14 +45,15 @@
           "refreshed_at": "2026-04-01T02:22:11Z",
           "freshness_status": "unknown"
         },
+        "entry_type": "plan",
         "limits": {
-          "max_input_tokens": 245760
+          "max_input_tokens": 262144
         },
         "context_evidence": {
-          "level": "unconfirmed",
-          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'byteplus/seed-1-8-251228', so the figure stays unverified.",
-          "unknown_kind": "unlisted",
-          "unknown_reason": "no consulted source publishes a window for this model"
+          "level": "plausible",
+          "derived_from": "model_caps[\"kimi-k2.6\"]",
+          "derived_from_value": 262144,
+          "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
         }
       },
       "variant": null

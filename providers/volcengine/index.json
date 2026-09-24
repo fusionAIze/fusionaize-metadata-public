@@ -51,34 +51,8 @@
           "unknown_kind": "unlisted",
           "unknown_reason": "no consulted source publishes a window for this model"
         }
-      }
-    },
-    {
-      "id": "ark-code-latest",
-      "vendor": "volcengine",
-      "contextLength": 262144,
-      "maxOutputTokens": null,
-      "supportsReasoning": false,
-      "toolCalling": true,
-      "_source": "volcengine-plan",
-      "_original": {
-        "pricing": {
-          "source_type": "unknown",
-          "source_url": "",
-          "refreshed_at": "2026-04-01T02:22:11Z",
-          "freshness_status": "unknown"
-        },
-        "entry_type": "plan",
-        "limits": {
-          "max_input_tokens": 262144
-        },
-        "context_evidence": {
-          "level": "plausible",
-          "derived_from": "model_caps[\"kimi-k2.6\"]",
-          "derived_from_value": 262144,
-          "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
-        }
-      }
+      },
+      "variant": null
     }
   ]
 }

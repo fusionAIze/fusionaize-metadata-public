@@ -52,7 +52,8 @@
           "derived_from_value": 1048576,
           "note": "Google Vertex entry; derived from model gemini-2.5-pro."
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

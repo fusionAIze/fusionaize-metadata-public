@@ -54,7 +54,8 @@
           "unknown_kind": "runtime_dependent",
           "unknown_reason": "aggregator — the window belongs to the model picked per request"
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

@@ -57,7 +57,8 @@
           "source_model_id": "microsoft/phi-4",
           "as_of": "2026-09-12"
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

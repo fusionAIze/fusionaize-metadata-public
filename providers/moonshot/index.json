@@ -52,7 +52,8 @@
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter moonshotai/kimi-k2.5=262144; LiteLLM azure_ai/kimi-k2.5=262144. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
         }
-      }
+      },
+      "variant": null
     },
     {
       "id": "k2p5",
@@ -78,7 +79,8 @@
           "unknown_kind": "unlisted",
           "unknown_reason": "no consulted source publishes a window for this model"
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

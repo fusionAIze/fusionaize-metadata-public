@@ -62,7 +62,8 @@
           "derived_from_value": 1000000,
           "note": "vendor rollup; single window is the flagship Opus. claude-opus-4-7 has no direct cap entry, so derived from family member claude-opus-4-6."
         }
-      }
+      },
+      "variant": null
     },
     {
       "id": "claude-opus-4-7",
@@ -92,7 +93,8 @@
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-opus-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
         }
-      }
+      },
+      "variant": "claude"
     },
     {
       "id": "claude-haiku-4-5",
@@ -124,7 +126,8 @@
           "derived_from": "model_caps[\"claude-haiku-4-5\"]",
           "derived_from_value": 200000
         }
-      }
+      },
+      "variant": null
     },
     {
       "id": "claude-sonnet-4-6",
@@ -152,7 +155,8 @@
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-sonnet-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

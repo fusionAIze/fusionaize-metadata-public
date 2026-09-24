@@ -45,7 +45,8 @@
           "unknown_kind": "runtime_dependent",
           "unknown_reason": "oauth harness, not a model endpoint"
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

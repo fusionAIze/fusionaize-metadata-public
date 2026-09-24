@@ -59,7 +59,8 @@
           "derived_from_value": 128000,
           "note": "vendor rollup; derived from primary model gpt-4o."
         }
-      }
+      },
+      "variant": null
     },
     {
       "id": "gpt-4o",
@@ -90,7 +91,8 @@
           "source_model_id": "openai/gpt-4o",
           "as_of": "2026-09-12"
         }
-      }
+      },
+      "variant": "gpt4o"
     },
     {
       "id": "gpt-image-1",
@@ -116,7 +118,8 @@
           "unknown_kind": "not_applicable",
           "unknown_reason": "image generation — there is no text context window"
         }
-      }
+      },
+      "variant": null
     },
     {
       "id": "gpt-oss-120b",
@@ -153,7 +156,8 @@
           "source_model_id": "openai/gpt-oss-120b",
           "as_of": "2026-09-12"
         }
-      }
+      },
+      "variant": null
     }
   ]
 }

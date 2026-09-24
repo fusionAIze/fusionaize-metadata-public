@@ -58,7 +58,8 @@
           "superseded_value": 128000,
           "note": "LiteLLM publishes no default window for a model it does not know: it is a proxy, and the window belongs to the target. The figure is therefore taken from the model this entry itself names, gpt-3.5-turbo, which LiteLLM's own map and OpenRouter both put at 16385. It stays plausible because it describes that named model rather than whatever an operator actually points the proxy at. The 128000 it replaces had no source."
         }
-      }
+      },
+      "variant": null
     }
   ]
 }
