@@ -3,6 +3,53 @@
   "generated_at": "2026-04-26T00:00:00Z",
   "source_repo": "fusionaize-metadata-public",
   "providers": {
+    "amazon-bedrock": {
+      "aliases": [
+        "amazon/nova-pro-v1",
+        "amazon.nova-pro-v1",
+        "nova-pro",
+        "amazon/nova-lite-v1",
+        "amazon/nova-micro-v1",
+        "amazon/nova-2-lite-v1"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "notes": "Amazon Bedrock Nova family. Nova Pro context window (300k input) sourced from the LiteLLM registry entry amazon.nova-pro-v1; Nova 2 (Lite/Pro) raises the window to 1M tokens.",
+      "context_window": 300000,
+      "limits": {
+        "max_input_tokens": 300000
+      },
+      "context_evidence": {
+        "level": "confirmed",
+        "source_url": "https://openrouter.ai/api/v1/models",
+        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "source_model_id": "amazon/nova-pro-v1",
+        "as_of": "2026-09-12"
+      },
+      "vendor": "amazon",
+      "model": "nova-pro-v1",
+      "hop": [],
+      "evidence_level": "official",
+      "official_source_url": "https://docs.aws.amazon.com/nova/latest/userguide/what-is-nova.html",
+      "signup_url": "https://aws.amazon.com/bedrock/",
+      "watch_sources": [],
+      "last_reviewed": "2026-09-11",
+      "capacity": {
+        "max_input_tokens": 300000,
+        "max_output_tokens": 10000,
+        "evidence": {
+          "level": "confirmed",
+          "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "as_of": "2026-09-11"
+        }
+      },
+      "tier_status": "active"
+    },
     "anthropic": {
       "aliases": [
         "claude-opus-4-7",
@@ -10,7 +57,9 @@
         "anthropic:opus",
         "claude-sonnet-4-6",
         "claude-haiku-4-5",
-        "claude-haiku-3-5"
+        "claude-haiku-3-5",
+        "anthropic:haiku",
+        "anthropic:sonnet"
       ],
       "track": "stable",
       "offer_track": "direct",
@@ -35,10 +84,10 @@
         "output_cost_per_1m": 25.0,
         "cache_read_cost_per_1m": 0.5
       },
+      "entry_type": "vendor",
       "vendor": "anthropic",
       "model": "claude-opus-4-7",
       "hop": [],
-      "entry_type": "vendor",
       "context_window": 1000000,
       "limits": {
         "max_input_tokens": 1000000
@@ -54,7 +103,12 @@
       "aliases": [
         "claude-opus-4-7",
         "claude-opus-4-6",
-        "anthropic:opus"
+        "anthropic:opus",
+        "claude-sonnet-4-6",
+        "claude-haiku-4-5",
+        "claude-haiku-3-5",
+        "anthropic:haiku",
+        "anthropic:sonnet"
       ],
       "track": "stable",
       "offer_track": "direct",
@@ -95,9 +149,14 @@
     },
     "anthropic-haiku": {
       "aliases": [
+        "claude-opus-4-7",
+        "claude-opus-4-6",
+        "anthropic:opus",
+        "claude-sonnet-4-6",
         "claude-haiku-4-5",
         "claude-haiku-3-5",
-        "anthropic:haiku"
+        "anthropic:haiku",
+        "anthropic:sonnet"
       ],
       "track": "stable",
       "offer_track": "direct",
@@ -111,7 +170,7 @@
       "official_source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
       "signup_url": "https://console.anthropic.com/",
       "watch_sources": [],
-      "notes": "Anthropic Claude Haiku 4.5 pricing verified from the official Haiku page on 2026-04-26.",
+      "notes": "Anthropic Claude Opus 4.7 direct API pricing verified from the official Opus page on 2026-04-26.",
       "last_reviewed": "2026-04-26",
       "pricing": {
         "source_type": "provider-docs",
@@ -140,7 +199,13 @@
     },
     "anthropic-sonnet": {
       "aliases": [
+        "claude-opus-4-7",
+        "claude-opus-4-6",
+        "anthropic:opus",
         "claude-sonnet-4-6",
+        "claude-haiku-4-5",
+        "claude-haiku-3-5",
+        "anthropic:haiku",
         "anthropic:sonnet"
       ],
       "track": "stable",
@@ -154,8 +219,8 @@
       "official_source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
       "signup_url": "https://console.anthropic.com/",
       "watch_sources": [],
-      "notes": "Anthropic Claude Sonnet 4.6 - balanced quality and speed for coding and reasoning.",
-      "last_reviewed": "2026-04-01",
+      "notes": "Anthropic Claude Opus 4.7 direct API pricing verified from the official Opus page on 2026-04-26.",
+      "last_reviewed": "2026-04-26",
       "pricing": {
         "source_type": "provider-docs",
         "source_url": "https://www.anthropic.com/pricing#api",
@@ -178,12 +243,11 @@
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-sonnet-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
       }
     },
-    "openai": {
+    "baidu-ernie": {
       "aliases": [
-        "gpt-4o",
-        "gpt-4o-mini",
-        "gpt-4.1",
-        "gpt-image-1"
+        "baidu/ernie-4.5-vl-424b-a47b",
+        "ernie-4.5",
+        "ernie-4.5-vl"
       ],
       "track": "stable",
       "offer_track": "direct",
@@ -191,489 +255,37 @@
       "auth_modes": [
         "api_key"
       ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://platform.openai.com/docs/models",
-      "signup_url": "https://platform.openai.com/",
-      "watch_sources": [],
-      "notes": "OpenAI GPT models including GPT-4o, GPT-4.1 series, and image generation.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://openai.com/api/pricing/",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 2.5,
-        "output_cost_per_1m": 10.0,
-        "cache_read_cost_per_1m": 1.25
-      },
-      "vendor": "openai",
-      "model": "gpt-4o",
-      "hop": [],
-      "entry_type": "vendor",
-      "context_window": 128000,
+      "volatility": "medium",
+      "notes": "Baidu ERNIE 4.5 (Wenxin). Context window of 123000 input tokens sourced from the OpenRouter entry baidu/ernie-4.5-vl-424b-a47b.",
+      "context_window": 123000,
       "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "derived_from": "model_caps[\"gpt-4o\"]",
-        "derived_from_value": 128000,
-        "note": "vendor rollup; derived from primary model gpt-4o."
-      }
-    },
-    "openai-gpt4o": {
-      "aliases": [
-        "gpt-4o"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://platform.openai.com/docs/models",
-      "signup_url": "https://platform.openai.com/",
-      "watch_sources": [],
-      "notes": "OpenAI GPT-4o - balanced multimodal model for general use.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://openai.com/api/pricing/",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 2.5,
-        "output_cost_per_1m": 10.0,
-        "cache_read_cost_per_1m": 1.25
-      },
-      "vendor": "openai",
-      "model": "gpt-4o",
-      "hop": [],
-      "variant": "gpt4o",
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
+        "max_input_tokens": 123000
       },
       "context_evidence": {
         "level": "confirmed",
         "source_url": "https://openrouter.ai/api/v1/models",
         "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-        "source_model_id": "openai/gpt-4o",
+        "source_model_id": "baidu/ernie-4.5-vl-424b-a47b",
         "as_of": "2026-09-12"
-      }
-    },
-    "openai-images": {
-      "aliases": [
-        "gpt-image-1"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://platform.openai.com/docs/models",
-      "signup_url": "https://platform.openai.com/",
-      "watch_sources": [],
-      "notes": "OpenAI image generation and editing models.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://openai.com/api/pricing/",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh"
       },
-      "vendor": "openai",
-      "model": "gpt-image-1",
+      "vendor": "baidu",
+      "model": "ernie-4.5-vl-424b-a47b",
       "hop": [],
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'gpt-image-1', so the figure stays unverified.",
-        "unknown_kind": "not_applicable",
-        "unknown_reason": "image generation \u2014 there is no text context window"
-      }
-    },
-    "google": {
-      "aliases": [
-        "gemini-3.1-pro",
-        "gemini-3-flash",
-        "gemini-3-flash-lite",
-        "gemini-2.5-pro"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
       "evidence_level": "official",
-      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "signup_url": "https://aistudio.google.com/",
+      "official_source_url": "https://cloud.baidu.com/product/wenxinworkshop",
+      "signup_url": "https://cloud.baidu.com/",
       "watch_sources": [],
-      "notes": "Google Gemini models including Pro, Flash, and Flash Lite variants.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://api-docs.deepseek.com/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 0.14,
-        "output_cost_per_1m": 0.28,
-        "cache_read_cost_per_1m": 0.014
-      },
-      "vendor": "google",
-      "model": "gemini-3.1-pro",
-      "hop": [],
-      "entry_type": "vendor",
-      "context_window": 1048576,
-      "limits": {
-        "max_input_tokens": 1048576
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "derived_from": "model_caps[\"gemini-3.1-pro\"]",
-        "derived_from_value": 1048576,
-        "note": "vendor rollup; derived from primary model gemini-3.1-pro."
-      }
-    },
-    "gemini-flash": {
-      "aliases": [
-        "gemini-3-flash",
-        "gemini-2.5-flash"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "signup_url": "https://aistudio.google.com/",
-      "watch_sources": [],
-      "notes": "Google Gemini Flash - fast, cost-effective model for general tasks.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://ai.google.dev/gemini-api/docs/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 0.075,
-        "output_cost_per_1m": 0.3,
-        "cache_read_cost_per_1m": 0.02
-      },
-      "vendor": "google",
-      "model": "gemini-3-flash",
-      "hop": [],
-      "context_window": 1048576,
-      "limits": {
-        "max_input_tokens": 1048576
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'gemini-3-flash', so the figure stays unverified.",
-        "unknown_kind": "derivable",
-        "unknown_reason": "the entry names 'gemini-2.5-flash', whose cap this catalog already records",
-        "derived_from": "model_caps[\"gemini-2.5-flash\"]",
-        "derived_from_value": 1048576
-      }
-    },
-    "gemini-flash-lite": {
-      "aliases": [
-        "gemini-3-flash-lite",
-        "gemini-2.5-flash-lite"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "signup_url": "https://aistudio.google.com/",
-      "watch_sources": [],
-      "notes": "Google Gemini Flash Lite - ultra-low cost model for lightweight tasks.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://ai.google.dev/gemini-api/docs/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 0.075,
-        "output_cost_per_1m": 0.3,
-        "cache_read_cost_per_1m": 0.02
-      },
-      "vendor": "google",
-      "model": "gemini-3-flash-lite",
-      "hop": [],
-      "context_window": 1048576,
-      "limits": {
-        "max_input_tokens": 1048576
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'gemini-3-flash-lite', so the figure stays unverified.",
-        "unknown_kind": "derivable",
-        "unknown_reason": "the entry names 'gemini-3-flash-lite', whose cap this catalog already records",
-        "derived_from": "model_caps[\"gemini-3-flash-lite\"]",
-        "derived_from_value": 1048576
-      }
-    },
-    "gemini-pro-high": {
-      "aliases": [
-        "gemini-3.1-pro",
-        "gemini-pro-high"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "signup_url": "https://aistudio.google.com/",
-      "watch_sources": [],
-      "notes": "Google Gemini Pro High - quality model for complex reasoning and coding.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://ai.google.dev/gemini-api/docs/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 1.25,
-        "output_cost_per_1m": 10.0,
-        "cache_read_cost_per_1m": 0.31
-      },
-      "vendor": "google",
-      "model": "gemini-3.1-pro",
-      "hop": [],
-      "variant": "high",
-      "context_window": 1048576,
-      "limits": {
-        "max_input_tokens": 1048576
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/google/gemini-3.1-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      }
-    },
-    "gemini-pro-low": {
-      "aliases": [
-        "gemini-3.1-pro",
-        "gemini-pro-low"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "signup_url": "https://aistudio.google.com/",
-      "watch_sources": [],
-      "notes": "Google Gemini Pro Low - balanced quality and cost for general tasks.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://ai.google.dev/gemini-api/docs/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 0.8,
-        "output_cost_per_1m": 4.0,
-        "cache_read_cost_per_1m": 0.2
-      },
-      "vendor": "google",
-      "model": "gemini-3.1-pro",
-      "hop": [],
-      "variant": "low",
-      "context_window": 1048576,
-      "limits": {
-        "max_input_tokens": 1048576
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/google/gemini-3.1-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      }
-    },
-    "deepseek-chat": {
-      "aliases": [
-        "deepseek-chat",
-        "ds-v4",
-        "ds-v3",
-        "deepseek-v4-flash",
-        "deepseek:chat"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "tier_status": "active",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "medium",
-      "evidence_level": "official",
-      "official_source_url": "https://api-docs.deepseek.com/",
-      "signup_url": "https://platform.deepseek.com/",
-      "watch_sources": [],
-      "notes": "DeepSeek V4 Flash pricing verified from official DeepSeek API pricing on 2026-04-26; OpenAI-format base URL remains https://api.deepseek.com.",
-      "last_reviewed": "2026-04-26",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
-        "refreshed_at": "2026-04-26T00:00:00Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 0.14,
-        "output_cost_per_1m": 0.28,
-        "cache_read_cost_per_1m": 0.028
-      },
-      "vendor": "deepseek",
-      "model": "deepseek-v4-flash",
-      "hop": [],
-      "context_window": 1048576,
-      "limits": {
-        "max_input_tokens": 1048576
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter deepseek/deepseek-chat=163840; LiteLLM deepseek-chat=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      }
-    },
-    "deepseek-reasoner": {
-      "aliases": [
-        "deepseek-reasoner",
-        "r1",
-        "deepseek-v4-pro",
-        "deepseek:reasoner"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "tier_status": "active",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "medium",
-      "evidence_level": "official",
-      "official_source_url": "https://api-docs.deepseek.com/",
-      "signup_url": "https://platform.deepseek.com/",
-      "watch_sources": [],
-      "notes": "DeepSeek V4 Pro pricing verified from official DeepSeek API pricing on 2026-04-26; supports thinking and non-thinking modes.",
-      "last_reviewed": "2026-04-26",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
-        "refreshed_at": "2026-04-26T00:00:00Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 1.74,
-        "output_cost_per_1m": 3.48,
-        "cache_read_cost_per_1m": 0.145
-      },
-      "vendor": "deepseek",
-      "model": "deepseek-v4-pro",
-      "hop": [],
-      "context_window": 1048576,
-      "limits": {
-        "max_input_tokens": 1048576
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepseek-reasoner=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      }
-    },
-    "deepseek-flash-vision-exp": {
-      "aliases": [
-        "deepseek-v4-flash-vision-exp",
-        "deepseek:flash-vision-exp"
-      ],
-      "track": "experimental",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "tier_status": "preview",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "high",
-      "evidence_level": "mixed",
-      "modalities": [
-        "text",
-        "vision"
-      ],
-      "evidence": {
-        "level": "confirmed",
-        "source_url": "https://api-docs.deepseek.com/quick_start/pricing"
-      },
-      "official_source_url": "https://api-docs.deepseek.com/quick_start/pricing",
-      "signup_url": "https://platform.deepseek.com/",
-      "watch_sources": [],
-      "notes": "DeepSeek V4 Flash Vision Exp (experimental) adds image input to V4 Flash. Images are converted to tokens by dimension with an upper bound of 384 tokens per image, billed at the input-token rate. The pricing page lists peak/off-peak and cache hit/miss rates, not a single flat price: the canonical *_cost_per_1m fields below carry the PEAK column (input = cache-miss, cache_read = cache-hit); the corresponding off-peak rates (half of peak) are carried in the pricing_off_peak object. Peak hours are 01:00-04:00 and 06:00-10:00 UTC, Mon-Fri. Context window: OmniRoute claims 1000000 (context_window, confirmed). faigate measured a lower bound of 200091 (context_window_min_measured): larger probes were cut by faigate's own payload guard before reaching the model. The two figures do not contradict (200091 <= 1000000); they are of different kinds and are stored separately.",
-      "last_reviewed": "2026-08-31",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
-        "refreshed_at": "2026-08-31T00:00:00Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 0.44,
-        "output_cost_per_1m": 1.32,
-        "cache_read_cost_per_1m": 0.014,
-        "image_tokens_max": 384,
-        "pricing_off_peak": {
-          "input_cost_per_1m": 0.22,
-          "output_cost_per_1m": 0.66,
-          "cache_read_cost_per_1m": 0.007
+      "last_reviewed": "2026-09-11",
+      "capacity": {
+        "max_input_tokens": 123000,
+        "max_output_tokens": 16000,
+        "evidence": {
+          "level": "confirmed",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "as_of": "2026-09-11"
         }
       },
-      "vendor": "deepseek",
-      "model": "deepseek-v4-flash-vision-exp",
-      "hop": [],
-      "input_modalities": [
-        "text",
-        "image"
-      ],
-      "output_modalities": [
-        "text"
-      ],
-      "entry_type": "model",
-      "context_window": 1000000,
-      "limits": {
-        "max_input_tokens": 1000000
-      },
-      "context_evidence": {
-        "level": "confirmed",
-        "source": "OmniRoute (operator-local router, not publicly resolvable)",
-        "source_url": "http://localhost:20128/v1/models",
-        "model_id": "deepseek/deepseek-v4-flash-vision-exp",
-        "as_of": "2026-09-11",
-        "note": "OmniRoute reports context_length=1000000. The source_url resolves only on the operator's host, so an external reader cannot re-check it; the publicly verifiable cross-reference is OpenRouter's deepseek/deepseek-v4-flash-vision-exp, which reports 1048576 (1 MiB). OmniRoute stays primary per source-of-truth policy; value matches model_caps[\"deepseek-v4-flash-vision-exp\"].",
-        "source_scope": "local"
-      },
-      "context_window_min_measured": 200091,
-      "context_measurement": {
-        "tool": "faigate 2.7.0",
-        "probed_at": "2026-09-01",
-        "tokens_accepted": 200091,
-        "served_by_verified": true,
-        "lower_bound_reason": "Larger probes were rejected by faigate's own payload guard (_payload_too_large_response) between 1.0 MB and 1.9 MB of request body, before the request reached the model. The true context window is therefore unknown. The vendor announcement states none. An earlier attempt against an unconfigured model ID was silently served by gemini-2.5-flash (HTTP 200, no error) \u2014 see FAI-212; model identity was verified via served_by on every successful probe."
-      }
+      "tier_status": "active"
     },
     "blackbox-free": {
       "aliases": [
@@ -718,9 +330,1222 @@
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/grok-code-fast-1=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
       }
     },
+    "byteplus": {
+      "aliases": [
+        "byteplus/seed-1-8-251228",
+        "byteplus-plan/ark-code-latest"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://www.byteplus.com/en/docs/product/ark",
+      "signup_url": "https://www.byteplus.com/",
+      "watch_sources": [],
+      "notes": "BytePlus ARK – international access to Volcano Engine models",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "unknown",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T02:22:11Z",
+        "freshness_status": "unknown"
+      },
+      "vendor": "volcengine",
+      "model": "seed-1-8-251228",
+      "hop": [
+        "byteplus"
+      ],
+      "context_window": 245760,
+      "limits": {
+        "max_input_tokens": 245760
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'byteplus/seed-1-8-251228', so the figure stays unverified.",
+        "unknown_kind": "unlisted",
+        "unknown_reason": "no consulted source publishes a window for this model"
+      }
+    },
+    "byteplus-plan": {
+      "aliases": [
+        "byteplus-plan/ark-code-latest"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://www.byteplus.com/en/docs/product/ark",
+      "signup_url": "https://www.byteplus.com/",
+      "watch_sources": [],
+      "notes": "BytePlus ARK – international access to Volcano Engine models",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "unknown",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T02:22:11Z",
+        "freshness_status": "unknown"
+      },
+      "entry_type": "plan",
+      "vendor": "volcengine",
+      "model": "ark-code-latest",
+      "hop": [
+        "byteplus"
+      ],
+      "context_window": 262144,
+      "limits": {
+        "max_input_tokens": 262144
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "derived_from": "model_caps[\"kimi-k2.6\"]",
+        "derived_from_value": 262144,
+        "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
+      }
+    },
+    "cerebras": {
+      "aliases": [
+        "llama3.3-70b"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://docs.cerebras.ai/",
+      "signup_url": "https://cerebras.ai/",
+      "watch_sources": [],
+      "notes": "Cerebras – fast inference, zai-glm-4.7 / zai-glm-4.6 compatible",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "registry-default",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T02:22:11Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 0.1,
+        "output_cost_per_1m": 0.1
+      },
+      "vendor": "meta",
+      "model": "llama3.3-70b",
+      "hop": [
+        "cerebras"
+      ],
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'qwen-3-235b-a22b-instruct-2507', so the figure stays unverified.",
+        "unknown_kind": "unlisted",
+        "unknown_reason": "no consulted source publishes a window for this model"
+      }
+    },
+    "claude-code": {
+      "aliases": [
+        "claude-code"
+      ],
+      "track": "stable",
+      "offer_track": "oauth",
+      "provider_type": "oauth",
+      "auth_modes": [
+        "oauth"
+      ],
+      "volatility": "low",
+      "notes": "Claude Code – special coding model via Anthropic OAuth",
+      "entry_type": "model",
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'claude-code', so the figure stays unverified.",
+        "unknown_kind": "runtime_dependent",
+        "unknown_reason": "oauth harness, not a model endpoint"
+      },
+      "vendor": "anthropic",
+      "model": "claude-code",
+      "hop": [],
+      "evidence_level": "official",
+      "official_source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
+      "signup_url": "https://console.anthropic.com/",
+      "watch_sources": [],
+      "last_reviewed": "2026-08-20"
+    },
+    "clawrouter": {
+      "aliases": [
+        "clawrouter"
+      ],
+      "track": "stable",
+      "offer_track": "marketplace",
+      "provider_type": "wallet-router",
+      "auth_modes": [
+        "wallet_x402"
+      ],
+      "volatility": "medium",
+      "notes": "BlockRun ClawRouter uses wallet/x402 routing modes rather than a classic API key",
+      "entry_type": "model",
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openrouter/auto=2000000; LiteLLM openrouter/openrouter/auto=2000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "vendor": "clawrouter",
+      "model": "auto-router",
+      "hop": [],
+      "evidence_level": "official",
+      "official_source_url": "https://blockrun.ai/docs/products/routing/clawrouter",
+      "signup_url": "https://blockrun.ai/",
+      "watch_sources": [],
+      "last_reviewed": "2026-08-20"
+    },
+    "cohere": {
+      "aliases": [
+        "cohere",
+        "command-a",
+        "command-r"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "notes": "Cohere Command A/R — enterprise-grade LLM with tool use",
+      "entry_type": "model",
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM command-a-03-2025=256000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "vendor": "cohere",
+      "model": "command-a-03-2025",
+      "hop": [],
+      "evidence_level": "official",
+      "official_source_url": "https://docs.cohere.com/",
+      "signup_url": "https://dashboard.cohere.com/",
+      "watch_sources": [],
+      "last_reviewed": "2026-08-20"
+    },
+    "deepseek-chat": {
+      "aliases": [
+        "deepseek-chat",
+        "ds-v4",
+        "ds-v3",
+        "deepseek-v4-flash",
+        "deepseek:chat",
+        "deepseek-reasoner",
+        "r1",
+        "deepseek-v4-pro",
+        "deepseek:reasoner",
+        "deepseek-v4-flash-vision-exp",
+        "deepseek:flash-vision-exp"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "tier_status": "active",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "medium",
+      "evidence_level": "official",
+      "official_source_url": "https://api-docs.deepseek.com/",
+      "signup_url": "https://platform.deepseek.com/",
+      "watch_sources": [],
+      "notes": "DeepSeek V4 Flash pricing verified from official DeepSeek API pricing on 2026-04-26; OpenAI-format base URL remains https://api.deepseek.com.",
+      "last_reviewed": "2026-04-26",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+        "refreshed_at": "2026-04-26T00:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 0.14,
+        "output_cost_per_1m": 0.28,
+        "cache_read_cost_per_1m": 0.028
+      },
+      "vendor": "deepseek",
+      "model": "deepseek-v4-flash",
+      "hop": [],
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter deepseek/deepseek-chat=163840; LiteLLM deepseek-chat=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      }
+    },
+    "deepseek-reasoner": {
+      "aliases": [
+        "deepseek-chat",
+        "ds-v4",
+        "ds-v3",
+        "deepseek-v4-flash",
+        "deepseek:chat",
+        "deepseek-reasoner",
+        "r1",
+        "deepseek-v4-pro",
+        "deepseek:reasoner",
+        "deepseek-v4-flash-vision-exp",
+        "deepseek:flash-vision-exp"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "tier_status": "active",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "medium",
+      "evidence_level": "official",
+      "official_source_url": "https://api-docs.deepseek.com/",
+      "signup_url": "https://platform.deepseek.com/",
+      "watch_sources": [],
+      "notes": "DeepSeek V4 Flash pricing verified from official DeepSeek API pricing on 2026-04-26; OpenAI-format base URL remains https://api.deepseek.com.",
+      "last_reviewed": "2026-04-26",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+        "refreshed_at": "2026-04-26T00:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 1.74,
+        "output_cost_per_1m": 3.48,
+        "cache_read_cost_per_1m": 0.145
+      },
+      "vendor": "deepseek",
+      "model": "deepseek-v4-pro",
+      "hop": [],
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepseek-reasoner=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      }
+    },
+    "deepseek-flash-vision-exp": {
+      "aliases": [
+        "deepseek-chat",
+        "ds-v4",
+        "ds-v3",
+        "deepseek-v4-flash",
+        "deepseek:chat",
+        "deepseek-reasoner",
+        "r1",
+        "deepseek-v4-pro",
+        "deepseek:reasoner",
+        "deepseek-v4-flash-vision-exp",
+        "deepseek:flash-vision-exp"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "tier_status": "preview",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "medium",
+      "evidence_level": "official",
+      "modalities": [
+        "text",
+        "vision"
+      ],
+      "evidence": {
+        "level": "confirmed",
+        "source_url": "https://api-docs.deepseek.com/quick_start/pricing"
+      },
+      "official_source_url": "https://api-docs.deepseek.com/",
+      "signup_url": "https://platform.deepseek.com/",
+      "watch_sources": [],
+      "notes": "DeepSeek V4 Flash pricing verified from official DeepSeek API pricing on 2026-04-26; OpenAI-format base URL remains https://api.deepseek.com.",
+      "last_reviewed": "2026-04-26",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+        "refreshed_at": "2026-08-31T00:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 0.44,
+        "output_cost_per_1m": 1.32,
+        "cache_read_cost_per_1m": 0.014,
+        "image_tokens_max": 384,
+        "pricing_off_peak": {
+          "input_cost_per_1m": 0.22,
+          "output_cost_per_1m": 0.66,
+          "cache_read_cost_per_1m": 0.007
+        }
+      },
+      "input_modalities": [
+        "text",
+        "image"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "entry_type": "model",
+      "vendor": "deepseek",
+      "model": "deepseek-v4-flash-vision-exp",
+      "hop": [],
+      "context_window": 1000000,
+      "limits": {
+        "max_input_tokens": 1000000
+      },
+      "context_evidence": {
+        "level": "confirmed",
+        "source": "OmniRoute (operator-local router, not publicly resolvable)",
+        "source_url": "http://localhost:20128/v1/models",
+        "model_id": "deepseek/deepseek-v4-flash-vision-exp",
+        "as_of": "2026-09-11",
+        "note": "OmniRoute reports context_length=1000000. The source_url resolves only on the operator's host, so an external reader cannot re-check it; the publicly verifiable cross-reference is OpenRouter's deepseek/deepseek-v4-flash-vision-exp, which reports 1048576 (1 MiB). OmniRoute stays primary per source-of-truth policy; value matches model_caps[\"deepseek-v4-flash-vision-exp\"].",
+        "source_scope": "local"
+      },
+      "context_window_min_measured": 200091,
+      "context_measurement": {
+        "tool": "faigate 2.7.0",
+        "probed_at": "2026-09-01",
+        "tokens_accepted": 200091,
+        "served_by_verified": true,
+        "lower_bound_reason": "Larger probes were rejected by faigate's own payload guard (_payload_too_large_response) between 1.0 MB and 1.9 MB of request body, before the request reached the model. The true context window is therefore unknown. The vendor announcement states none. An earlier attempt against an unconfigured model ID was silently served by gemini-2.5-flash (HTTP 200, no error) — see FAI-212; model identity was verified via served_by on every successful probe."
+      }
+    },
+    "github-copilot": {
+      "aliases": [
+        "gpt-4o"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "oauth",
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://docs.github.com/en/copilot",
+      "signup_url": "https://github.com/features/copilot",
+      "watch_sources": [],
+      "notes": "GitHub Copilot – requires GH_TOKEN / COPILOT_GITHUB_TOKEN",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "unknown",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T02:22:11Z",
+        "freshness_status": "unknown"
+      },
+      "vendor": "openai",
+      "model": "gpt-4o",
+      "hop": [
+        "github-copilot"
+      ],
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "confirmed",
+        "source_url": "https://openrouter.ai/api/v1/models",
+        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "source_model_id": "openai/gpt-4o",
+        "as_of": "2026-09-12"
+      }
+    },
+    "google": {
+      "aliases": [
+        "gemini-3.1-pro",
+        "gemini-3-flash",
+        "gemini-3-flash-lite",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-pro-high",
+        "gemini-pro-low",
+        "google/gemini-3.6-flash",
+        "gemini-3.6-flash",
+        "google/gemini-3.7-flash",
+        "gemini-3.7-flash",
+        "google/gemini-3.8-flash",
+        "gemini-3.8-flash"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
+      "signup_url": "https://aistudio.google.com/",
+      "watch_sources": [],
+      "notes": "Google Gemini models including Pro, Flash, and Flash Lite variants.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://api-docs.deepseek.com/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 0.14,
+        "output_cost_per_1m": 0.28,
+        "cache_read_cost_per_1m": 0.014
+      },
+      "entry_type": "vendor",
+      "vendor": "google",
+      "model": "gemini-3.1-pro",
+      "hop": [],
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "derived_from": "model_caps[\"gemini-3.1-pro\"]",
+        "derived_from_value": 1048576,
+        "note": "vendor rollup; derived from primary model gemini-3.1-pro."
+      }
+    },
+    "gemini-flash": {
+      "aliases": [
+        "gemini-3.1-pro",
+        "gemini-3-flash",
+        "gemini-3-flash-lite",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-pro-high",
+        "gemini-pro-low",
+        "google/gemini-3.6-flash",
+        "gemini-3.6-flash",
+        "google/gemini-3.7-flash",
+        "gemini-3.7-flash",
+        "google/gemini-3.8-flash",
+        "gemini-3.8-flash"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
+      "signup_url": "https://aistudio.google.com/",
+      "watch_sources": [],
+      "notes": "Google Gemini models including Pro, Flash, and Flash Lite variants.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://ai.google.dev/gemini-api/docs/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 0.075,
+        "output_cost_per_1m": 0.3,
+        "cache_read_cost_per_1m": 0.02
+      },
+      "vendor": "google",
+      "model": "gemini-3-flash",
+      "hop": [],
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'gemini-3-flash', so the figure stays unverified.",
+        "unknown_kind": "derivable",
+        "unknown_reason": "the entry names 'gemini-2.5-flash', whose cap this catalog already records",
+        "derived_from": "model_caps[\"gemini-2.5-flash\"]",
+        "derived_from_value": 1048576
+      }
+    },
+    "gemini-flash-lite": {
+      "aliases": [
+        "gemini-3.1-pro",
+        "gemini-3-flash",
+        "gemini-3-flash-lite",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-pro-high",
+        "gemini-pro-low",
+        "google/gemini-3.6-flash",
+        "gemini-3.6-flash",
+        "google/gemini-3.7-flash",
+        "gemini-3.7-flash",
+        "google/gemini-3.8-flash",
+        "gemini-3.8-flash"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
+      "signup_url": "https://aistudio.google.com/",
+      "watch_sources": [],
+      "notes": "Google Gemini models including Pro, Flash, and Flash Lite variants.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://ai.google.dev/gemini-api/docs/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 0.075,
+        "output_cost_per_1m": 0.3,
+        "cache_read_cost_per_1m": 0.02
+      },
+      "vendor": "google",
+      "model": "gemini-3-flash-lite",
+      "hop": [],
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'gemini-3-flash-lite', so the figure stays unverified.",
+        "unknown_kind": "derivable",
+        "unknown_reason": "the entry names 'gemini-3-flash-lite', whose cap this catalog already records",
+        "derived_from": "model_caps[\"gemini-3-flash-lite\"]",
+        "derived_from_value": 1048576
+      }
+    },
+    "gemini-pro-high": {
+      "aliases": [
+        "gemini-3.1-pro",
+        "gemini-3-flash",
+        "gemini-3-flash-lite",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-pro-high",
+        "gemini-pro-low",
+        "google/gemini-3.6-flash",
+        "gemini-3.6-flash",
+        "google/gemini-3.7-flash",
+        "gemini-3.7-flash",
+        "google/gemini-3.8-flash",
+        "gemini-3.8-flash"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
+      "signup_url": "https://aistudio.google.com/",
+      "watch_sources": [],
+      "notes": "Google Gemini models including Pro, Flash, and Flash Lite variants.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://ai.google.dev/gemini-api/docs/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 1.25,
+        "output_cost_per_1m": 10.0,
+        "cache_read_cost_per_1m": 0.31
+      },
+      "vendor": "google",
+      "model": "gemini-3.1-pro",
+      "hop": [],
+      "variant": "high",
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/google/gemini-3.1-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      }
+    },
+    "gemini-pro-low": {
+      "aliases": [
+        "gemini-3.1-pro",
+        "gemini-3-flash",
+        "gemini-3-flash-lite",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-pro-high",
+        "gemini-pro-low",
+        "google/gemini-3.6-flash",
+        "gemini-3.6-flash",
+        "google/gemini-3.7-flash",
+        "gemini-3.7-flash",
+        "google/gemini-3.8-flash",
+        "gemini-3.8-flash"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
+      "signup_url": "https://aistudio.google.com/",
+      "watch_sources": [],
+      "notes": "Google Gemini models including Pro, Flash, and Flash Lite variants.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://ai.google.dev/gemini-api/docs/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 0.8,
+        "output_cost_per_1m": 4.0,
+        "cache_read_cost_per_1m": 0.2
+      },
+      "vendor": "google",
+      "model": "gemini-3.1-pro",
+      "hop": [],
+      "variant": "low",
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/google/gemini-3.1-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      }
+    },
+    "google-gemini-3-6-flash": {
+      "aliases": [
+        "gemini-3.1-pro",
+        "gemini-3-flash",
+        "gemini-3-flash-lite",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-pro-high",
+        "gemini-pro-low",
+        "google/gemini-3.6-flash",
+        "gemini-3.6-flash",
+        "google/gemini-3.7-flash",
+        "gemini-3.7-flash",
+        "google/gemini-3.8-flash",
+        "gemini-3.8-flash"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "notes": "Google Gemini models including Pro, Flash, and Flash Lite variants.",
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "confirmed",
+        "source_url": "https://openrouter.ai/api/v1/models",
+        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "source_model_id": "google/gemini-3.6-flash",
+        "as_of": "2026-09-12"
+      },
+      "vendor": "google",
+      "model": "gemini-3.6-flash",
+      "hop": [],
+      "evidence_level": "official",
+      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
+      "signup_url": "https://aistudio.google.com/",
+      "watch_sources": [],
+      "last_reviewed": "2026-04-01",
+      "capacity": {
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65536,
+        "evidence": {
+          "level": "confirmed",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "as_of": "2026-09-11"
+        }
+      },
+      "input_modalities": [
+        "text",
+        "image",
+        "audio"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "tier_status": "active"
+    },
+    "google-gemini-3-7-flash": {
+      "aliases": [
+        "gemini-3.1-pro",
+        "gemini-3-flash",
+        "gemini-3-flash-lite",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-pro-high",
+        "gemini-pro-low",
+        "google/gemini-3.6-flash",
+        "gemini-3.6-flash",
+        "google/gemini-3.7-flash",
+        "gemini-3.7-flash",
+        "google/gemini-3.8-flash",
+        "gemini-3.8-flash"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "notes": "Google Gemini models including Pro, Flash, and Flash Lite variants.",
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "confirmed",
+        "source_url": "https://openrouter.ai/api/v1/models",
+        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "source_model_id": "google/gemini-3.7-flash",
+        "as_of": "2026-09-12"
+      },
+      "vendor": "google",
+      "model": "gemini-3.7-flash",
+      "hop": [],
+      "evidence_level": "official",
+      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
+      "signup_url": "https://aistudio.google.com/",
+      "watch_sources": [],
+      "last_reviewed": "2026-04-01",
+      "capacity": {
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65536,
+        "evidence": {
+          "level": "confirmed",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "as_of": "2026-09-11"
+        }
+      },
+      "input_modalities": [
+        "text",
+        "image",
+        "audio"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "tier_status": "active"
+    },
+    "google-gemini-3-8-flash": {
+      "aliases": [
+        "gemini-3.1-pro",
+        "gemini-3-flash",
+        "gemini-3-flash-lite",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-pro-high",
+        "gemini-pro-low",
+        "google/gemini-3.6-flash",
+        "gemini-3.6-flash",
+        "google/gemini-3.7-flash",
+        "gemini-3.7-flash",
+        "google/gemini-3.8-flash",
+        "gemini-3.8-flash"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "notes": "Google Gemini models including Pro, Flash, and Flash Lite variants.",
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "confirmed",
+        "source_url": "https://openrouter.ai/api/v1/models",
+        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "source_model_id": "google/gemini-3.8-flash",
+        "as_of": "2026-09-12"
+      },
+      "vendor": "google",
+      "model": "gemini-3.8-flash",
+      "hop": [],
+      "evidence_level": "official",
+      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
+      "signup_url": "https://aistudio.google.com/",
+      "watch_sources": [],
+      "last_reviewed": "2026-04-01",
+      "capacity": {
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65536,
+        "evidence": {
+          "level": "confirmed",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "as_of": "2026-09-11"
+        }
+      },
+      "input_modalities": [
+        "text",
+        "image",
+        "audio"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "tier_status": "active"
+    },
+    "google-antigravity": {
+      "aliases": [
+        "google-antigravity",
+        "antigravity",
+        "agy"
+      ],
+      "track": "stable",
+      "offer_track": "oauth",
+      "provider_type": "oauth",
+      "auth_modes": [
+        "oauth"
+      ],
+      "volatility": "low",
+      "notes": "Google Antigravity (VS Code AI fork) – Google OAuth via Authorization Code + PKCE. client_id: 1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com. Token: ~/.gemini/oauth_creds.json. Antigravity's local interface is a gRPC language server (127.0.0.1:<ephemeral-port>/exa.language_server_pb.LanguageServerService/…) – faigate bypasses it and calls the Google Generative Language API (generativelanguage.googleapis.com/v1beta/openai) directly with the OAuth token. Auth: faigate-auth google-antigravity  or sign in to Antigravity IDE.",
+      "entry_type": "model",
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter google/gemini-2.5-pro=1048576; LiteLLM deepinfra/google/gemini-2.5-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "vendor": "google",
+      "model": "gemini-2.5-pro",
+      "hop": [
+        "antigravity"
+      ],
+      "evidence_level": "unofficial",
+      "evidence_level_note": "faigate's code table recorded this as 'observed' — a fourth level it invented outside the published enum. Mapped to 'unofficial', which carries the same meaning in this schema: the integration was seen to work, the vendor documents none. The original word is kept here so the mapping is visible, not silent.",
+      "official_source_url": "https://antigravity.dev/",
+      "signup_url": "https://antigravity.dev/",
+      "watch_sources": [],
+      "last_reviewed": "2026-08-20"
+    },
+    "google-gemini-cli": {
+      "aliases": [
+        "google-gemini-cli",
+        "google-vertex"
+      ],
+      "track": "stable",
+      "offer_track": "oauth",
+      "provider_type": "oauth",
+      "auth_modes": [
+        "oauth"
+      ],
+      "volatility": "low",
+      "notes": "Google Gemini via Vertex AI – uses gcloud ADC; requires: gcloud auth login",
+      "entry_type": "model",
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter google/gemini-2.5-pro=1048576; LiteLLM deepinfra/google/gemini-2.5-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "vendor": "google",
+      "model": "gemini-2.5-pro",
+      "hop": [
+        "gemini-cli"
+      ],
+      "evidence_level": "official",
+      "official_source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini",
+      "signup_url": "https://cloud.google.com/vertex-ai",
+      "watch_sources": [],
+      "last_reviewed": "2026-08-20"
+    },
+    "google-vertex": {
+      "aliases": [
+        "google-vertex/gemini-2.5-pro"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "oauth",
+        "adc"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference",
+      "signup_url": "https://cloud.google.com/vertex-ai",
+      "watch_sources": [],
+      "notes": "Google Vertex AI - uses gcloud ADC; interactive setup required.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://cloud.google.com/vertex-ai/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh"
+      },
+      "entry_type": "vendor",
+      "vendor": "google",
+      "model": "gemini-2.5-pro",
+      "hop": [],
+      "context_window": 1048576,
+      "limits": {
+        "max_input_tokens": 1048576
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "derived_from": "model_caps[\"gemini-2.5-pro\"]",
+        "derived_from_value": 1048576,
+        "note": "Google Vertex entry; derived from model gemini-2.5-pro."
+      }
+    },
+    "groq": {
+      "aliases": [
+        "llama-3.3-70b-versatile",
+        "groq/llama",
+        "mixtral-8x7b"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://console.groq.com/docs/models",
+      "signup_url": "https://console.groq.com/",
+      "watch_sources": [],
+      "notes": "Groq – ultra-fast inference (LPU), Llama / DeepSeek models.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://console.groq.com/docs/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 0.05,
+        "output_cost_per_1m": 0.1
+      },
+      "vendor": "meta",
+      "model": "llama-3.3-70b-versatile",
+      "hop": [
+        "groq"
+      ],
+      "context_window": 131072,
+      "limits": {
+        "max_input_tokens": 131072
+      },
+      "context_evidence": {
+        "level": "confirmed",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "source_model_id": "groq/llama-3.3-70b-versatile",
+        "as_of": "2026-09-12"
+      }
+    },
+    "huggingface": {
+      "aliases": [
+        "HuggingFaceH4/zephyr-7b-beta",
+        "meta-llama/Llama-3.2-3B-Instruct"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "medium",
+      "evidence_level": "official",
+      "official_source_url": "https://huggingface.co/docs/inference-endpoints",
+      "signup_url": "https://huggingface.co/",
+      "watch_sources": [],
+      "notes": "Hugging Face Inference Endpoints – hosted open-weight models.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://huggingface.co/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh"
+      },
+      "vendor": "huggingface",
+      "model": "zephyr-7b-beta",
+      "hop": [],
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/deepseek-ai/DeepSeek-R1=163840. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      }
+    },
+    "kilo-auto-balanced": {
+      "aliases": [
+        "kilo-auto/balanced",
+        "kilo-balanced",
+        "kilo-auto/free",
+        "kilo-free",
+        "kilo-auto/frontier",
+        "kilo-frontier"
+      ],
+      "track": "stable",
+      "offer_track": "gateway-paid",
+      "provider_type": "aggregator",
+      "auth_modes": [
+        "api_key",
+        "byok"
+      ],
+      "volatility": "medium",
+      "notes": "Kilo Auto Balanced lane – balanced routing through Kilo gateway",
+      "entry_type": "model",
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kilo-auto/balanced', so the figure stays unverified.",
+        "unknown_kind": "runtime_dependent",
+        "unknown_reason": "router tier — the window belongs to the model picked per request"
+      },
+      "vendor": "kilo",
+      "model": "tier-balanced",
+      "hop": [
+        "kilo-auto"
+      ],
+      "evidence_level": "official",
+      "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
+      "signup_url": "https://kilo.ai/",
+      "watch_sources": [],
+      "last_reviewed": "2026-08-20"
+    },
+    "kilo-auto-free": {
+      "aliases": [
+        "kilo-auto/balanced",
+        "kilo-balanced",
+        "kilo-auto/free",
+        "kilo-free",
+        "kilo-auto/frontier",
+        "kilo-frontier"
+      ],
+      "track": "stable",
+      "offer_track": "gateway-paid",
+      "provider_type": "aggregator",
+      "auth_modes": [
+        "api_key",
+        "byok"
+      ],
+      "volatility": "medium",
+      "notes": "Kilo Auto Balanced lane – balanced routing through Kilo gateway",
+      "entry_type": "model",
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openrouter/free=200000; LiteLLM openrouter/openrouter/free=200000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "vendor": "kilo",
+      "model": "tier-free",
+      "hop": [
+        "kilo-auto"
+      ],
+      "evidence_level": "official",
+      "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
+      "signup_url": "https://kilo.ai/",
+      "watch_sources": [],
+      "last_reviewed": "2026-08-20"
+    },
+    "kilo-auto-frontier": {
+      "aliases": [
+        "kilo-auto/balanced",
+        "kilo-balanced",
+        "kilo-auto/free",
+        "kilo-free",
+        "kilo-auto/frontier",
+        "kilo-frontier"
+      ],
+      "track": "stable",
+      "offer_track": "gateway-paid",
+      "provider_type": "aggregator",
+      "auth_modes": [
+        "api_key",
+        "byok"
+      ],
+      "volatility": "medium",
+      "notes": "Kilo Auto Balanced lane – balanced routing through Kilo gateway",
+      "entry_type": "model",
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kilo-auto/frontier', so the figure stays unverified.",
+        "unknown_kind": "runtime_dependent",
+        "unknown_reason": "router tier — the window belongs to the model picked per request"
+      },
+      "vendor": "kilo",
+      "model": "tier-frontier",
+      "hop": [
+        "kilo-auto"
+      ],
+      "evidence_level": "official",
+      "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
+      "signup_url": "https://kilo.ai/",
+      "watch_sources": [],
+      "last_reviewed": "2026-08-20"
+    },
     "kilocode": {
       "aliases": [
-        "z-ai/glm-5:free"
+        "z-ai/glm-5:free",
+        "anthropic/claude-opus-4.6",
+        "kilo-auto/frontier",
+        "anthropic/claude-sonnet-4.6",
+        "kilo-auto/balanced"
       ],
       "track": "free",
       "offer_track": "free",
@@ -765,36 +1590,358 @@
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter z-ai/glm-5=204800; LiteLLM openrouter/z-ai/glm-5=202752. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
       }
     },
-    "openrouter-fallback": {
+    "kilo-opus": {
       "aliases": [
-        "openrouter/auto",
-        "openrouter:auto",
-        "auto-router"
+        "z-ai/glm-5:free",
+        "anthropic/claude-opus-4.6",
+        "kilo-auto/frontier",
+        "anthropic/claude-sonnet-4.6",
+        "kilo-auto/balanced"
       ],
-      "track": "stable",
-      "offer_track": "byok",
+      "track": "free",
+      "offer_track": "free",
       "provider_type": "aggregator",
       "auth_modes": [
         "api_key",
         "byok"
       ],
+      "volatility": "high",
+      "notes": "Kilo free tier with GLM-5 expired 2026-04-26. Aliases retained for back-compat; do not auto-select.",
+      "entry_type": "model",
+      "context_window": 200000,
+      "limits": {
+        "max_input_tokens": 200000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-opus-4.6=1000000; LiteLLM openrouter/anthropic/claude-opus-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "vendor": "anthropic",
+      "model": "claude-opus-4-6",
+      "hop": [
+        "kilo"
+      ],
+      "evidence_level": "official",
+      "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
+      "signup_url": "https://kilo.ai/",
+      "watch_sources": [
+        "community"
+      ],
+      "last_reviewed": "2026-04-26"
+    },
+    "kilo-sonnet": {
+      "aliases": [
+        "z-ai/glm-5:free",
+        "anthropic/claude-opus-4.6",
+        "kilo-auto/frontier",
+        "anthropic/claude-sonnet-4.6",
+        "kilo-auto/balanced"
+      ],
+      "track": "free",
+      "offer_track": "free",
+      "provider_type": "aggregator",
+      "auth_modes": [
+        "api_key",
+        "byok"
+      ],
+      "volatility": "high",
+      "notes": "Kilo free tier with GLM-5 expired 2026-04-26. Aliases retained for back-compat; do not auto-select.",
+      "entry_type": "model",
+      "context_window": 200000,
+      "limits": {
+        "max_input_tokens": 200000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-sonnet-4.6=1000000; LiteLLM openrouter/anthropic/claude-sonnet-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "vendor": "anthropic",
+      "model": "claude-sonnet-4-6",
+      "hop": [
+        "kilo"
+      ],
+      "evidence_level": "official",
+      "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
+      "signup_url": "https://kilo.ai/",
+      "watch_sources": [
+        "community"
+      ],
+      "last_reviewed": "2026-04-26"
+    },
+    "kiro": {
+      "aliases": [
+        "kiro",
+        "kr",
+        "kiro/claude-sonnet"
+      ],
+      "track": "free",
+      "offer_track": "free",
+      "provider_type": "aggregator",
+      "auth_modes": [
+        "oauth"
+      ],
+      "volatility": "high",
+      "notes": "Kiro free via AWS Builder ID OAuth — Claude Sonnet 4.5 unlimited",
+      "entry_type": "model",
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kiro/claude-sonnet', so the figure stays unverified.",
+        "unknown_kind": "runtime_dependent",
+        "unknown_reason": "aggregator — the window belongs to the model picked per request"
+      },
+      "vendor": "anthropic",
+      "model": "claude-sonnet",
+      "hop": [
+        "kiro"
+      ],
+      "evidence_level": "official",
+      "official_source_url": "https://kiro.dev/",
+      "signup_url": "https://kiro.dev/",
+      "watch_sources": [
+        {
+          "label": "free-llm-api-resources",
+          "url": "https://github.com/cheahjs/free-llm-api-resources"
+        }
+      ],
+      "last_reviewed": "2026-08-20"
+    },
+    "litellm": {
+      "aliases": [
+        "gpt-3.5-turbo",
+        "claude-3-haiku"
+      ],
+      "track": "stable",
+      "offer_track": "aggregator",
+      "provider_type": "aggregator",
+      "auth_modes": [
+        "api_key"
+      ],
       "volatility": "medium",
       "evidence_level": "official",
-      "official_source_url": "https://openrouter.ai/openrouter/auto",
-      "signup_url": "https://openrouter.ai/",
+      "official_source_url": "https://docs.litellm.ai/",
+      "signup_url": "https://litellm.ai/",
       "watch_sources": [],
-      "notes": "OpenRouter Auto Router pricing audited 2026-04-26: openrouter/auto is billed at the routed model rate; OpenRouter states posted model pricing is not marked up and failed/fallback attempts are not billed.",
-      "last_reviewed": "2026-04-26",
+      "notes": "LiteLLM – unified API for 100+ LLM providers.",
+      "last_reviewed": "2026-04-01",
       "pricing": {
         "source_type": "provider-docs",
-        "source_url": "https://openrouter.ai/openrouter/auto",
-        "refreshed_at": "2026-04-26T00:00:00Z",
-        "freshness_status": "fresh",
-        "routed_model_pricing": true,
-        "platform_fee": "Pay-as-you-go lists a 5.5% platform fee; BYOK has monthly included request allowances, then OpenRouter fee policy applies."
+        "source_url": "https://litellm.ai/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh"
       },
-      "vendor": "openrouter",
-      "model": "auto-router",
+      "vendor": "openai",
+      "model": "gpt-3.5-turbo",
+      "hop": [
+        "litellm"
+      ],
+      "context_window": 16385,
+      "limits": {
+        "max_input_tokens": 16385
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "unknown_kind": "runtime_dependent",
+        "unknown_reason": "proxy — the window belongs to the model it is pointed at",
+        "source": "LiteLLM model map",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "source_model_id": "gpt-3.5-turbo",
+        "as_of": "2026-09-22",
+        "superseded_value": 128000,
+        "note": "LiteLLM publishes no default window for a model it does not know: it is a proxy, and the window belongs to the target. The figure is therefore taken from the model this entry itself names, gpt-3.5-turbo, which LiteLLM's own map and OpenRouter both put at 16385. It stays plausible because it describes that named model rather than whatever an operator actually points the proxy at. The 128000 it replaces had no source."
+      }
+    },
+    "lmstudio": {
+      "aliases": [
+        "local-model"
+      ],
+      "track": "stable",
+      "offer_track": "local",
+      "provider_type": "local",
+      "auth_modes": [
+        "none"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://lmstudio.ai/",
+      "signup_url": "https://lmstudio.ai/",
+      "watch_sources": [],
+      "notes": "LM Studio – local LLM GUI with OpenAI-compatible server.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "free-local",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh"
+      },
+      "vendor": "local",
+      "model": "local-model",
+      "hop": [
+        "lmstudio"
+      ],
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'lmstudio/minimax-m2.1-gs32', so the figure stays unverified.",
+        "unknown_kind": "runtime_dependent",
+        "unknown_reason": "local runner — the window is whatever model the operator loaded"
+      }
+    },
+    "longcat": {
+      "aliases": [
+        "longcat",
+        "lc",
+        "longcat/flash-lite"
+      ],
+      "track": "free",
+      "offer_track": "free",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "high",
+      "notes": "LongCat AI free tier: Flash-Lite, 50M tokens/day",
+      "entry_type": "model",
+      "context_window": 131072,
+      "limits": {
+        "max_input_tokens": 131072
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'longcat/flash-lite', so the figure stays unverified.",
+        "unknown_kind": "unlisted",
+        "unknown_reason": "no consulted source publishes a window for this model"
+      },
+      "vendor": "longcat",
+      "model": "flash-lite",
+      "hop": [],
+      "evidence_level": "official",
+      "official_source_url": "https://longcat.ai/",
+      "signup_url": "https://longcat.ai/",
+      "watch_sources": [
+        {
+          "label": "free-llm-api-resources",
+          "url": "https://github.com/cheahjs/free-llm-api-resources"
+        }
+      ],
+      "last_reviewed": "2026-08-20"
+    },
+    "microsoft-phi": {
+      "aliases": [
+        "microsoft/phi-4",
+        "azure_ai/Phi-4",
+        "phi-4"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "notes": "Microsoft Phi family. Phi-4 (16k input) is the current flagship small model; Phi-4-mini raises the window to 131k. Context sourced from the LiteLLM registry entry azure_ai/Phi-4.",
+      "context_window": 16384,
+      "limits": {
+        "max_input_tokens": 16384
+      },
+      "context_evidence": {
+        "level": "confirmed",
+        "source_url": "https://openrouter.ai/api/v1/models",
+        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "source_model_id": "microsoft/phi-4",
+        "as_of": "2026-09-12"
+      },
+      "vendor": "microsoft",
+      "model": "phi-4",
+      "hop": [],
+      "evidence_level": "official",
+      "official_source_url": "https://azure.microsoft.com/en-us/products/phi",
+      "signup_url": "https://azure.microsoft.com/",
+      "watch_sources": [],
+      "last_reviewed": "2026-09-11",
+      "capacity": {
+        "max_input_tokens": 16384,
+        "max_output_tokens": 16384,
+        "evidence": {
+          "level": "confirmed",
+          "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "as_of": "2026-09-11"
+        }
+      },
+      "tier_status": "active"
+    },
+    "minimax": {
+      "aliases": [
+        "minimax/MiniMax-M2.1"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://api.minimax.chat/",
+      "signup_url": "https://www.minimaxi.com/",
+      "watch_sources": [],
+      "notes": "MiniMax – Anthropic-compat custom endpoint",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "unknown",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T02:22:11Z",
+        "freshness_status": "unknown"
+      },
+      "vendor": "minimax",
+      "model": "MiniMax-M2.1",
+      "hop": [],
+      "context_window": 245760,
+      "limits": {
+        "max_input_tokens": 245760
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM sambanova/MiniMax-M2.7=196608. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      }
+    },
+    "mistral": {
+      "aliases": [
+        "mistral-large-latest",
+        "codestral-latest"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://docs.mistral.ai/",
+      "signup_url": "https://console.mistral.ai/",
+      "watch_sources": [],
+      "notes": "Mistral AI – Mistral Large, Codestral, etc.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://mistral.ai/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 2.0,
+        "output_cost_per_1m": 6.0
+      },
+      "vendor": "mistral",
+      "model": "mistral-large-latest",
       "hop": [],
       "context_window": 128000,
       "limits": {
@@ -803,8 +1950,354 @@
       "context_evidence": {
         "level": "plausible",
         "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openrouter/auto=2000000; LiteLLM openrouter/openrouter/auto=2000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure/mistral-large-latest=32000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
       }
+    },
+    "moonshot": {
+      "aliases": [
+        "moonshot-v1-8k",
+        "moonshot-v1-32k",
+        "moonshot-v1-128k",
+        "kimi-coding/k2p5"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://platform.moonshot.cn/docs/api/",
+      "signup_url": "https://platform.moonshot.cn/",
+      "watch_sources": [],
+      "notes": "Moonshot AI – long-context Chinese/English models.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://platform.moonshot.cn/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh"
+      },
+      "vendor": "moonshot",
+      "model": "moonshot-v1-8k",
+      "hop": [],
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter moonshotai/kimi-k2.5=262144; LiteLLM azure_ai/kimi-k2.5=262144. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      }
+    },
+    "kimi-coding": {
+      "aliases": [
+        "moonshot-v1-8k",
+        "moonshot-v1-32k",
+        "moonshot-v1-128k",
+        "kimi-coding/k2p5"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://platform.moonshot.cn/docs/api/",
+      "signup_url": "https://platform.moonshot.cn/",
+      "watch_sources": [],
+      "notes": "Moonshot AI – long-context Chinese/English models.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "unknown",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T02:22:11Z",
+        "freshness_status": "unknown"
+      },
+      "vendor": "moonshot",
+      "model": "k2p5",
+      "hop": [],
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kimi-coding/k2p5', so the figure stays unverified.",
+        "unknown_kind": "unlisted",
+        "unknown_reason": "no consulted source publishes a window for this model"
+      }
+    },
+    "nvidia-nim": {
+      "aliases": [
+        "nvidia-nim",
+        "nvidia",
+        "nim"
+      ],
+      "track": "free",
+      "offer_track": "free",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "medium",
+      "notes": "NVIDIA NIM free: 129 models, 40 RPM. DeepSeek-R1, Llama 405B, Qwen3 Coder 480B",
+      "entry_type": "model",
+      "context_window": 131072,
+      "limits": {
+        "max_input_tokens": 131072
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'nvidia/nemotron', so the figure stays unverified.",
+        "unknown_kind": "unlisted",
+        "unknown_reason": "no consulted source publishes a window for this model"
+      },
+      "vendor": "nvidia",
+      "model": "nemotron",
+      "hop": [],
+      "evidence_level": "official",
+      "official_source_url": "https://build.nvidia.com/",
+      "signup_url": "https://build.nvidia.com/explore/discover",
+      "watch_sources": [],
+      "last_reviewed": "2026-08-20"
+    },
+    "ollama": {
+      "aliases": [
+        "llama3.2",
+        "mistral",
+        "codellama"
+      ],
+      "track": "stable",
+      "offer_track": "local",
+      "provider_type": "local",
+      "auth_modes": [
+        "none"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://github.com/ollama/ollama",
+      "signup_url": "https://ollama.com/",
+      "watch_sources": [],
+      "notes": "Ollama – local LLM runner, no API key required.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "free-local",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh"
+      },
+      "vendor": "meta",
+      "model": "llama3.2",
+      "hop": [
+        "ollama"
+      ],
+      "context_window": 4096,
+      "limits": {
+        "max_input_tokens": 4096
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "unknown_kind": "runtime_dependent",
+        "unknown_reason": "local runner — the window is whatever model the operator pulled",
+        "source": "Ollama documentation, docs/context-length.mdx",
+        "source_url": "https://github.com/ollama/ollama/blob/main/docs/context-length.mdx",
+        "as_of": "2026-09-22",
+        "superseded_value": 128000,
+        "note": "Ollama sets its own default from available VRAM: '< 24 GiB VRAM: 4k context', '24-48 GiB: 32k', '>= 48 GiB: 256k'. 4096 is the lowest documented tier, so it is a floor in the strict sense: an operator with more VRAM, a Modelfile, or OLLAMA_CONTEXT_LENGTH gets more, never less. It describes the runner's default and not the window of whatever model is loaded, which is why it stays plausible. The 128000 it replaces came from faigate's embedded table and had no source at all."
+      }
+    },
+    "openai": {
+      "aliases": [
+        "gpt-4o",
+        "gpt-4o-mini",
+        "gpt-4.1",
+        "gpt-image-1",
+        "openai/gpt-oss-120b",
+        "gpt-oss-120b"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://platform.openai.com/docs/models",
+      "signup_url": "https://platform.openai.com/",
+      "watch_sources": [],
+      "notes": "OpenAI GPT models including GPT-4o, GPT-4.1 series, and image generation.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://openai.com/api/pricing/",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 2.5,
+        "output_cost_per_1m": 10.0,
+        "cache_read_cost_per_1m": 1.25
+      },
+      "entry_type": "vendor",
+      "vendor": "openai",
+      "model": "gpt-4o",
+      "hop": [],
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "derived_from": "model_caps[\"gpt-4o\"]",
+        "derived_from_value": 128000,
+        "note": "vendor rollup; derived from primary model gpt-4o."
+      }
+    },
+    "openai-gpt4o": {
+      "aliases": [
+        "gpt-4o",
+        "gpt-4o-mini",
+        "gpt-4.1",
+        "gpt-image-1",
+        "openai/gpt-oss-120b",
+        "gpt-oss-120b"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://platform.openai.com/docs/models",
+      "signup_url": "https://platform.openai.com/",
+      "watch_sources": [],
+      "notes": "OpenAI GPT models including GPT-4o, GPT-4.1 series, and image generation.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://openai.com/api/pricing/",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 2.5,
+        "output_cost_per_1m": 10.0,
+        "cache_read_cost_per_1m": 1.25
+      },
+      "vendor": "openai",
+      "model": "gpt-4o",
+      "hop": [],
+      "variant": "gpt4o",
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "confirmed",
+        "source_url": "https://openrouter.ai/api/v1/models",
+        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "source_model_id": "openai/gpt-4o",
+        "as_of": "2026-09-12"
+      }
+    },
+    "openai-images": {
+      "aliases": [
+        "gpt-4o",
+        "gpt-4o-mini",
+        "gpt-4.1",
+        "gpt-image-1",
+        "openai/gpt-oss-120b",
+        "gpt-oss-120b"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://platform.openai.com/docs/models",
+      "signup_url": "https://platform.openai.com/",
+      "watch_sources": [],
+      "notes": "OpenAI GPT models including GPT-4o, GPT-4.1 series, and image generation.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://openai.com/api/pricing/",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh"
+      },
+      "vendor": "openai",
+      "model": "gpt-image-1",
+      "hop": [],
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'gpt-image-1', so the figure stays unverified.",
+        "unknown_kind": "not_applicable",
+        "unknown_reason": "image generation — there is no text context window"
+      }
+    },
+    "openai-gpt-oss-120b": {
+      "aliases": [
+        "gpt-4o",
+        "gpt-4o-mini",
+        "gpt-4.1",
+        "gpt-image-1",
+        "openai/gpt-oss-120b",
+        "gpt-oss-120b"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "notes": "OpenAI GPT models including GPT-4o, GPT-4.1 series, and image generation.",
+      "context_window": 131072,
+      "limits": {
+        "max_input_tokens": 131072
+      },
+      "context_evidence": {
+        "level": "confirmed",
+        "source_url": "https://openrouter.ai/api/v1/models",
+        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "source_model_id": "openai/gpt-oss-120b",
+        "as_of": "2026-09-12"
+      },
+      "vendor": "openai",
+      "model": "gpt-oss-120b",
+      "hop": [],
+      "evidence_level": "official",
+      "official_source_url": "https://platform.openai.com/docs/models",
+      "signup_url": "https://platform.openai.com/",
+      "watch_sources": [],
+      "last_reviewed": "2026-04-01",
+      "capacity": {
+        "max_input_tokens": 131072,
+        "max_output_tokens": 32768,
+        "evidence": {
+          "level": "confirmed",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "as_of": "2026-09-11"
+        }
+      },
+      "input_modalities": [
+        "text"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "tier_status": "active"
     },
     "openai-codex": {
       "aliases": [
@@ -888,1291 +2381,37 @@
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-opus-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
       }
     },
-    "google-vertex": {
+    "openrouter-fallback": {
       "aliases": [
-        "google-vertex/gemini-2.5-pro"
+        "openrouter/auto",
+        "openrouter:auto",
+        "auto-router"
       ],
       "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "oauth",
-        "adc"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference",
-      "signup_url": "https://cloud.google.com/vertex-ai",
-      "watch_sources": [],
-      "notes": "Google Vertex AI - uses gcloud ADC; interactive setup required.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://cloud.google.com/vertex-ai/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh"
-      },
-      "vendor": "google",
-      "model": "gemini-2.5-pro",
-      "hop": [],
-      "entry_type": "vendor",
-      "context_window": 1048576,
-      "limits": {
-        "max_input_tokens": 1048576
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "derived_from": "model_caps[\"gemini-2.5-pro\"]",
-        "derived_from_value": 1048576,
-        "note": "Google Vertex entry; derived from model gemini-2.5-pro."
-      }
-    },
-    "zai": {
-      "aliases": [
-        "z-ai/glm-5"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://docs.z.ai/",
-      "signup_url": "https://z.ai/",
-      "watch_sources": [],
-      "notes": "Z-AI GLM models.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://z.ai/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh"
-      },
-      "vendor": "z-ai",
-      "model": "glm-5",
-      "hop": [],
-      "context_window": 131072,
-      "limits": {
-        "max_input_tokens": 131072
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter z-ai/glm-4.7=204800; LiteLLM openrouter/z-ai/glm-4.7=202752. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      }
-    },
-    "groq": {
-      "aliases": [
-        "llama-3.3-70b-versatile",
-        "groq/llama",
-        "mixtral-8x7b"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://console.groq.com/docs/models",
-      "signup_url": "https://console.groq.com/",
-      "watch_sources": [],
-      "notes": "Groq \u2013 ultra-fast inference (LPU), Llama / DeepSeek models.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://console.groq.com/docs/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 0.05,
-        "output_cost_per_1m": 0.1
-      },
-      "vendor": "meta",
-      "model": "llama-3.3-70b-versatile",
-      "hop": [
-        "groq"
-      ],
-      "context_window": 131072,
-      "limits": {
-        "max_input_tokens": 131072
-      },
-      "context_evidence": {
-        "level": "confirmed",
-        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-        "source_model_id": "groq/llama-3.3-70b-versatile",
-        "as_of": "2026-09-12"
-      }
-    },
-    "mistral": {
-      "aliases": [
-        "mistral-large-latest",
-        "codestral-latest"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://docs.mistral.ai/",
-      "signup_url": "https://console.mistral.ai/",
-      "watch_sources": [],
-      "notes": "Mistral AI \u2013 Mistral Large, Codestral, etc.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://mistral.ai/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 2.0,
-        "output_cost_per_1m": 6.0
-      },
-      "vendor": "mistral",
-      "model": "mistral-large-latest",
-      "hop": [],
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure/mistral-large-latest=32000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      }
-    },
-    "moonshot": {
-      "aliases": [
-        "moonshot-v1-8k",
-        "moonshot-v1-32k",
-        "moonshot-v1-128k"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://platform.moonshot.cn/docs/api/",
-      "signup_url": "https://platform.moonshot.cn/",
-      "watch_sources": [],
-      "notes": "Moonshot AI \u2013 long-context Chinese/English models.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://platform.moonshot.cn/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh"
-      },
-      "vendor": "moonshot",
-      "model": "moonshot-v1-8k",
-      "hop": [],
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter moonshotai/kimi-k2.5=262144; LiteLLM azure_ai/kimi-k2.5=262144. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      }
-    },
-    "ollama": {
-      "aliases": [
-        "llama3.2",
-        "mistral",
-        "codellama"
-      ],
-      "track": "stable",
-      "offer_track": "local",
-      "provider_type": "local",
-      "auth_modes": [
-        "none"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://github.com/ollama/ollama",
-      "signup_url": "https://ollama.com/",
-      "watch_sources": [],
-      "notes": "Ollama \u2013 local LLM runner, no API key required.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "free-local",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh"
-      },
-      "vendor": "meta",
-      "model": "llama3.2",
-      "hop": [
-        "ollama"
-      ],
-      "context_window": 4096,
-      "limits": {
-        "max_input_tokens": 4096
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "unknown_kind": "runtime_dependent",
-        "unknown_reason": "local runner \u2014 the window is whatever model the operator pulled",
-        "source": "Ollama documentation, docs/context-length.mdx",
-        "source_url": "https://github.com/ollama/ollama/blob/main/docs/context-length.mdx",
-        "as_of": "2026-09-22",
-        "superseded_value": 128000,
-        "note": "Ollama sets its own default from available VRAM: '< 24 GiB VRAM: 4k context', '24-48 GiB: 32k', '>= 48 GiB: 256k'. 4096 is the lowest documented tier, so it is a floor in the strict sense: an operator with more VRAM, a Modelfile, or OLLAMA_CONTEXT_LENGTH gets more, never less. It describes the runner's default and not the window of whatever model is loaded, which is why it stays plausible. The 128000 it replaces came from faigate's embedded table and had no source at all."
-      }
-    },
-    "huggingface": {
-      "aliases": [
-        "HuggingFaceH4/zephyr-7b-beta",
-        "meta-llama/Llama-3.2-3B-Instruct"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "medium",
-      "evidence_level": "official",
-      "official_source_url": "https://huggingface.co/docs/inference-endpoints",
-      "signup_url": "https://huggingface.co/",
-      "watch_sources": [],
-      "notes": "Hugging Face Inference Endpoints \u2013 hosted open-weight models.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "provider-docs",
-        "source_url": "https://huggingface.co/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh"
-      },
-      "vendor": "huggingface",
-      "model": "zephyr-7b-beta",
-      "hop": [],
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/deepseek-ai/DeepSeek-R1=163840. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      }
-    },
-    "lmstudio": {
-      "aliases": [
-        "local-model"
-      ],
-      "track": "stable",
-      "offer_track": "local",
-      "provider_type": "local",
-      "auth_modes": [
-        "none"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://lmstudio.ai/",
-      "signup_url": "https://lmstudio.ai/",
-      "watch_sources": [],
-      "notes": "LM Studio \u2013 local LLM GUI with OpenAI-compatible server.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "free-local",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh"
-      },
-      "vendor": "local",
-      "model": "local-model",
-      "hop": [
-        "lmstudio"
-      ],
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'lmstudio/minimax-m2.1-gs32', so the figure stays unverified.",
-        "unknown_kind": "runtime_dependent",
-        "unknown_reason": "local runner \u2014 the window is whatever model the operator loaded"
-      }
-    },
-    "vllm": {
-      "aliases": [
-        "local-model"
-      ],
-      "track": "stable",
-      "offer_track": "local",
-      "provider_type": "local",
-      "auth_modes": [
-        "none"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://github.com/vllm-project/vllm",
-      "signup_url": "https://vllm.ai/",
-      "watch_sources": [],
-      "notes": "vLLM \u2013 high-throughput local inference engine.",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "free-local",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh"
-      },
-      "vendor": "local",
-      "model": "local-model",
-      "hop": [
-        "vllm"
-      ],
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'vllm/your-model-id', so the figure stays unverified.",
-        "unknown_kind": "runtime_dependent",
-        "unknown_reason": "local runner \u2014 the window is whatever model the operator loaded"
-      }
-    },
-    "litellm": {
-      "aliases": [
-        "gpt-3.5-turbo",
-        "claude-3-haiku"
-      ],
-      "track": "stable",
-      "offer_track": "aggregator",
+      "offer_track": "byok",
       "provider_type": "aggregator",
       "auth_modes": [
-        "api_key"
+        "api_key",
+        "byok"
       ],
       "volatility": "medium",
       "evidence_level": "official",
-      "official_source_url": "https://docs.litellm.ai/",
-      "signup_url": "https://litellm.ai/",
+      "official_source_url": "https://openrouter.ai/openrouter/auto",
+      "signup_url": "https://openrouter.ai/",
       "watch_sources": [],
-      "notes": "LiteLLM \u2013 unified API for 100+ LLM providers.",
-      "last_reviewed": "2026-04-01",
+      "notes": "OpenRouter Auto Router pricing audited 2026-04-26: openrouter/auto is billed at the routed model rate; OpenRouter states posted model pricing is not marked up and failed/fallback attempts are not billed.",
+      "last_reviewed": "2026-04-26",
       "pricing": {
         "source_type": "provider-docs",
-        "source_url": "https://litellm.ai/pricing",
-        "refreshed_at": "2026-04-01T12:00:00Z",
-        "freshness_status": "fresh"
-      },
-      "vendor": "openai",
-      "model": "gpt-3.5-turbo",
-      "hop": [
-        "litellm"
-      ],
-      "context_window": 16385,
-      "limits": {
-        "max_input_tokens": 16385
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "unknown_kind": "runtime_dependent",
-        "unknown_reason": "proxy \u2014 the window belongs to the model it is pointed at",
-        "source": "LiteLLM model map",
-        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-        "source_model_id": "gpt-3.5-turbo",
-        "as_of": "2026-09-22",
-        "superseded_value": 128000,
-        "note": "LiteLLM publishes no default window for a model it does not know: it is a proxy, and the window belongs to the target. The figure is therefore taken from the model this entry itself names, gpt-3.5-turbo, which LiteLLM's own map and OpenRouter both put at 16385. It stays plausible because it describes that named model rather than whatever an operator actually points the proxy at. The 128000 it replaces had no source."
-      }
-    },
-    "byteplus": {
-      "aliases": [
-        "byteplus/seed-1-8-251228"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://www.byteplus.com/en/docs/product/ark",
-      "signup_url": "https://www.byteplus.com/",
-      "watch_sources": [],
-      "notes": "BytePlus ARK \u2013 international access to Volcano Engine models",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "unknown",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T02:22:11Z",
-        "freshness_status": "unknown"
-      },
-      "vendor": "volcengine",
-      "model": "seed-1-8-251228",
-      "hop": [
-        "byteplus"
-      ],
-      "context_window": 245760,
-      "limits": {
-        "max_input_tokens": 245760
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'byteplus/seed-1-8-251228', so the figure stays unverified.",
-        "unknown_kind": "unlisted",
-        "unknown_reason": "no consulted source publishes a window for this model"
-      }
-    },
-    "byteplus-plan": {
-      "aliases": [
-        "byteplus-plan/ark-code-latest"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://www.byteplus.com/en/docs/product/ark",
-      "signup_url": "https://www.byteplus.com/",
-      "watch_sources": [],
-      "notes": "BytePlus ARK \u2013 coding models (ark-code-latest, doubao-seed-code, kimi-k2.5, kimi-k2-thinking, glm-4.7)",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "unknown",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T02:22:11Z",
-        "freshness_status": "unknown"
-      },
-      "vendor": "volcengine",
-      "model": "ark-code-latest",
-      "hop": [
-        "byteplus"
-      ],
-      "entry_type": "plan",
-      "context_window": 262144,
-      "limits": {
-        "max_input_tokens": 262144
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "derived_from": "model_caps[\"kimi-k2.6\"]",
-        "derived_from_value": 262144,
-        "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
-      }
-    },
-    "cerebras": {
-      "aliases": [
-        "llama3.3-70b"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://docs.cerebras.ai/",
-      "signup_url": "https://cerebras.ai/",
-      "watch_sources": [],
-      "notes": "Cerebras \u2013 fast inference, zai-glm-4.7 / zai-glm-4.6 compatible",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "registry-default",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T02:22:11Z",
+        "source_url": "https://openrouter.ai/openrouter/auto",
+        "refreshed_at": "2026-04-26T00:00:00Z",
         "freshness_status": "fresh",
-        "input_cost_per_1m": 0.1,
-        "output_cost_per_1m": 0.1
+        "routed_model_pricing": true,
+        "platform_fee": "Pay-as-you-go lists a 5.5% platform fee; BYOK has monthly included request allowances, then OpenRouter fee policy applies."
       },
-      "vendor": "meta",
-      "model": "llama3.3-70b",
-      "hop": [
-        "cerebras"
-      ],
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'qwen-3-235b-a22b-instruct-2507', so the figure stays unverified.",
-        "unknown_kind": "unlisted",
-        "unknown_reason": "no consulted source publishes a window for this model"
-      }
-    },
-    "github-copilot": {
-      "aliases": [
-        "gpt-4o"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "oauth",
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://docs.github.com/en/copilot",
-      "signup_url": "https://github.com/features/copilot",
-      "watch_sources": [],
-      "notes": "GitHub Copilot \u2013 requires GH_TOKEN / COPILOT_GITHUB_TOKEN",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "unknown",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T02:22:11Z",
-        "freshness_status": "unknown"
-      },
-      "vendor": "openai",
-      "model": "gpt-4o",
-      "hop": [
-        "github-copilot"
-      ],
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "confirmed",
-        "source_url": "https://openrouter.ai/api/v1/models",
-        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-        "source_model_id": "openai/gpt-4o",
-        "as_of": "2026-09-12"
-      }
-    },
-    "kimi-coding": {
-      "aliases": [
-        "kimi-coding/k2p5"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://platform.moonshot.cn/docs/api/",
-      "signup_url": "https://platform.moonshot.cn/",
-      "watch_sources": [],
-      "notes": "Kimi Coding \u2013 Anthropic-compat endpoint via Moonshot",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "unknown",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T02:22:11Z",
-        "freshness_status": "unknown"
-      },
-      "vendor": "moonshot",
-      "model": "k2p5",
+      "vendor": "openrouter",
+      "model": "auto-router",
       "hop": [],
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kimi-coding/k2p5', so the figure stays unverified.",
-        "unknown_kind": "unlisted",
-        "unknown_reason": "no consulted source publishes a window for this model"
-      }
-    },
-    "minimax": {
-      "aliases": [
-        "minimax/MiniMax-M2.1"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://api.minimax.chat/",
-      "signup_url": "https://www.minimaxi.com/",
-      "watch_sources": [],
-      "notes": "MiniMax \u2013 Anthropic-compat custom endpoint",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "unknown",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T02:22:11Z",
-        "freshness_status": "unknown"
-      },
-      "vendor": "minimax",
-      "model": "MiniMax-M2.1",
-      "hop": [],
-      "context_window": 245760,
-      "limits": {
-        "max_input_tokens": 245760
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM sambanova/MiniMax-M2.7=196608. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      }
-    },
-    "qwen-portal": {
-      "aliases": [
-        "qwen-portal/coder-model"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "none"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://help.aliyun.com/zh/model-studio/getting-started/what-is-model-studio",
-      "signup_url": "https://modelscope.cn/",
-      "watch_sources": [],
-      "notes": "Qwen OAuth (free tier) \u2013 device-code flow; requires: openclaw plugins enable qwen-portal-auth",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "unknown",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T02:22:11Z",
-        "freshness_status": "unknown"
-      },
-      "vendor": "qwen",
-      "model": "coder-model",
-      "hop": [],
-      "context_window": 131072,
-      "limits": {
-        "max_input_tokens": 131072
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'coder-model', so the figure stays unverified.",
-        "unknown_kind": "unlisted",
-        "unknown_reason": "no consulted source publishes a window for this model"
-      }
-    },
-    "synthetic": {
-      "aliases": [
-        "synthetic/hf:MiniMaxAI/MiniMax-M2.1"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://synthetic.com/docs",
-      "signup_url": "https://synthetic.com/",
-      "watch_sources": [],
-      "notes": "Synthetic \u2013 Anthropic-compat; exposes HuggingFace models (MiniMax, etc.)",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "unknown",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T02:22:11Z",
-        "freshness_status": "unknown"
-      },
-      "vendor": "minimax",
-      "model": "MiniMax-M2.1",
-      "hop": [
-        "synthetic"
-      ],
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM gmi/MiniMaxAI/MiniMax-M2.1=196608. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      }
-    },
-    "vercel-ai-gateway": {
-      "aliases": [
-        "vercel-ai-gateway/anthropic/claude-opus-4.6"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://vercel.com/docs/ai/ai-gateway",
-      "signup_url": "https://vercel.com/",
-      "watch_sources": [],
-      "notes": "Vercel AI Gateway \u2013 multi-model proxy",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "unknown",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T02:22:11Z",
-        "freshness_status": "unknown"
-      },
-      "vendor": "anthropic",
-      "model": "claude-opus-4.6",
-      "hop": [
-        "vercel-ai-gateway"
-      ],
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-opus-4.6=1000000; LiteLLM openrouter/anthropic/claude-opus-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      }
-    },
-    "volcengine": {
-      "aliases": [
-        "volcengine/doubao-seed-1-8-251228"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://www.volcengine.com/docs/82379",
-      "signup_url": "https://www.volcengine.com/",
-      "watch_sources": [],
-      "notes": "Volcano Engine \u2013 Doubao, Kimi K2.5, GLM 4.7, DeepSeek V3.2 (CN)",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "unknown",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T02:22:11Z",
-        "freshness_status": "unknown"
-      },
-      "vendor": "volcengine",
-      "model": "doubao-seed-1-8-251228",
-      "hop": [],
-      "context_window": 245760,
-      "limits": {
-        "max_input_tokens": 245760
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'volcengine/doubao-seed-1-8-251228', so the figure stays unverified.",
-        "unknown_kind": "unlisted",
-        "unknown_reason": "no consulted source publishes a window for this model"
-      }
-    },
-    "volcengine-plan": {
-      "aliases": [
-        "volcengine-plan/ark-code-latest"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://www.volcengine.com/docs/82379",
-      "signup_url": "https://www.volcengine.com/",
-      "watch_sources": [],
-      "notes": "Volcano Engine \u2013 coding models (ark-code-latest, doubao-seed-code, kimi-k2.5, kimi-k2-thinking, glm-4.7)",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "unknown",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T02:22:11Z",
-        "freshness_status": "unknown"
-      },
-      "vendor": "volcengine",
-      "model": "ark-code-latest",
-      "hop": [],
-      "entry_type": "plan",
-      "context_window": 262144,
-      "limits": {
-        "max_input_tokens": 262144
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "derived_from": "model_caps[\"kimi-k2.6\"]",
-        "derived_from_value": 262144,
-        "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
-      }
-    },
-    "xai": {
-      "aliases": [
-        "grok-3"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://docs.x.ai/",
-      "signup_url": "https://x.ai/",
-      "watch_sources": [],
-      "notes": "xAI / Grok models",
-      "last_reviewed": "2026-04-01",
-      "pricing": {
-        "source_type": "registry-default",
-        "source_url": "",
-        "refreshed_at": "2026-04-01T02:22:11Z",
-        "freshness_status": "fresh",
-        "input_cost_per_1m": 3.0,
-        "output_cost_per_1m": 15.0
-      },
-      "vendor": "x-ai",
-      "model": "grok-3",
-      "hop": [],
-      "context_window": 131072,
-      "limits": {
-        "max_input_tokens": 131072
-      },
-      "context_evidence": {
-        "level": "confirmed",
-        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-        "source_model_id": "azure_ai/global/grok-3",
-        "as_of": "2026-09-12"
-      }
-    },
-    "amazon-bedrock": {
-      "aliases": [
-        "amazon/nova-pro-v1",
-        "amazon.nova-pro-v1",
-        "nova-pro",
-        "amazon/nova-lite-v1",
-        "amazon/nova-micro-v1",
-        "amazon/nova-2-lite-v1"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "tier_status": "active",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://docs.aws.amazon.com/nova/latest/userguide/what-is-nova.html",
-      "signup_url": "https://aws.amazon.com/bedrock/",
-      "watch_sources": [],
-      "notes": "Amazon Bedrock Nova family. Nova Pro context window (300k input) sourced from the LiteLLM registry entry amazon.nova-pro-v1; Nova 2 (Lite/Pro) raises the window to 1M tokens.",
-      "last_reviewed": "2026-09-11",
-      "capacity": {
-        "max_input_tokens": 300000,
-        "max_output_tokens": 10000,
-        "evidence": {
-          "level": "confirmed",
-          "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-          "as_of": "2026-09-11"
-        }
-      },
-      "vendor": "amazon",
-      "model": "nova-pro-v1",
-      "hop": [],
-      "context_window": 300000,
-      "limits": {
-        "max_input_tokens": 300000
-      },
-      "context_evidence": {
-        "level": "confirmed",
-        "source_url": "https://openrouter.ai/api/v1/models",
-        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-        "source_model_id": "amazon/nova-pro-v1",
-        "as_of": "2026-09-12"
-      }
-    },
-    "microsoft-phi": {
-      "aliases": [
-        "microsoft/phi-4",
-        "azure_ai/Phi-4",
-        "phi-4"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "tier_status": "active",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://azure.microsoft.com/en-us/products/phi",
-      "signup_url": "https://azure.microsoft.com/",
-      "watch_sources": [],
-      "notes": "Microsoft Phi family. Phi-4 (16k input) is the current flagship small model; Phi-4-mini raises the window to 131k. Context sourced from the LiteLLM registry entry azure_ai/Phi-4.",
-      "last_reviewed": "2026-09-11",
-      "capacity": {
-        "max_input_tokens": 16384,
-        "max_output_tokens": 16384,
-        "evidence": {
-          "level": "confirmed",
-          "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-          "as_of": "2026-09-11"
-        }
-      },
-      "vendor": "microsoft",
-      "model": "phi-4",
-      "hop": [],
-      "context_window": 16384,
-      "limits": {
-        "max_input_tokens": 16384
-      },
-      "context_evidence": {
-        "level": "confirmed",
-        "source_url": "https://openrouter.ai/api/v1/models",
-        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-        "source_model_id": "microsoft/phi-4",
-        "as_of": "2026-09-12"
-      }
-    },
-    "baidu-ernie": {
-      "aliases": [
-        "baidu/ernie-4.5-vl-424b-a47b",
-        "ernie-4.5",
-        "ernie-4.5-vl"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "tier_status": "active",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "medium",
-      "evidence_level": "official",
-      "official_source_url": "https://cloud.baidu.com/product/wenxinworkshop",
-      "signup_url": "https://cloud.baidu.com/",
-      "watch_sources": [],
-      "notes": "Baidu ERNIE 4.5 (Wenxin). Context window of 123000 input tokens sourced from the OpenRouter entry baidu/ernie-4.5-vl-424b-a47b.",
-      "last_reviewed": "2026-09-11",
-      "capacity": {
-        "max_input_tokens": 123000,
-        "max_output_tokens": 16000,
-        "evidence": {
-          "level": "confirmed",
-          "source_url": "https://openrouter.ai/api/v1/models",
-          "as_of": "2026-09-11"
-        }
-      },
-      "vendor": "baidu",
-      "model": "ernie-4.5-vl-424b-a47b",
-      "hop": [],
-      "context_window": 123000,
-      "limits": {
-        "max_input_tokens": 123000
-      },
-      "context_evidence": {
-        "level": "confirmed",
-        "source_url": "https://openrouter.ai/api/v1/models",
-        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-        "source_model_id": "baidu/ernie-4.5-vl-424b-a47b",
-        "as_of": "2026-09-12"
-      }
-    },
-    "tencent-hunyuan": {
-      "aliases": [
-        "tencent/hy3",
-        "hunyuan-3",
-        "tencent/hunyuan-a13b-instruct"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "tier_status": "active",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "medium",
-      "evidence_level": "official",
-      "official_source_url": "https://cloud.tencent.com/product/hunyuan",
-      "signup_url": "https://cloud.tencent.com/",
-      "watch_sources": [],
-      "notes": "Tencent Hunyuan 3 (hy3). Context window of 262144 input tokens sourced from the OpenRouter entry tencent/hy3; the hy4 preview raises it to 1048576.",
-      "last_reviewed": "2026-09-11",
-      "capacity": {
-        "max_input_tokens": 262144,
-        "max_output_tokens": 128000,
-        "evidence": {
-          "level": "confirmed",
-          "source_url": "https://openrouter.ai/api/v1/models",
-          "as_of": "2026-09-11"
-        }
-      },
-      "vendor": "tencent",
-      "model": "hunyuan-3",
-      "hop": [],
-      "context_window": 262144,
-      "limits": {
-        "max_input_tokens": 262144
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "No public listing found for 'hunyuan-3' in OpenRouter or LiteLLM. The entry's own notes cite the OpenRouter entry tencent/hy3 at 262144 input tokens; that figure is carried here as an orientation, not as a verified fact for hunyuan-3 itself."
-      }
-    },
-    "google-gemini-3-6-flash": {
-      "aliases": [
-        "google/gemini-3.6-flash",
-        "gemini-3.6-flash"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "tier_status": "active",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "signup_url": "https://aistudio.google.com/",
-      "watch_sources": [],
-      "notes": "Google Gemini 3.6 Flash. Context window (1M input) and output ceiling (65536) sourced from the OpenRouter and LiteLLM registry entries google/gemini-3.6-flash.",
-      "last_reviewed": "2026-09-11",
-      "capacity": {
-        "max_input_tokens": 1048576,
-        "max_output_tokens": 65536,
-        "evidence": {
-          "level": "confirmed",
-          "source_url": "https://openrouter.ai/api/v1/models",
-          "as_of": "2026-09-11"
-        }
-      },
-      "input_modalities": [
-        "text",
-        "image",
-        "audio"
-      ],
-      "output_modalities": [
-        "text"
-      ],
-      "vendor": "google",
-      "model": "gemini-3.6-flash",
-      "hop": [],
-      "context_window": 1048576,
-      "limits": {
-        "max_input_tokens": 1048576
-      },
-      "context_evidence": {
-        "level": "confirmed",
-        "source_url": "https://openrouter.ai/api/v1/models",
-        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-        "source_model_id": "google/gemini-3.6-flash",
-        "as_of": "2026-09-12"
-      }
-    },
-    "google-gemini-3-7-flash": {
-      "aliases": [
-        "google/gemini-3.7-flash",
-        "gemini-3.7-flash"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "tier_status": "active",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "signup_url": "https://aistudio.google.com/",
-      "watch_sources": [],
-      "notes": "Google Gemini 3.7 Flash. Context window (1M input) sourced from OpenRouter; output ceiling 65536 confirmed by OmniRoute antigravity and LiteLLM.",
-      "last_reviewed": "2026-09-11",
-      "capacity": {
-        "max_input_tokens": 1048576,
-        "max_output_tokens": 65536,
-        "evidence": {
-          "level": "confirmed",
-          "source_url": "https://openrouter.ai/api/v1/models",
-          "as_of": "2026-09-11"
-        }
-      },
-      "input_modalities": [
-        "text",
-        "image",
-        "audio"
-      ],
-      "output_modalities": [
-        "text"
-      ],
-      "vendor": "google",
-      "model": "gemini-3.7-flash",
-      "hop": [],
-      "context_window": 1048576,
-      "limits": {
-        "max_input_tokens": 1048576
-      },
-      "context_evidence": {
-        "level": "confirmed",
-        "source_url": "https://openrouter.ai/api/v1/models",
-        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-        "source_model_id": "google/gemini-3.7-flash",
-        "as_of": "2026-09-12"
-      }
-    },
-    "google-gemini-3-8-flash": {
-      "aliases": [
-        "google/gemini-3.8-flash",
-        "gemini-3.8-flash"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "tier_status": "active",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "signup_url": "https://aistudio.google.com/",
-      "watch_sources": [],
-      "notes": "Google Gemini 3.8 Flash. Context window (1M input) and output ceiling (65536) sourced from the OpenRouter and LiteLLM registry entries google/gemini-3.8-flash.",
-      "last_reviewed": "2026-09-11",
-      "capacity": {
-        "max_input_tokens": 1048576,
-        "max_output_tokens": 65536,
-        "evidence": {
-          "level": "confirmed",
-          "source_url": "https://openrouter.ai/api/v1/models",
-          "as_of": "2026-09-11"
-        }
-      },
-      "input_modalities": [
-        "text",
-        "image",
-        "audio"
-      ],
-      "output_modalities": [
-        "text"
-      ],
-      "vendor": "google",
-      "model": "gemini-3.8-flash",
-      "hop": [],
-      "context_window": 1048576,
-      "limits": {
-        "max_input_tokens": 1048576
-      },
-      "context_evidence": {
-        "level": "confirmed",
-        "source_url": "https://openrouter.ai/api/v1/models",
-        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-        "source_model_id": "google/gemini-3.8-flash",
-        "as_of": "2026-09-12"
-      }
-    },
-    "openai-gpt-oss-120b": {
-      "aliases": [
-        "openai/gpt-oss-120b",
-        "gpt-oss-120b"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "tier_status": "active",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "evidence_level": "official",
-      "official_source_url": "https://openai.com/open-model/",
-      "signup_url": "https://platform.openai.com/",
-      "watch_sources": [],
-      "notes": "OpenAI GPT-OSS-120B open-weight model. Context window (131072 input) sourced from OpenRouter; output ceiling 32768 from OmniRoute antigravity.",
-      "last_reviewed": "2026-09-11",
-      "capacity": {
-        "max_input_tokens": 131072,
-        "max_output_tokens": 32768,
-        "evidence": {
-          "level": "confirmed",
-          "source_url": "https://openrouter.ai/api/v1/models",
-          "as_of": "2026-09-11"
-        }
-      },
-      "input_modalities": [
-        "text"
-      ],
-      "output_modalities": [
-        "text"
-      ],
-      "vendor": "openai",
-      "model": "gpt-oss-120b",
-      "hop": [],
-      "context_window": 131072,
-      "limits": {
-        "max_input_tokens": 131072
-      },
-      "context_evidence": {
-        "level": "confirmed",
-        "source_url": "https://openrouter.ai/api/v1/models",
-        "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-        "source_model_id": "openai/gpt-oss-120b",
-        "as_of": "2026-09-12"
-      }
-    },
-    "claude-code": {
-      "aliases": [
-        "claude-code"
-      ],
-      "track": "stable",
-      "offer_track": "oauth",
-      "provider_type": "oauth",
-      "auth_modes": [
-        "oauth"
-      ],
-      "volatility": "low",
-      "notes": "Claude Code \u2013 special coding model via Anthropic OAuth",
-      "entry_type": "model",
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'claude-code', so the figure stays unverified.",
-        "unknown_kind": "runtime_dependent",
-        "unknown_reason": "oauth harness, not a model endpoint"
-      },
-      "vendor": "anthropic",
-      "model": "claude-code",
-      "hop": [],
-      "evidence_level": "official",
-      "official_source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
-      "signup_url": "https://console.anthropic.com/",
-      "watch_sources": [],
-      "last_reviewed": "2026-08-20"
-    },
-    "clawrouter": {
-      "aliases": [
-        "clawrouter"
-      ],
-      "track": "stable",
-      "offer_track": "marketplace",
-      "provider_type": "wallet-router",
-      "auth_modes": [
-        "wallet_x402"
-      ],
-      "volatility": "medium",
-      "notes": "BlockRun ClawRouter uses wallet/x402 routing modes rather than a classic API key",
-      "entry_type": "model",
       "context_window": 128000,
       "limits": {
         "max_input_tokens": 128000
@@ -2181,415 +2420,7 @@
         "level": "plausible",
         "as_of": "2026-09-12",
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openrouter/auto=2000000; LiteLLM openrouter/openrouter/auto=2000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      },
-      "vendor": "clawrouter",
-      "model": "auto-router",
-      "hop": [],
-      "evidence_level": "official",
-      "official_source_url": "https://blockrun.ai/docs/products/routing/clawrouter",
-      "signup_url": "https://blockrun.ai/",
-      "watch_sources": [],
-      "last_reviewed": "2026-08-20"
-    },
-    "cohere": {
-      "aliases": [
-        "cohere",
-        "command-a",
-        "command-r"
-      ],
-      "track": "stable",
-      "offer_track": "direct",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "low",
-      "notes": "Cohere Command A/R \u2014 enterprise-grade LLM with tool use",
-      "entry_type": "model",
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM command-a-03-2025=256000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      },
-      "vendor": "cohere",
-      "model": "command-a-03-2025",
-      "hop": [],
-      "evidence_level": "official",
-      "official_source_url": "https://docs.cohere.com/",
-      "signup_url": "https://dashboard.cohere.com/",
-      "watch_sources": [],
-      "last_reviewed": "2026-08-20"
-    },
-    "google-antigravity": {
-      "aliases": [
-        "google-antigravity",
-        "antigravity",
-        "agy"
-      ],
-      "track": "stable",
-      "offer_track": "oauth",
-      "provider_type": "oauth",
-      "auth_modes": [
-        "oauth"
-      ],
-      "volatility": "low",
-      "notes": "Google Antigravity (VS Code AI fork) \u2013 Google OAuth via Authorization Code + PKCE. client_id: 1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com. Token: ~/.gemini/oauth_creds.json. Antigravity's local interface is a gRPC language server (127.0.0.1:<ephemeral-port>/exa.language_server_pb.LanguageServerService/\u2026) \u2013 faigate bypasses it and calls the Google Generative Language API (generativelanguage.googleapis.com/v1beta/openai) directly with the OAuth token. Auth: faigate-auth google-antigravity  or sign in to Antigravity IDE.",
-      "entry_type": "model",
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter google/gemini-2.5-pro=1048576; LiteLLM deepinfra/google/gemini-2.5-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      },
-      "vendor": "google",
-      "model": "gemini-2.5-pro",
-      "hop": [
-        "antigravity"
-      ],
-      "evidence_level": "unofficial",
-      "official_source_url": "https://antigravity.dev/",
-      "signup_url": "https://antigravity.dev/",
-      "watch_sources": [],
-      "last_reviewed": "2026-08-20",
-      "evidence_level_note": "faigate's code table recorded this as 'observed' \u2014 a fourth level it invented outside the published enum. Mapped to 'unofficial', which carries the same meaning in this schema: the integration was seen to work, the vendor documents none. The original word is kept here so the mapping is visible, not silent."
-    },
-    "google-gemini-cli": {
-      "aliases": [
-        "google-gemini-cli",
-        "google-vertex"
-      ],
-      "track": "stable",
-      "offer_track": "oauth",
-      "provider_type": "oauth",
-      "auth_modes": [
-        "oauth"
-      ],
-      "volatility": "low",
-      "notes": "Google Gemini via Vertex AI \u2013 uses gcloud ADC; requires: gcloud auth login",
-      "entry_type": "model",
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter google/gemini-2.5-pro=1048576; LiteLLM deepinfra/google/gemini-2.5-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      },
-      "vendor": "google",
-      "model": "gemini-2.5-pro",
-      "hop": [
-        "gemini-cli"
-      ],
-      "evidence_level": "official",
-      "official_source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini",
-      "signup_url": "https://cloud.google.com/vertex-ai",
-      "watch_sources": [],
-      "last_reviewed": "2026-08-20"
-    },
-    "kilo-auto-balanced": {
-      "aliases": [
-        "kilo-auto/balanced",
-        "kilo-balanced"
-      ],
-      "track": "stable",
-      "offer_track": "gateway-paid",
-      "provider_type": "aggregator",
-      "auth_modes": [
-        "api_key",
-        "byok"
-      ],
-      "volatility": "medium",
-      "notes": "Kilo Auto Balanced lane \u2013 balanced routing through Kilo gateway",
-      "entry_type": "model",
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kilo-auto/balanced', so the figure stays unverified.",
-        "unknown_kind": "runtime_dependent",
-        "unknown_reason": "router tier \u2014 the window belongs to the model picked per request"
-      },
-      "vendor": "kilo",
-      "model": "tier-balanced",
-      "hop": [
-        "kilo-auto"
-      ],
-      "evidence_level": "official",
-      "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
-      "signup_url": "https://kilo.ai/",
-      "watch_sources": [],
-      "last_reviewed": "2026-08-20"
-    },
-    "kilo-auto-free": {
-      "aliases": [
-        "kilo-auto/free",
-        "kilo-free"
-      ],
-      "track": "free",
-      "offer_track": "free",
-      "provider_type": "aggregator",
-      "auth_modes": [
-        "api_key",
-        "byok"
-      ],
-      "volatility": "high",
-      "notes": "Kilo Auto Free lane \u2013 free-tier routing through Kilo gateway",
-      "entry_type": "model",
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openrouter/free=200000; LiteLLM openrouter/openrouter/free=200000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      },
-      "vendor": "kilo",
-      "model": "tier-free",
-      "hop": [
-        "kilo-auto"
-      ],
-      "evidence_level": "official",
-      "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
-      "signup_url": "https://kilo.ai/",
-      "watch_sources": [
-        {
-          "label": "free-llm-api-resources",
-          "url": "https://github.com/cheahjs/free-llm-api-resources"
-        }
-      ],
-      "last_reviewed": "2026-08-20"
-    },
-    "kilo-auto-frontier": {
-      "aliases": [
-        "kilo-auto/frontier",
-        "kilo-frontier"
-      ],
-      "track": "stable",
-      "offer_track": "gateway-paid",
-      "provider_type": "aggregator",
-      "auth_modes": [
-        "api_key",
-        "byok"
-      ],
-      "volatility": "medium",
-      "notes": "Kilo Auto Frontier lane \u2013 premium routing through Kilo gateway",
-      "entry_type": "model",
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kilo-auto/frontier', so the figure stays unverified.",
-        "unknown_kind": "runtime_dependent",
-        "unknown_reason": "router tier \u2014 the window belongs to the model picked per request"
-      },
-      "vendor": "kilo",
-      "model": "tier-frontier",
-      "hop": [
-        "kilo-auto"
-      ],
-      "evidence_level": "official",
-      "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
-      "signup_url": "https://kilo.ai/",
-      "watch_sources": [],
-      "last_reviewed": "2026-08-20"
-    },
-    "kilo-opus": {
-      "aliases": [
-        "anthropic/claude-opus-4.6",
-        "kilo-auto/frontier"
-      ],
-      "track": "stable",
-      "offer_track": "gateway-paid",
-      "provider_type": "aggregator",
-      "auth_modes": [
-        "api_key",
-        "byok"
-      ],
-      "volatility": "medium",
-      "notes": "Kilo paid Opus lane; useful when expiring Kilo credits should absorb premium reasoning traffic",
-      "entry_type": "model",
-      "context_window": 200000,
-      "limits": {
-        "max_input_tokens": 200000
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-opus-4.6=1000000; LiteLLM openrouter/anthropic/claude-opus-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      },
-      "vendor": "anthropic",
-      "model": "claude-opus-4-6",
-      "hop": [
-        "kilo"
-      ],
-      "evidence_level": "official",
-      "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
-      "signup_url": "https://kilo.ai/",
-      "watch_sources": [],
-      "last_reviewed": "2026-08-20"
-    },
-    "kilo-sonnet": {
-      "aliases": [
-        "anthropic/claude-sonnet-4.6",
-        "kilo-auto/frontier",
-        "kilo-auto/balanced"
-      ],
-      "track": "stable",
-      "offer_track": "gateway-paid",
-      "provider_type": "aggregator",
-      "auth_modes": [
-        "api_key",
-        "byok"
-      ],
-      "volatility": "medium",
-      "notes": "Kilo paid Sonnet lane; useful as the workhorse path when you want Kilo credits to absorb balanced coding traffic",
-      "entry_type": "model",
-      "context_window": 200000,
-      "limits": {
-        "max_input_tokens": 200000
-      },
-      "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-sonnet-4.6=1000000; LiteLLM openrouter/anthropic/claude-sonnet-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-      },
-      "vendor": "anthropic",
-      "model": "claude-sonnet-4-6",
-      "hop": [
-        "kilo"
-      ],
-      "evidence_level": "official",
-      "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
-      "signup_url": "https://kilo.ai/",
-      "watch_sources": [],
-      "last_reviewed": "2026-08-20"
-    },
-    "kiro": {
-      "aliases": [
-        "kiro",
-        "kr",
-        "kiro/claude-sonnet"
-      ],
-      "track": "free",
-      "offer_track": "free",
-      "provider_type": "aggregator",
-      "auth_modes": [
-        "oauth"
-      ],
-      "volatility": "high",
-      "notes": "Kiro free via AWS Builder ID OAuth \u2014 Claude Sonnet 4.5 unlimited",
-      "entry_type": "model",
-      "context_window": 128000,
-      "limits": {
-        "max_input_tokens": 128000
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kiro/claude-sonnet', so the figure stays unverified.",
-        "unknown_kind": "runtime_dependent",
-        "unknown_reason": "aggregator \u2014 the window belongs to the model picked per request"
-      },
-      "vendor": "anthropic",
-      "model": "claude-sonnet",
-      "hop": [
-        "kiro"
-      ],
-      "evidence_level": "official",
-      "official_source_url": "https://kiro.dev/",
-      "signup_url": "https://kiro.dev/",
-      "watch_sources": [
-        {
-          "label": "free-llm-api-resources",
-          "url": "https://github.com/cheahjs/free-llm-api-resources"
-        }
-      ],
-      "last_reviewed": "2026-08-20"
-    },
-    "longcat": {
-      "aliases": [
-        "longcat",
-        "lc",
-        "longcat/flash-lite"
-      ],
-      "track": "free",
-      "offer_track": "free",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "high",
-      "notes": "LongCat AI free tier: Flash-Lite, 50M tokens/day",
-      "entry_type": "model",
-      "context_window": 131072,
-      "limits": {
-        "max_input_tokens": 131072
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'longcat/flash-lite', so the figure stays unverified.",
-        "unknown_kind": "unlisted",
-        "unknown_reason": "no consulted source publishes a window for this model"
-      },
-      "vendor": "longcat",
-      "model": "flash-lite",
-      "hop": [],
-      "evidence_level": "official",
-      "official_source_url": "https://longcat.ai/",
-      "signup_url": "https://longcat.ai/",
-      "watch_sources": [
-        {
-          "label": "free-llm-api-resources",
-          "url": "https://github.com/cheahjs/free-llm-api-resources"
-        }
-      ],
-      "last_reviewed": "2026-08-20"
-    },
-    "nvidia-nim": {
-      "aliases": [
-        "nvidia-nim",
-        "nvidia",
-        "nim"
-      ],
-      "track": "free",
-      "offer_track": "free",
-      "provider_type": "direct",
-      "auth_modes": [
-        "api_key"
-      ],
-      "volatility": "medium",
-      "notes": "NVIDIA NIM free: 129 models, 40 RPM. DeepSeek-R1, Llama 405B, Qwen3 Coder 480B",
-      "entry_type": "model",
-      "context_window": 131072,
-      "limits": {
-        "max_input_tokens": 131072
-      },
-      "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'nvidia/nemotron', so the figure stays unverified.",
-        "unknown_kind": "unlisted",
-        "unknown_reason": "no consulted source publishes a window for this model"
-      },
-      "vendor": "nvidia",
-      "model": "nemotron",
-      "hop": [],
-      "evidence_level": "official",
-      "official_source_url": "https://build.nvidia.com/",
-      "signup_url": "https://build.nvidia.com/explore/discover",
-      "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      }
     },
     "pollinations": {
       "aliases": [
@@ -2604,7 +2435,7 @@
         "none"
       ],
       "volatility": "high",
-      "notes": "Pollinations free text+image+video+audio \u2014 no API key required",
+      "notes": "Pollinations free text+image+video+audio — no API key required",
       "entry_type": "model",
       "context_window": 128000,
       "limits": {
@@ -2647,7 +2478,7 @@
         "oauth"
       ],
       "volatility": "high",
-      "notes": "Qoder free via Google OAuth \u2014 kimi-k2-thinking unlimited",
+      "notes": "Qoder free via Google OAuth — kimi-k2-thinking unlimited",
       "entry_type": "model",
       "context_window": 128000,
       "limits": {
@@ -2705,6 +2536,351 @@
       "signup_url": "https://dashscope.aliyun.com/",
       "watch_sources": [],
       "last_reviewed": "2026-08-20"
+    },
+    "qwen-portal": {
+      "aliases": [
+        "qwen-portal/coder-model"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "none"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://help.aliyun.com/zh/model-studio/getting-started/what-is-model-studio",
+      "signup_url": "https://modelscope.cn/",
+      "watch_sources": [],
+      "notes": "Qwen OAuth (free tier) – device-code flow; requires: openclaw plugins enable qwen-portal-auth",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "unknown",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T02:22:11Z",
+        "freshness_status": "unknown"
+      },
+      "vendor": "qwen",
+      "model": "coder-model",
+      "hop": [],
+      "context_window": 131072,
+      "limits": {
+        "max_input_tokens": 131072
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'coder-model', so the figure stays unverified.",
+        "unknown_kind": "unlisted",
+        "unknown_reason": "no consulted source publishes a window for this model"
+      }
+    },
+    "synthetic": {
+      "aliases": [
+        "synthetic/hf:MiniMaxAI/MiniMax-M2.1"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://synthetic.com/docs",
+      "signup_url": "https://synthetic.com/",
+      "watch_sources": [],
+      "notes": "Synthetic – Anthropic-compat; exposes HuggingFace models (MiniMax, etc.)",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "unknown",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T02:22:11Z",
+        "freshness_status": "unknown"
+      },
+      "vendor": "minimax",
+      "model": "MiniMax-M2.1",
+      "hop": [
+        "synthetic"
+      ],
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM gmi/MiniMaxAI/MiniMax-M2.1=196608. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      }
+    },
+    "tencent-hunyuan": {
+      "aliases": [
+        "tencent/hy3",
+        "hunyuan-3",
+        "tencent/hunyuan-a13b-instruct"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "medium",
+      "notes": "Tencent Hunyuan 3 (hy3). Context window of 262144 input tokens sourced from the OpenRouter entry tencent/hy3; the hy4 preview raises it to 1048576.",
+      "context_window": 262144,
+      "limits": {
+        "max_input_tokens": 262144
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "No public listing found for 'hunyuan-3' in OpenRouter or LiteLLM. The entry's own notes cite the OpenRouter entry tencent/hy3 at 262144 input tokens; that figure is carried here as an orientation, not as a verified fact for hunyuan-3 itself."
+      },
+      "vendor": "tencent",
+      "model": "hunyuan-3",
+      "hop": [],
+      "evidence_level": "official",
+      "official_source_url": "https://cloud.tencent.com/product/hunyuan",
+      "signup_url": "https://cloud.tencent.com/",
+      "watch_sources": [],
+      "last_reviewed": "2026-09-11",
+      "capacity": {
+        "max_input_tokens": 262144,
+        "max_output_tokens": 128000,
+        "evidence": {
+          "level": "confirmed",
+          "source_url": "https://openrouter.ai/api/v1/models",
+          "as_of": "2026-09-11"
+        }
+      },
+      "tier_status": "active"
+    },
+    "vercel-ai-gateway": {
+      "aliases": [
+        "vercel-ai-gateway/anthropic/claude-opus-4.6"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://vercel.com/docs/ai/ai-gateway",
+      "signup_url": "https://vercel.com/",
+      "watch_sources": [],
+      "notes": "Vercel AI Gateway – multi-model proxy",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "unknown",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T02:22:11Z",
+        "freshness_status": "unknown"
+      },
+      "vendor": "anthropic",
+      "model": "claude-opus-4.6",
+      "hop": [
+        "vercel-ai-gateway"
+      ],
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-opus-4.6=1000000; LiteLLM openrouter/anthropic/claude-opus-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      }
+    },
+    "vllm": {
+      "aliases": [
+        "local-model"
+      ],
+      "track": "stable",
+      "offer_track": "local",
+      "provider_type": "local",
+      "auth_modes": [
+        "none"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://github.com/vllm-project/vllm",
+      "signup_url": "https://vllm.ai/",
+      "watch_sources": [],
+      "notes": "vLLM – high-throughput local inference engine.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "free-local",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh"
+      },
+      "vendor": "local",
+      "model": "local-model",
+      "hop": [
+        "vllm"
+      ],
+      "context_window": 128000,
+      "limits": {
+        "max_input_tokens": 128000
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'vllm/your-model-id', so the figure stays unverified.",
+        "unknown_kind": "runtime_dependent",
+        "unknown_reason": "local runner — the window is whatever model the operator loaded"
+      }
+    },
+    "volcengine": {
+      "aliases": [
+        "volcengine/doubao-seed-1-8-251228",
+        "volcengine-plan/ark-code-latest"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://www.volcengine.com/docs/82379",
+      "signup_url": "https://www.volcengine.com/",
+      "watch_sources": [],
+      "notes": "Volcano Engine – Doubao, Kimi K2.5, GLM 4.7, DeepSeek V3.2 (CN)",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "unknown",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T02:22:11Z",
+        "freshness_status": "unknown"
+      },
+      "vendor": "volcengine",
+      "model": "doubao-seed-1-8-251228",
+      "hop": [],
+      "context_window": 245760,
+      "limits": {
+        "max_input_tokens": 245760
+      },
+      "context_evidence": {
+        "level": "unconfirmed",
+        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'volcengine/doubao-seed-1-8-251228', so the figure stays unverified.",
+        "unknown_kind": "unlisted",
+        "unknown_reason": "no consulted source publishes a window for this model"
+      }
+    },
+    "volcengine-plan": {
+      "aliases": [
+        "volcengine-plan/ark-code-latest"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://www.volcengine.com/docs/82379",
+      "signup_url": "https://www.volcengine.com/",
+      "watch_sources": [],
+      "notes": "Volcano Engine – Doubao, Kimi K2.5, GLM 4.7, DeepSeek V3.2 (CN)",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "unknown",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T02:22:11Z",
+        "freshness_status": "unknown"
+      },
+      "entry_type": "plan",
+      "vendor": "volcengine",
+      "model": "ark-code-latest",
+      "hop": [],
+      "context_window": 262144,
+      "limits": {
+        "max_input_tokens": 262144
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "derived_from": "model_caps[\"kimi-k2.6\"]",
+        "derived_from_value": 262144,
+        "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
+      }
+    },
+    "xai": {
+      "aliases": [
+        "grok-3"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://docs.x.ai/",
+      "signup_url": "https://x.ai/",
+      "watch_sources": [],
+      "notes": "xAI / Grok models",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "registry-default",
+        "source_url": "",
+        "refreshed_at": "2026-04-01T02:22:11Z",
+        "freshness_status": "fresh",
+        "input_cost_per_1m": 3.0,
+        "output_cost_per_1m": 15.0
+      },
+      "vendor": "x-ai",
+      "model": "grok-3",
+      "hop": [],
+      "context_window": 131072,
+      "limits": {
+        "max_input_tokens": 131072
+      },
+      "context_evidence": {
+        "level": "confirmed",
+        "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "source_model_id": "azure_ai/global/grok-3",
+        "as_of": "2026-09-12"
+      }
+    },
+    "zai": {
+      "aliases": [
+        "z-ai/glm-5"
+      ],
+      "track": "stable",
+      "offer_track": "direct",
+      "provider_type": "direct",
+      "auth_modes": [
+        "api_key"
+      ],
+      "volatility": "low",
+      "evidence_level": "official",
+      "official_source_url": "https://docs.z.ai/",
+      "signup_url": "https://z.ai/",
+      "watch_sources": [],
+      "notes": "Z-AI GLM models.",
+      "last_reviewed": "2026-04-01",
+      "pricing": {
+        "source_type": "provider-docs",
+        "source_url": "https://z.ai/pricing",
+        "refreshed_at": "2026-04-01T12:00:00Z",
+        "freshness_status": "fresh"
+      },
+      "vendor": "z-ai",
+      "model": "glm-5",
+      "hop": [],
+      "context_window": 131072,
+      "limits": {
+        "max_input_tokens": 131072
+      },
+      "context_evidence": {
+        "level": "plausible",
+        "as_of": "2026-09-12",
+        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter z-ai/glm-4.7=204800; LiteLLM openrouter/z-ai/glm-4.7=202752. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      }
     }
   },
   "model_caps": {
@@ -2947,7 +3123,7 @@
           "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
         ],
         "as_of": "2026-09-11",
-        "note": "OpenRouter tail qwen3-coder=262144 and LiteLLM openrouter/qwen/qwen3-coder\u2248262100 both confirm catalog value 262144."
+        "note": "OpenRouter tail qwen3-coder=262144 and LiteLLM openrouter/qwen/qwen3-coder≈262100 both confirm catalog value 262144."
       }
     },
     "glm-5.3": {
