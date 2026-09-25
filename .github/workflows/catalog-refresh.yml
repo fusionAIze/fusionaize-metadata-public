@@ -57,48 +57,48 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         run: |
           python3 -c "
-import json, os, sys
+          import json, os, sys
 
-old = json.load(open('/tmp/catalog.before.json'))
-new = json.load(open('providers/catalog.v1.json'))
+          old = json.load(open('/tmp/catalog.before.json'))
+          new = json.load(open('providers/catalog.v1.json'))
 
-ROUTING_FIELDS = {'vendor', 'model', 'variant', 'hop', 'baseUrl', 'auth_modes'}
+          ROUTING_FIELDS = {'vendor', 'model', 'variant', 'hop', 'baseUrl', 'auth_modes'}
 
-changes = []
-routing = False
+          changes = []
+          routing = False
 
-for key in sorted(new['providers']):
-    if key not in old['providers']:
-        changes.append(f'- **{key}** — NEW entry')
-        routing = True
-        continue
-    o = old['providers'][key]
-    n = new['providers'][key]
-    for f in ROUTING_FIELDS:
-        ov = o.get(f)
-        nv = n.get(f)
-        if ov != nv:
+          for key in sorted(new['providers']):
+          if key not in old['providers']:
+          changes.append(f'- **{key}** — NEW entry')
+          routing = True
+          continue
+          o = old['providers'][key]
+          n = new['providers'][key]
+          for f in ROUTING_FIELDS:
+          ov = o.get(f)
+          nv = n.get(f)
+          if ov != nv:
             changes.append(f'- **{key}**.{f}: \`{json.dumps(ov)}\` → \`{json.dumps(nv)}\`')
             routing = True
 
-for key in sorted(old['providers']):
-    if key not in new['providers']:
-        changes.append(f'- **{key}** — REMOVED entry')
-        routing = True
+          for key in sorted(old['providers']):
+          if key not in new['providers']:
+          changes.append(f'- **{key}** — REMOVED entry')
+          routing = True
 
-os.makedirs('/tmp/pr-metadata', exist_ok=True)
-with open('/tmp/pr-metadata/routing-changes.txt', 'w') as f:
-    f.write('\n'.join(changes))
+          os.makedirs('/tmp/pr-metadata', exist_ok=True)
+          with open('/tmp/pr-metadata/routing-changes.txt', 'w') as f:
+          f.write('\n'.join(changes))
 
-with open('/tmp/pr-metadata/has-routing-effect.txt', 'w') as f:
-    f.write('true' if routing else 'false')
+          with open('/tmp/pr-metadata/has-routing-effect.txt', 'w') as f:
+          f.write('true' if routing else 'false')
 
-print(f'Routing effect: {\"YES\" if routing else \"no\"}')
-if changes:
-    print('Changes detected:')
-    for c in changes:
-        print(f'  {c}')
-"
+          print(f'Routing effect: {\"YES\" if routing else \"no\"}')
+          if changes:
+          print('Changes detected:')
+          for c in changes:
+          print(f'  {c}')
+          "
 
       - name: Read routing metadata
         id: metadata
