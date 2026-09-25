@@ -1,0 +1,167 @@
+# Scheduled Catalog Refresh
+#
+# Periodically regenerates catalog.v1.json from the provider folders
+# (scripts/build-catalog.py).  If the generated catalog differs from the
+# checked-in version, this workflow opens a pull request with the diff.
+# A no-change run produces no PR and no noise.
+#
+# Runs only on GitHub (the CI mirror).  The load is on GitHub Actions
+# infrastructure — no self-hosted service in the request path.
+#
+# See docs/CATALOG-REFRESH.md for background and review guidance.
+
+name: Scheduled Catalog Refresh
+
+on:
+  schedule:
+    # Weekly: Monday 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    if: ${{ github.server_url == 'https://github.com' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Snapshot current catalog
+        run: cp providers/catalog.v1.json /tmp/catalog.before.json
+
+      - name: Generate catalog from provider folders
+        run: python scripts/build-catalog.py
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if ! git diff --quiet -- providers/catalog.v1.json; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to catalog — nothing to do."
+          fi
+
+      - name: Detect routing-relevant changes
+        id: routing
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          python3 -c "
+          import json, os, sys
+
+          old = json.load(open('/tmp/catalog.before.json'))
+          new = json.load(open('providers/catalog.v1.json'))
+
+          ROUTING_FIELDS = {'vendor', 'model', 'variant', 'hop', 'baseUrl', 'auth_modes'}
+
+          changes = []
+          routing = False
+
+          for key in sorted(new['providers']):
+          if key not in old['providers']:
+          changes.append(f'- **{key}** — NEW entry')
+          routing = True
+          continue
+          o = old['providers'][key]
+          n = new['providers'][key]
+          for f in ROUTING_FIELDS:
+          ov = o.get(f)
+          nv = n.get(f)
+          if ov != nv:
+            changes.append(f'- **{key}**.{f}: \`{json.dumps(ov)}\` → \`{json.dumps(nv)}\`')
+            routing = True
+
+          for key in sorted(old['providers']):
+          if key not in new['providers']:
+          changes.append(f'- **{key}** — REMOVED entry')
+          routing = True
+
+          os.makedirs('/tmp/pr-metadata', exist_ok=True)
+          with open('/tmp/pr-metadata/routing-changes.txt', 'w') as f:
+          f.write('\n'.join(changes))
+
+          with open('/tmp/pr-metadata/has-routing-effect.txt', 'w') as f:
+          f.write('true' if routing else 'false')
+
+          print(f'Routing effect: {\"YES\" if routing else \"no\"}')
+          if changes:
+          print('Changes detected:')
+          for c in changes:
+          print(f'  {c}')
+          "
+
+      - name: Read routing metadata
+        id: metadata
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          echo "has_routing=$(cat /tmp/pr-metadata/has-routing-effect.txt)" >> "$GITHUB_OUTPUT"
+          {
+            echo 'routing_changes<<EOF'
+            cat /tmp/pr-metadata/routing-changes.txt
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE="$(date +%Y-%m-%d)"
+          BRANCH="chore/catalog-refresh/${DATE}"
+          TITLE="Scheduled catalog refresh — ${DATE}"
+
+          # Build PR body
+          cat > /tmp/pr-body.md <<PRBODY
+          ## Summary
+
+          Automated regeneration of \`providers/catalog.v1.json\` from the
+          provider folders (\`scripts/build-catalog.py\`).
+
+          **Date:** ${DATE}
+          **Source:** \`$(git rev-parse HEAD)\`
+
+          PRBODY
+
+          ROUTING="${{ steps.metadata.outputs.has_routing }}"
+          if [ "${ROUTING}" = "true" ]; then
+            cat >> /tmp/pr-body.md <<PRBODY
+
+          ---
+
+          ## ⚠️ Routing Effect
+
+          This refresh changes one or more **routing-relevant fields** (vendor,
+          model, variant, hop, baseUrl, auth_modes).  The following entries
+          are affected:
+
+          ${{ steps.metadata.outputs.routing_changes }}
+
+          Review these changes carefully — a routing change can affect which
+          provider handles a request.
+
+          PRBODY
+          fi
+
+          git checkout -b "${BRANCH}"
+          git add providers/catalog.v1.json
+          git commit -m "chore(catalog): scheduled refresh ${DATE}"
+
+          # Push to the GitHub mirror (this repo).  The canonical upstream
+          # receives changes through the normal merge workflow.
+          git push origin "${BRANCH}"
+
+          gh pr create \
+            --title "${TITLE}" \
+            --body-file /tmp/pr-body.md \
+            --label "catalog" \
+            --label "automated"
