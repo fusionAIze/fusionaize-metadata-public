@@ -547,7 +547,7 @@
       "watch_sources": [],
       "last_reviewed": "2026-08-20"
     },
-    "deepseek-chat": {
+    "deepseek-v4-flash": {
       "aliases": [
         "deepseek-chat",
         "ds-v4",
@@ -597,7 +597,7 @@
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter deepseek/deepseek-chat=163840; LiteLLM deepseek-chat=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
       }
     },
-    "deepseek-reasoner": {
+    "deepseek-v4-pro": {
       "aliases": [
         "deepseek-chat",
         "ds-v4",
