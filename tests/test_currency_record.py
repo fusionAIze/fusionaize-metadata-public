@@ -279,6 +279,154 @@ def test_relationship_documented():
 
 
 # ---------------------------------------------------------------------------
+# Criterion 4 — provider-self vs foreign-registry evidence levels
+# ---------------------------------------------------------------------------
+
+def test_provider_self_confirmed_window():
+    """An entry whose context window the provider itself confirmed (level=confirmed).
+
+    The provider's own documentation is the primary source — no intermediary,
+    no aggregator, no derivation. This is the highest evidence tier.
+    """
+    doc = {
+        "schema_version": "fusionaize-provider-catalog/v1.7",
+        "providers": {
+            "acme-self-attested": {
+                "vendor": "acme",
+                "model": "gpt-future",
+                "input_modalities": ["text"],
+                "output_modalities": ["text"],
+                "last_reviewed": "2026-09-26",
+                "context_window": 128000,
+                "limits": {"max_input_tokens": 128000},
+                "context_evidence": {
+                    "level": "confirmed",
+                    "source_url": "https://acme.example.com/docs/models",
+                    "as_of": "2026-09-26",
+                },
+                "freshness": {
+                    "context_window": {
+                        "level": "confirmed",
+                        "source": "ACME official model documentation",
+                        "source_url": "https://acme.example.com/docs/models",
+                        "confirmed_at": "2026-09-26",
+                    },
+                },
+            },
+        },
+    }
+    assert _errors(doc) == []
+    entry = doc["providers"]["acme-self-attested"]
+    assert entry["freshness"]["context_window"]["level"] == "confirmed"
+    assert entry["context_evidence"]["level"] == "confirmed"
+
+
+def test_registry_confirmed_window_plausible():
+    """An entry whose context window a foreign registry confirmed (level=plausible).
+
+    A third-party aggregator (e.g. OpenRouter, LiteLLM) reports the value.
+    Because it is not the provider itself speaking, the evidence is plausible
+    — a step below confirmed, but still sourced.
+    """
+    doc = {
+        "schema_version": "fusionaize-provider-catalog/v1.7",
+        "providers": {
+            "third-party-sourced": {
+                "vendor": "third",
+                "model": "party-model",
+                "input_modalities": ["text"],
+                "output_modalities": ["text"],
+                "last_reviewed": "2026-09-26",
+                "context_window": 256000,
+                "limits": {"max_input_tokens": 256000},
+                "context_evidence": {
+                    "level": "plausible",
+                    "source_url": "https://openrouter.ai/api/v1/models",
+                    "source_model_id": "third/party-model",
+                    "as_of": "2026-09-26",
+                },
+                "freshness": {
+                    "context_window": {
+                        "level": "plausible",
+                        "source": "OpenRouter /v1/models",
+                        "source_url": "https://openrouter.ai/api/v1/models",
+                        "confirmed_at": "2026-09-26",
+                    },
+                },
+            },
+        },
+    }
+    assert _errors(doc) == []
+    entry = doc["providers"]["third-party-sourced"]
+    assert entry["freshness"]["context_window"]["level"] == "plausible"
+    assert entry["context_evidence"]["level"] == "plausible"
+
+
+def test_two_evidence_levels_are_different():
+    """The two entries carry DIFFERENT evidence levels.
+
+    A provider-self attestation is `confirmed`; a foreign registry
+    attestation is `plausible`. A consumer can distinguish who said what.
+    """
+    provider_self = {
+        "schema_version": "fusionaize-provider-catalog/v1.7",
+        "providers": {
+            "provider-self": {
+                "vendor": "self",
+                "model": "attested",
+                "input_modalities": ["text"],
+                "output_modalities": ["text"],
+                "last_reviewed": "2026-09-26",
+                "context_window": 128000,
+                "limits": {"max_input_tokens": 128000},
+                "freshness": {
+                    "context_window": {
+                        "level": "confirmed",
+                        "source": "Provider docs",
+                        "source_url": "https://self.example.com/docs",
+                        "confirmed_at": "2026-09-26",
+                    },
+                },
+            },
+        },
+    }
+    registry = {
+        "schema_version": "fusionaize-provider-catalog/v1.7",
+        "providers": {
+            "registry-sourced": {
+                "vendor": "reg",
+                "model": "sourced",
+                "input_modalities": ["text"],
+                "output_modalities": ["text"],
+                "last_reviewed": "2026-09-26",
+                "context_window": 256000,
+                "limits": {"max_input_tokens": 256000},
+                "freshness": {
+                    "context_window": {
+                        "level": "plausible",
+                        "source": "OpenRouter /v1/models",
+                        "source_url": "https://openrouter.ai/api/v1/models",
+                        "confirmed_at": "2026-09-26",
+                    },
+                },
+            },
+        },
+    }
+    assert _errors(provider_self) == []
+    assert _errors(registry) == []
+
+    ps_level = provider_self["providers"]["provider-self"]["freshness"]["context_window"]["level"]
+    reg_level = registry["providers"]["registry-sourced"]["freshness"]["context_window"]["level"]
+
+    assert ps_level == "confirmed", f"provider-self must be confirmed, got {ps_level!r}"
+    assert reg_level == "plausible", f"registry must be plausible, got {reg_level!r}"
+    assert ps_level != reg_level, (
+        f"the two evidence levels must differ: "
+        f"provider-self={ps_level!r}, registry={reg_level!r}"
+    )
+
+
+# ---------------------------------------------------------------------------
 # RED PROOF — assertion against bcd6ff6
 # ---------------------------------------------------------------------------
 
@@ -342,8 +490,8 @@ def test_suite_count():
     import re
     m = re.search(r"(\d+) tests collected", result.stdout)
     count = int(m.group(1)) if m else 0
-    assert count >= 83, (
-        f"suite must have at least 83 tests (70 baseline + 13 new); "
+    assert count >= 87, (
+        f"suite must have at least 87 tests (70 baseline + 17 new); "
         f"got {count}. Collected output:\n{result.stdout}"
     )
 
