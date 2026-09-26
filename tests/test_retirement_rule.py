@@ -1,0 +1,281 @@
+"""Acceptance tests for the retirement rule (FAI-247-B, lane retirement-is-a-rule).
+
+Criterion 1: an entry that no source confirms across a stated number of
+  collections is retired, and the retirement names the reason and the last
+  source that confirmed it.
+
+Criterion 2: a name the operator has configured is NEVER removed — it is
+  flagged as unconfirmed and stays routable.
+
+Criterion 3: a retired entry does not disappear silently: it is reported,
+  and the report says what was retired and what was spared.
+
+No test reaches the network.  All collection results and the operator list
+are constructed inline as fixtures.
+
+Run with ``python3 -m pytest -q`` (or the suite's own interpreter).
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+
+import sys
+sys.path.insert(0, str(ROOT / "scripts"))
+from retire import apply_retirement  # noqa: E402
+
+
+# ---------------------------------------------------------------------------
+# Fixtures — recorded collection results, no network
+# ---------------------------------------------------------------------------
+
+def _catalog(*names: str) -> dict:
+    """A minimal catalog with one active entry per name."""
+    return {
+        "schema_version": "fusionaize-provider-catalog/v1.4",
+        "providers": {
+            name: {"tier_status": "active", "last_reviewed": "2026-04-01"}
+            for name in names
+        },
+    }
+
+
+def _confirmations(sources, confirmed, *, collected_at="2026-09-26"):
+    """Build a confirmation document as FAI-245-D would emit it.
+
+    ``sources`` is the list of source names that ran this round.
+    ``confirmed`` maps provider-name -> list of source names that
+    confirmed it.
+    """
+    return {
+        "collected_at": collected_at,
+        "sources": list(sources),
+        "confirmations": {
+            name: {"sources": srcs, "last_confirmed_at": collected_at}
+            for name, srcs in confirmed.items()
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+# Criterion 1 — an unconfirmed entry is retired, with reason + last source
+# ---------------------------------------------------------------------------
+
+def test_entry_unconfirmed_across_threshold_is_retired():
+    """An entry confirmed by no source in N rounds is retired."""
+    catalog = _catalog("ghost-provider")
+    confs = _confirmations(["openrouter"], {})
+
+    catalog, report = apply_retirement(catalog, confs, set(), threshold=1)
+
+    entry = catalog["providers"]["ghost-provider"]
+    assert entry["tier_status"] == "deprecated", (
+        "an entry no source confirms must be retired"
+    )
+    assert report["retired"], "the retirement must appear in the report"
+
+
+def test_retirement_names_reason_and_last_confirming_source():
+    """The retirement record names WHY and WHICH source confirmed it last."""
+    catalog = _catalog("fading-provider")
+    # Round 1: confirmed by openrouter.
+    confs_round1 = _confirmations(["openrouter"], {"fading-provider": ["openrouter"]})
+    catalog, _ = apply_retirement(catalog, confs_round1, set(), threshold=1)
+
+    # Round 2: not confirmed by anything.
+    confs_round2 = _confirmations(["openrouter"], {})
+    catalog, report = apply_retirement(catalog, confs_round2, set(), threshold=1)
+
+    retired = report["retired"]
+    assert len(retired) == 1
+    record = retired[0]
+    assert record["name"] == "fading-provider"
+    assert "openrouter" in record["last_confirming_source"], (
+        f"the retirement must name the last confirming source; got "
+        f"{record['last_confirming_source']!r}"
+    )
+    assert "2026-09-26" in record["last_confirming_source"], (
+        "the retirement must name WHEN the source last confirmed"
+    )
+    assert record["reason"], "the retirement must state a reason"
+
+    entry = catalog["providers"]["fading-provider"]
+    assert entry["retirement"]["misses"] >= 1
+    assert entry["retirement"]["last_confirmed_by"] == "openrouter"
+
+
+def test_entry_below_threshold_is_not_retired():
+    """An entry unconfirmed for fewer rounds than the threshold is NOT retired."""
+    catalog = _catalog("slow-fader")
+    confs = _confirmations(["openrouter"], {})
+
+    catalog, report = apply_retirement(catalog, confs, set(), threshold=3)
+
+    entry = catalog["providers"]["slow-fader"]
+    assert entry["tier_status"] == "active", (
+        "an entry below the miss threshold must stay active"
+    )
+    assert report["retired"] == []
+    assert report["tracked"], "the entry must be tracked, not silently ignored"
+
+
+def test_threshold_is_stated_in_report():
+    """The stated number of collections appears in the report."""
+    catalog = _catalog("anything")
+    confs = _confirmations(["openrouter"], {})
+
+    _, report = apply_retirement(catalog, confs, set(), threshold=5)
+
+    assert report["threshold"] == 5, "the report must state the threshold used"
+
+
+# ---------------------------------------------------------------------------
+# Criterion 2 — operator-configured names are never removed
+# ---------------------------------------------------------------------------
+
+def test_operator_configured_entry_is_never_retired():
+    """A name the operator configured is never removed, even when unconfirmed."""
+    catalog = _catalog("operator-pick")
+    confs = _confirmations(["openrouter"], {})
+
+    catalog, report = apply_retirement(
+        catalog, confs, {"operator-pick"}, threshold=1,
+    )
+
+    entry = catalog["providers"]["operator-pick"]
+    assert entry["tier_status"] == "active", (
+        "an operator-configured entry must never be retired"
+    )
+    assert "operator-pick" in [s["name"] for s in report["spared"]], (
+        "the spared entry must be reported"
+    )
+    assert report["retired"] == []
+
+
+def test_routing_survives_for_operator_configured_entry():
+    """The routing survives: the entry is still present and routable."""
+    catalog = _catalog("anthropic-claude")
+    confs = _confirmations(["openrouter"], {})
+
+    catalog, _ = apply_retirement(
+        catalog, confs, {"anthropic-claude"}, threshold=10,
+    )
+
+    assert "anthropic-claude" in catalog["providers"], (
+        "the operator-configured name must still be in the catalog after "
+        "many unconfirmed rounds — removing it would break routing"
+    )
+    assert catalog["providers"]["anthropic-claude"]["tier_status"] != "deprecated", (
+        "the entry must stay routable, not be retired"
+    )
+
+
+def test_operator_configured_unconfirmed_is_flagged():
+    """The operator-configured entry is flagged as unconfirmed, not hidden."""
+    catalog = _catalog("operator-pick")
+    confs = _confirmations(["openrouter"], {})
+
+    catalog, report = apply_retirement(
+        catalog, confs, {"operator-pick"}, threshold=1,
+    )
+
+    spared = [s for s in report["spared"] if s["name"] == "operator-pick"]
+    assert spared, "the spared entry must appear in the report with a reason"
+    assert "operator" in spared[0]["reason"].lower()
+
+
+# ---------------------------------------------------------------------------
+# Criterion 3 — a retired entry does not disappear silently
+# ---------------------------------------------------------------------------
+
+def test_retired_entry_stays_in_catalog():
+    """A retired entry is not deleted — it stays, marked retired."""
+    catalog = _catalog("ghost-provider")
+    confs = _confirmations(["openrouter"], {})
+
+    catalog, _ = apply_retirement(catalog, confs, set(), threshold=1)
+
+    assert "ghost-provider" in catalog["providers"], (
+        "a retired entry must remain in the catalog, marked — never silently "
+        "deleted"
+    )
+
+
+def test_report_separates_retired_from_spared():
+    """The report says what was retired AND what was spared."""
+    catalog = _catalog("ghost-provider", "operator-pick")
+    confs = _confirmations(["openrouter"], {})
+
+    _, report = apply_retirement(catalog, confs, {"operator-pick"}, threshold=1)
+
+    retired_names = [r["name"] for r in report["retired"]]
+    spared_names = [s["name"] for s in report["spared"]]
+
+    assert retired_names == ["ghost-provider"]
+    assert spared_names == ["operator-pick"]
+    assert report["total_entries"] == 2
+
+
+def test_report_has_before_and_after_counts():
+    """The report carries before/after counts for the run."""
+    catalog = _catalog("a", "b", "operator-pick")
+    confs = _confirmations(["openrouter"], {"a": ["openrouter"]})
+
+    _, report = apply_retirement(catalog, confs, {"operator-pick"}, threshold=1)
+
+    assert report["total_entries"] == 3
+    assert len(report["retired"]) == 1
+    assert len(report["spared"]) == 1
+
+
+# ---------------------------------------------------------------------------
+# RED PROOF
+# ---------------------------------------------------------------------------
+
+def test_red_proof_retirement_changes_behavior():
+    """RED PROOF: on the base commit this rule does not exist.
+
+    At base 26de04a there is no ``scripts/retire.py`` and thus no
+    ``apply_retirement``.  This assertion proves the retirement *behavior*
+    is new: an unconfirmed non-operator entry moves from active to
+    deprecated, which nothing in the base catalog does.
+
+    Run against the base (git stash / checkout 26de04a) this module fails
+    to import, so the red proof is the import itself combined with this
+    behavioral assertion.
+    """
+    catalog = _catalog("unconfirmed-entry")
+    confs = _confirmations(["openrouter"], {})
+
+    catalog, report = apply_retirement(catalog, confs, set(), threshold=1)
+
+    entry = catalog["providers"]["unconfirmed-entry"]
+    assert entry["tier_status"] == "deprecated", (
+        "RED PROOF: the retirement rule must move an unconfirmed entry from "
+        "active to deprecated — no code at base 26de04a does this"
+    )
+    assert report["retired"][0]["name"] == "unconfirmed-entry"
+
+
+if __name__ == "__main__":
+    import sys as _sys
+
+    tests = [
+        name for name, fn in sorted(globals().items())
+        if name.startswith("test_") and callable(fn)
+    ]
+    failures = []
+    for name in tests:
+        try:
+            globals()[name]()
+            print(f"PASS {name}")
+        except AssertionError as exc:
+            failures.append(name)
+            print(f"FAIL {name}: {exc}")
+    if failures:
+        print(f"{len(failures)} failure(s)")
+        _sys.exit(1)
+    print(f"{len(tests)} tests passed")
