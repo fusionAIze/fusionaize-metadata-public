@@ -17,8 +17,12 @@ v1.0:
   - Fails when the branch list is empty (guards against silent pass)
 """
 
-import yaml
+import json
+import shutil
 import subprocess
+import tempfile
+
+import yaml
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -108,6 +112,126 @@ def test_every_workflow_triggers_on_a_real_branch():
     assert not violations, (
         "Workflow trigger branch violations:\n  " + "\n  ".join(violations)
     )
+
+
+# ---------------------------------------------------------------------------
+# FAI-247-G — CI's "Validate catalog schema" step must actually validate
+# ---------------------------------------------------------------------------
+# Criterion 2: the test must prove that the SCHEDULED STEP validates — not
+# that jsonschema validates.  The approach:
+#
+#   1. Parse ci.yml, find step "Validate catalog schema"
+#   2. Static check: no "skipping", no "optional", calls a real validator
+#   3. Dynamic check: run the step's command AS-WRITTEN against the real
+#      catalog (must pass) and against a deliberately broken fixture (must
+#      fail)
+#   4. Riegel: the test MUST fail if the step is missing or its command is
+#      empty
+#
+# RED PROOF: on bcd6ff6 the step echoes "skipping for now" and exits 0.
+# The static check catches "skipping" and the test fails with a real
+# assertion.  The RED PROOF is demonstrated by running this test against
+# bcd6ff6's ci.yml — see the report for the output.
+# ---------------------------------------------------------------------------
+
+SCHEMA_PATH = ROOT / "schemas" / "provider-catalog.v1.schema.json"
+CATALOG_PATH = ROOT / "providers" / "catalog.v1.json"
+
+
+def _ci_step_run(name: str) -> str | None:
+    """Extract the ``run`` script of a ci.yml step by its name."""
+    path = WORKFLOWS_DIR / "ci.yml"
+    parsed = yaml.safe_load(path.read_text())
+    for step in parsed.get("jobs", {}).get("validate", {}).get("steps", []):
+        if step.get("name") == name:
+            return step.get("run")
+    return None
+
+
+def test_ci_validate_catalog_schema_step_actually_validates():
+    """The 'Validate catalog schema' step in ci.yml must actually check.
+
+    Static checks (Riegel):
+      - step exists
+      - run script is non-empty
+      - no 'skipping' or 'optional' keywords
+      - calls a real JSON Schema validator (jsonschema / Draft202012Validator)
+
+    Dynamic checks:
+      - run the step's command against the real catalog  -> exit 0
+      - run the step's command against a broken fixture  -> exit != 0 with ERROR
+
+    RED PROOF: against bcd6ff6 all static checks fire because the step was
+    a no-op that echoed "skipping for now" and always exited 0.
+    """
+    run = _ci_step_run("Validate catalog schema")
+    # Riegel: step must exist
+    assert run is not None, (
+        "ci.yml must have a step named 'Validate catalog schema'"
+    )
+    # Riegel: command must not be empty
+    assert run.strip(), (
+        "Validate catalog schema step must have a non-empty run script"
+    )
+
+    run_lower = run.lower()
+    # Static: no skipping or optional keywords
+    assert "skipping" not in run_lower, (
+        "Step contains 'skipping' — it is a no-op, not actual validation"
+    )
+    assert "optional" not in run_lower, (
+        "Step is marked 'optional' — failures would be silently ignored"
+    )
+    # Static: must call a real JSON Schema validator
+    assert "Draft202012Validator" in run or "jsonschema" in run, (
+        "Step must call a real JSON Schema validator "
+        "(Draft202012Validator or jsonschema)"
+    )
+
+    # Dynamic: run the step's command against the real catalog (must pass)
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        (tmp / "schemas").mkdir()
+        (tmp / "providers").mkdir()
+        shutil.copy2(SCHEMA_PATH, tmp / "schemas" / "provider-catalog.v1.schema.json")
+        shutil.copy2(CATALOG_PATH, tmp / "providers" / "catalog.v1.json")
+
+        result = subprocess.run(
+            ["bash", "-c", run],
+            capture_output=True, text=True, cwd=tmp,
+        )
+        assert result.returncode == 0, (
+            f"Real catalog must pass validation, but got exit code "
+            f"{result.returncode}:\n{result.stdout}\n{result.stderr}"
+        )
+        assert "no errors" in result.stdout.lower(), (
+            f"Expected success message, got:\n{result.stdout}"
+        )
+
+    # Dynamic: run the step's command against a deliberately broken fixture
+    # (must fail with a non-zero exit code and ERROR output)
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        (tmp / "schemas").mkdir()
+        (tmp / "providers").mkdir()
+        shutil.copy2(SCHEMA_PATH, tmp / "schemas" / "provider-catalog.v1.schema.json")
+
+        broken = tmp / "providers" / "catalog.v1.json"
+        broken.write_text(json.dumps({
+            "schema_version": "fusionaize-provider-catalog/v1.4",
+            "providers": "not-an-object",
+        }))
+
+        result = subprocess.run(
+            ["bash", "-c", run],
+            capture_output=True, text=True, cwd=tmp,
+        )
+        assert result.returncode != 0, (
+            f"Broken catalog must fail validation, but exited 0:\n{result.stdout}"
+        )
+        assert "ERROR" in result.stdout, (
+            f"Broken catalog must produce ERROR output, got:\n{result.stdout}"
+        )
 
 
 def test_ci_workflow_uses_main():
