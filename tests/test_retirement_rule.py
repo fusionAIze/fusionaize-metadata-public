@@ -232,6 +232,138 @@ def test_report_has_before_and_after_counts():
 
 
 # ---------------------------------------------------------------------------
+# Criterion 4 — retirement is reversible
+# ---------------------------------------------------------------------------
+
+def test_later_confirmation_revives_retired_entry():
+    """A later confirmation revives the entry without hand editing."""
+    catalog = _catalog("comeback")
+    # Retire it.
+    catalog, _ = apply_retirement(
+        catalog, _confirmations(["openrouter"], {}), set(), threshold=1,
+    )
+    assert catalog["providers"]["comeback"]["tier_status"] == "deprecated"
+
+    # A later collection confirms it again.
+    confs = _confirmations(["openrouter"], {"comeback": ["openrouter"]})
+    catalog, report = apply_retirement(catalog, confs, set(), threshold=1)
+
+    entry = catalog["providers"]["comeback"]
+    assert entry["tier_status"] == "active", (
+        "a later confirmation must revive the entry without hand editing"
+    )
+    assert entry["retirement"]["misses"] == 0
+    assert "comeback" in [r["name"] for r in report["revived"]]
+
+
+def test_revival_clears_the_retirement_reason():
+    """Reviving clears the retirement reason so the entry is clean again."""
+    catalog = _catalog("comeback")
+    catalog, _ = apply_retirement(
+        catalog, _confirmations(["openrouter"], {}), set(), threshold=1,
+    )
+    assert "reason" in catalog["providers"]["comeback"]["retirement"]
+
+    confs = _confirmations(["openrouter"], {"comeback": ["openrouter"]})
+    catalog, _ = apply_retirement(catalog, confs, set(), threshold=1)
+
+    assert "reason" not in catalog["providers"]["comeback"]["retirement"], (
+        "the stale retirement reason must be cleared on revival"
+    )
+
+
+def test_multiple_retire_revive_cycles_are_idempotent():
+    """Retire, revive, retire again — each transition is clean."""
+    catalog = _catalog("yo-yo")
+
+    # Retire
+    catalog, r1 = apply_retirement(
+        catalog, _confirmations(["openrouter"], {}), set(), threshold=1,
+    )
+    assert len(r1["retired"]) == 1
+    assert catalog["providers"]["yo-yo"]["tier_status"] == "deprecated"
+
+    # Revive
+    catalog, r2 = apply_retirement(
+        catalog, _confirmations(["openrouter"], {"yo-yo": ["openrouter"]}),
+        set(), threshold=1,
+    )
+    assert len(r2["revived"]) == 1
+    assert catalog["providers"]["yo-yo"]["tier_status"] == "active"
+
+    # Retire again
+    catalog, r3 = apply_retirement(
+        catalog, _confirmations(["openrouter"], {}), set(), threshold=1,
+    )
+    assert len(r3["retired"]) == 1
+    assert catalog["providers"]["yo-yo"]["tier_status"] == "deprecated"
+
+
+# ---------------------------------------------------------------------------
+# Criterion 5 — guards against the rule itself
+# ---------------------------------------------------------------------------
+
+def test_empty_source_set_retires_nothing():
+    """THE most important guard: an empty set of collected sources must not
+    retire anything, no matter how many misses the entries have."""
+    catalog = _catalog("a", "b", "c")
+    confs = _confirmations([], {})  # no sources ran, nothing confirmed
+
+    catalog, report = apply_retirement(catalog, confs, set(), threshold=1)
+
+    for name in ("a", "b", "c"):
+        assert catalog["providers"][name]["tier_status"] == "active", (
+            f"{name} was retired on an empty source set — a rule that "
+            "deletes everything when input is missing is worse than no rule"
+        )
+    assert report["retired"] == []
+    assert report.get("aborted") is True, (
+        "the report must state that the run was aborted because no source "
+        "was collected"
+    )
+
+
+def test_empty_source_set_reported_as_aborted():
+    """An aborted run names the reason it did not act."""
+    catalog = _catalog("a")
+    confs = _confirmations([], {})
+
+    _, report = apply_retirement(catalog, confs, set(), threshold=1)
+
+    assert report.get("aborted") is True
+    assert "no source" in report.get("abort_reason", "").lower()
+
+
+def test_failed_collection_is_reported_and_retires_nothing():
+    """A collection that FAILS (marked failed) retires nothing."""
+    catalog = _catalog("a", "b")
+    confs = {
+        "collected_at": "2026-09-26",
+        "sources": ["openrouter"],
+        "failed": True,
+        "confirmations": {},
+    }
+
+    catalog, report = apply_retirement(catalog, confs, set(), threshold=1)
+
+    assert catalog["providers"]["a"]["tier_status"] == "active"
+    assert catalog["providers"]["b"]["tier_status"] == "active"
+    assert report["retired"] == []
+    assert report.get("aborted") is True
+
+
+def test_empty_catalog_and_empty_sources_do_not_crash_or_retire():
+    """Both empty: no crash, no retirement."""
+    catalog = {"schema_version": "v1.4", "providers": {}}
+    confs = _confirmations([], {})
+
+    catalog, report = apply_retirement(catalog, confs, set(), threshold=1)
+
+    assert report["retired"] == []
+    assert report["total_entries"] == 0
+
+
+# ---------------------------------------------------------------------------
 # RED PROOF
 # ---------------------------------------------------------------------------
 
