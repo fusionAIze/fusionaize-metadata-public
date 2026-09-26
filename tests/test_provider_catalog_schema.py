@@ -56,7 +56,14 @@ CATALOG_PATH = ROOT / "providers" / "catalog.v1.json"
 # Provider keys that may be dropped from the catalog without the shrink guard
 # failing. Add a key here ONLY when the removal is a conscious decision, with
 # the reason captured in the commit that edits this list.
-ALLOWED_REMOVALS: set[str] = set()
+ALLOWED_REMOVALS: set[str] = {
+    # FAI-247-D: deepseek-chat and deepseek-reasoner are legacy API names that
+    # DeepSeek itself considers aliases of deepseek-v4-flash and deepseek-v4-pro
+    # respectively.  They are now expressed as aliases only; the current-model
+    # entries (deepseek-v4-flash, deepseek-v4-pro) carry the facts.
+    "deepseek-chat",
+    "deepseek-reasoner",
+}
 
 ROUTING_MODES = [
     "auto/auto",

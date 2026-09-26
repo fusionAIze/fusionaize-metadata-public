@@ -43,7 +43,7 @@
       "maxOutputTokens": null,
       "supportsReasoning": false,
       "toolCalling": true,
-      "_source": "deepseek-chat",
+      "_source": "deepseek-v4-flash",
       "_original": {
         "tier_status": "active",
         "pricing": {
@@ -73,7 +73,7 @@
       "maxOutputTokens": null,
       "supportsReasoning": false,
       "toolCalling": true,
-      "_source": "deepseek-reasoner",
+      "_source": "deepseek-v4-pro",
       "_original": {
         "tier_status": "active",
         "pricing": {
