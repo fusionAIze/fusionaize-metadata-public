@@ -1087,6 +1087,42 @@ def test_min_measured_red_proof():
     )
 
 
+# ---------------------------------------------------------------------------
+# FAI-247-G — schema validation RED PROOF: deliberately broken fixture fails
+# ---------------------------------------------------------------------------
+
+def test_schema_validation_rejects_deliberately_broken_catalog():
+    """The schema validator (same logic as ci.yml's Validate catalog schema step)
+    must reject a deliberately broken catalog.
+
+    A broken fixture (e.g. a catalog whose providers value is not an object)
+    must produce at least one validation error.  This proves the step actually
+    checks, rather than silently passing.
+    """
+    schema = _load_schema()
+
+    # Fixture: required "providers" key missing entirely.
+    broken = {"schema_version": "fusionaize-provider-catalog/v1.4"}
+    errors = sorted(
+        Draft202012Validator(schema).iter_errors(broken),
+        key=lambda e: str(e.path),
+    )
+    assert errors, (
+        "schema validation must reject a catalog missing the required "
+        "'providers' key"
+    )
+
+    # Fixture: providers value is not an object.
+    broken2 = {"schema_version": "fusionaize-provider-catalog/v1.4", "providers": "not-an-object"}
+    errors2 = sorted(
+        Draft202012Validator(schema).iter_errors(broken2),
+        key=lambda e: str(e.path),
+    )
+    assert errors2, (
+        "schema validation must reject a catalog whose 'providers' is not an object"
+    )
+
+
 if __name__ == "__main__":
     tests = [
         name for name, fn in sorted(globals().items())

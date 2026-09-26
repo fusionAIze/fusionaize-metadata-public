@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   schedule:
     - cron: '0 0 * * 1'
 
@@ -37,12 +37,14 @@ jobs:
           count=$(jq -r '.providers | keys | length' providers/catalog.v1.json)
           echo "✓ Found $count unique provider IDs"
           
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Validate catalog schema
         run: |
-          if [ -f "schemas/provider-catalog.v1.schema.json" ]; then
-            echo "Schema validation requires Python and jsonschema, skipping for now"
-            echo "Note: Schema validation is optional"
-          fi
+          pip install -q jsonschema
+          python3 -c "import json,sys;from jsonschema import Draft202012Validator;s=json.load(open('schemas/provider-catalog.v1.schema.json'));c=json.load(open('providers/catalog.v1.json'));e=sorted(Draft202012Validator(s).iter_errors(c),key=lambda e:str(e.path));[print('ERROR: '+' -> '.join(str(p) for p in x.path)+': '+x.message) for x in e];(print('Catalog validates against schema - no errors.') if not e else sys.exit(1))"
           
       - name: Validate sources structure
         run: |
