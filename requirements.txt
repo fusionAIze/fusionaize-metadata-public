@@ -1,0 +1,6 @@
+# Test suite dependencies.
+# A fresh checkout can install these and run the full test suite:
+#   pip install -r requirements.txt && python3 -m pytest -q
+jsonschema>=4.20,<5
+PyYAML>=6.0,<7
+pytest>=7.0,<9
