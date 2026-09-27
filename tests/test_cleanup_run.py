@@ -321,17 +321,37 @@ def test_retire_report_numbers_are_the_real_ones(retire_report):
     )
 
 
-def test_report_numbers_agree_with_the_lists(retire_report):
-    """The counts are not free-floating — they match the lists."""
+def test_report_numbers_agree_with_the_lists(retire_report, confirmations,
+                                             catalog):
+    """The counts are not free-floating — they match the lists.
+
+    ``refreshed`` and ``revived`` are the two buckets a *confirmed* entry
+    can land in, so together they must cover exactly the entries the
+    collection confirmed — no more, no fewer.  That is an independent
+    relation, not a restatement of the count.
+    """
     assert retire_report["retired_count"] == len(retire_report["retired"])
     assert retire_report["spared_count"] == len(retire_report["spared"])
     assert retire_report["refreshed_count"] == len(retire_report["refreshed"])
     assert retire_report["tracked_count"] == len(
         retire_report.get("tracked", []))
-    assert retire_report["refreshed_count"] == (
-        len(retire_report["revived"]) + retire_report["refreshed_count"]
-        - len(retire_report["revived"])
-    ), "refreshed_count must be the confirmed entries that were not revived"
+
+    # The rule iterates every catalog entry and counts a confirmed one
+    # as refreshed (or revived).  So the two buckets together must equal
+    # exactly the confirmed names that are catalog entries — the run does
+    # not skip the FAI-247-C folders, it counts their confirmations too.
+    confirmed_in_catalog = {
+        name for name in confirmations["confirmations"]
+        if name in catalog["providers"]
+    }
+    assert retire_report["refreshed_count"] + retire_report["revived_count"] == (
+        len(confirmed_in_catalog)
+    ), (
+        "every confirmed entry is refreshed or revived: "
+        f"refreshed={retire_report['refreshed_count']} + "
+        f"revived={retire_report['revived_count']} must equal the "
+        f"{len(confirmed_in_catalog)} entries the collection confirmed"
+    )
 
 
 def test_report_categories_partition_all_66_entries(retire_report):
@@ -620,33 +640,59 @@ def test_empty_operator_list_makes_retire_fail(operator_names):
 def test_control_without_the_guard_empties_the_operator_routes(operator_names):
     """Control: with the operator guard deleted, the operator routes fall.
 
-    Proves the guard is load-bearing.  Given the same inputs, the
-    guarded rule keeps every name on the operator list out of the
-    retired set; the unguarded copy retires operator names that the
-    guarded rule spared.
+    Proves the guard is load-bearing by *differencing* the two rules on
+    the input the guard exists for — an EMPTY operator list.  Only then
+    does deleting the guard change the outcome:
+
+    * the guarded rule refuses (non-zero exit, nothing retired);
+    * the unguarded copy accepts and retires the entries the guarded
+      rule would have spared, because with no operator names every
+      configured route counts as unconfirmed.
+
+    A *present* operator list never reaches the guard, so comparing the
+    two rules with one is a tautology that also holds at the lane base.
+    This test therefore uses the empty list and asserts the outcomes
+    differ; on ``5332e90`` (no guard) both copies accept, the outcomes
+    are identical, and this assertion fails.
     """
     import tempfile
 
+    assert operator_names, "precondition: the real operator list is not empty"
+
     with tempfile.TemporaryDirectory() as tmp:
+        empty = Path(tmp) / "empty-operator.json"
+        empty.write_text("[]")
         unguarded = _rule_without_operator_guard(RETIRE_SCRIPT, Path(tmp))
-        guarded = _run_rule(RETIRE_SCRIPT, OPERATOR_PATH)
-        control = _run_rule(unguarded, OPERATOR_PATH)
+        guarded = _run_rule(RETIRE_SCRIPT, empty)
+        control = _run_rule(unguarded, empty)
 
-    assert guarded.returncode == 0, guarded.stderr
+    # The guarded rule refuses the empty list outright.
+    assert guarded.returncode != 0, (
+        "the guarded rule must refuse an empty operator list; it exited "
+        f"{guarded.returncode}:\n{guarded.stdout}"
+    )
     guarded_report = json.loads(guarded.stdout)
-    guarded_retired = _retired_names(guarded_report)
-
-    assert not (guarded_retired & set(operator_names)), (
-        "the guarded rule retired an operator route; it must spare them all"
+    assert _retired_names(guarded_report) == set(), (
+        "the guarded rule retired entries despite the empty operator list"
     )
 
-    assert control.returncode == 0, control.stderr
-    # The unguarded copy against the real operator list is the same rule
-    # as the guarded one — the guard is not what spares these names.
+    # The unguarded copy accepts the very same input and retires routes.
+    assert control.returncode == 0, (
+        "the control must accept the empty list — deleting the guard has "
+        f"to be what makes it fatal; it exited {control.returncode}:\n"
+        f"{control.stderr}"
+    )
     control_report = json.loads(control.stdout)
-    assert _retired_names(control_report) == guarded_retired, (
-        "deleting the guard must not change the outcome for a *present* "
-        "operator list — the guard only exists for the empty case"
+    control_retired = _retired_names(control_report)
+
+    assert control_retired != _retired_names(guarded_report), (
+        "deleting the guard must change the outcome for an empty operator "
+        "list — otherwise the guard is not load-bearing and this control "
+        "proves nothing"
+    )
+    assert control_retired, (
+        "the unguarded rule must demonstrate the harm the guard prevents "
+        "by retiring routes the guarded rule kept"
     )
 
 
@@ -736,8 +782,8 @@ def test_catalog_rebuild_is_stable():
 # asserts the observable result of the cleanup run, not a detail of the
 # rule.
 #
-# The whole file at ``5332e90``: ``24 failed, 11 passed``, and the
-# failures are ``19 AssertionError`` / ``5 KeyError`` — the keys the
+# The whole file at ``5332e90``: ``25 failed, 10 passed``, and the
+# failures are ``20 AssertionError`` / ``6 KeyError`` — the keys the
 # report gained on this branch.  No ``CollectionError``, ``ImportError``,
 # ``AttributeError``, ``NameError`` or ``TypeError``: the tests reach
 # real behaviour and reject it.
