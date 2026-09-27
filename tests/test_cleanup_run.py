@@ -865,26 +865,73 @@ def test_all_confirmed_entries_refreshed(retire_report, catalog, confirmations):
 # ── AC4: unknowns are named, not guessed ────────────────────────────────
 
 def test_deprecated_entries_state_the_absence_of_a_source(retire_report):
-    """A retired entry either names the last source — or says there was none.
+    """A retired entry says plainly that no source ever confirmed it.
 
-    Every entry retired by this run was confirmed by no source, ever: its
-    ``last_confirming_source`` is ``None``, and the report says so plainly.
-    What it must never do is dress the absence up as the sentinel string
-    ``"unknown on unknown"`` — a made-up source name and date that read as
-    a fact.
+    Every entry this run retired was confirmed by no source, ever: its
+    ``last_confirming_source`` is ``None`` — the absence, reported as
+    such.  What it must never do is dress that absence up as the sentinel
+    ``"unknown on unknown"``, a made-up source name and date that read as
+    a fact.  The two assertions below pin both halves: the value is
+    ``None``, and it is not the sentinel *or any string* — a fake source
+    name is rejected even if it does not contain the word "unknown".
     """
     for item in retire_report["retired"]:
         last_src = item["last_confirming_source"]
-        if last_src is None:
-            assert item["name"] in EXPECTED_RETIRED, (
-                f"{item['name']}: no confirming source recorded, but it is "
-                f"not one of the never-confirmed entries {sorted(EXPECTED_RETIRED)}"
-            )
-            continue
-        assert "unknown" not in last_src.lower(), (
-            f"{item['name']}: last_confirming_source={last_src!r} — absence "
-            f"must be reported as null, not as a fake source name"
+        assert last_src is None, (
+            f"{item['name']}: last_confirming_source={last_src!r} — no source "
+            f"ever confirmed this entry, and the report must say so as "
+            f"``None``, never as a fabricated source name or the sentinel "
+            f"``unknown on unknown``"
         )
+        assert item["name"] in EXPECTED_RETIRED, (
+            f"{item['name']}: no confirming source recorded, but it is "
+            f"not one of the never-confirmed entries {sorted(EXPECTED_RETIRED)}"
+        )
+
+
+def test_last_confirming_source_is_not_always_null():
+    """Positive control: the field *can* carry a real source and date.
+
+    The test above asserts every retired entry has ``None``; on its own
+    that would also pass if the rule hardcoded ``None`` for every entry,
+    proof of nothing.  This drives the same rule to the other branch — an
+    entry that *was* confirmed in an earlier round and has since gone
+    unconfirmed past the threshold — and asserts the report names the
+    source it last saw.  Only together do the two tests show the null in
+    the run's report is a real absence and not a constant.
+    """
+    import copy
+
+    if str(ROOT / "scripts") not in sys.path:
+        sys.path.insert(0, str(ROOT / "scripts"))
+    from retire import apply_retirement  # noqa: PLC0415
+
+    catalog = _pre_rule_catalog()
+    name = sorted(EXPECTED_RETIRED)[0]
+    # A retirement already on the record: the entry was confirmed by
+    # ``openrouter`` in an earlier round, then stopped being confirmed.
+    catalog["providers"][name]["retirement"] = {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-01",
+    }
+    # This round: that entry gets no confirmation at all, everyone else
+    # still does — so it crosses the threshold alone.
+    confirmations = json.loads(CONFIRMATIONS_PATH.read_text())
+    confirmations["confirmations"].pop(name, None)
+
+    _, report = apply_retirement(
+        copy.deepcopy(catalog), confirmations,
+        set(json.loads(OPERATOR_PATH.read_text())), 1,
+    )
+    retired = {r["name"]: r for r in report["retired"]}
+    assert name in retired, (
+        f"{name}: expected the entry to be retired once it lost its source"
+    )
+    assert retired[name]["last_confirming_source"] == "openrouter on 2026-09-01", (
+        f"{name}: the report must name the source that last confirmed it; "
+        f"got {retired[name]['last_confirming_source']!r}"
+    )
 
 
 def test_confirmed_entries_have_real_last_confirmed_by(
