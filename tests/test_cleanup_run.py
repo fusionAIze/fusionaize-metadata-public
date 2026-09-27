@@ -11,6 +11,12 @@ repository:
 ``/tmp/confirmations.json``   59 confirmations from three sources
 ``/tmp/operator-list.json``   the 38 names the operator has configured
 
+``tests/fai247f_inputs.py`` derives both from the raw collection and
+operator documents and reproduces them byte-for-byte, so the inputs are
+reproducible rather than hand-carried::
+
+    python tests/fai247f_inputs.py
+
 ``retire.py`` is invoked WITHOUT ``--write``: it applies the rule to the
 catalog as it is on disk today and prints the report.  Nothing in this
 file mutates the checked-in catalog except the rebuild-stability
