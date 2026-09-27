@@ -456,11 +456,18 @@ RETIRE = ROOT / "scripts" / "retire.py"
 
 
 def _run_cli(catalog_path, survey_path, operator_path, threshold, *extra):
-    """Run scripts/retire.py as a process and return the CompletedProcess."""
+    """Run scripts/retire.py as a process and return the CompletedProcess.
+
+    The flag is ``--confirmations``: the CLI takes the collector's survey
+    through it.  Passing a flag the parser does not know makes argparse
+    exit 2 on its own, which would satisfy a ``returncode != 0``
+    assertion without the rule ever running — the tests below would pass
+    for a reason that has nothing to do with the guard they pin.
+    """
     return subprocess.run(
         [sys.executable, str(RETIRE),
          "--catalog", str(catalog_path),
-         "--survey", str(survey_path),
+         "--confirmations", str(survey_path),
          "--operator", str(operator_path),
          "--threshold", str(threshold),
          *extra],
