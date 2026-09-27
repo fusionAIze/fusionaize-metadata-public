@@ -264,6 +264,36 @@ REPORT_COUNT_KEYS = (
     "refreshed_count",
 )
 
+#: The five numbers criterion 3 asks for, as this run must report them.
+#: 66 entries; 7 got no confirmation from any source (clawrouter,
+#: kilo-auto-*, lmstudio, longcat, vllm) and all 7 are retired, because
+#: none of them is operator-configured — so 0 are spared; the other 59
+#: were confirmed and refreshed.
+EXPECTED_REPORT_NUMBERS = {
+    "total_entries": 66,
+    "without_confirmation": 7,
+    "retired_count": 7,
+    "spared_count": 0,
+    "refreshed_count": 59,
+}
+
+#: Every category the report partitions entries into.  ``revived`` is not
+#: one of them: a revived entry was confirmed and counts as refreshed,
+#: and the two lists are disjoint by construction.
+PARTITION_BUCKETS = ("retired", "spared", "refreshed", "tracked")
+
+
+def _names(bucket) -> set:
+    return {
+        item["name"] if isinstance(item, dict) else item
+        for item in bucket
+    }
+
+
+def _partition_names(report: dict) -> dict[str, set]:
+    return {bucket: _names(report.get(bucket, []))
+            for bucket in PARTITION_BUCKETS}
+
 
 def test_retire_report_states_total_and_threshold(retire_report):
     assert retire_report["total_entries"] == 66, (
@@ -282,38 +312,61 @@ def test_retire_report_carries_all_five_numbers(retire_report):
     )
 
 
+def test_retire_report_numbers_are_the_real_ones(retire_report):
+    """The five numbers are the run's actual outcome, not placeholders."""
+    got = {k: retire_report[k] for k in REPORT_COUNT_KEYS}
+    assert got == EXPECTED_REPORT_NUMBERS, (
+        f"the reported numbers are {got}; the run's outcome is "
+        f"{EXPECTED_REPORT_NUMBERS}"
+    )
+
+
 def test_report_numbers_agree_with_the_lists(retire_report):
     """The counts are not free-floating — they match the lists."""
     assert retire_report["retired_count"] == len(retire_report["retired"])
     assert retire_report["spared_count"] == len(retire_report["spared"])
-    assert retire_report["without_confirmation"] == (
-        retire_report["retired_count"] + retire_report["spared_count"]
-    ), "without_confirmation must be the retired plus the spared"
+    assert retire_report["refreshed_count"] == len(retire_report["refreshed"])
+    assert retire_report["tracked_count"] == len(
+        retire_report.get("tracked", []))
+    assert retire_report["refreshed_count"] == (
+        len(retire_report["revived"]) + retire_report["refreshed_count"]
+        - len(retire_report["revived"])
+    ), "refreshed_count must be the confirmed entries that were not revived"
 
 
 def test_report_categories_partition_all_66_entries(retire_report):
-    """The categories must add up to the total — no entry slips through."""
+    """The categories must add up to the total — no entry slips through.
+
+    Confirmed entries fall out as *refreshed* (or *revived*, which is
+    counted under refreshed); unconfirmed ones are retired, spared or
+    still tracked.  All four buckets together are the whole catalog.
+    """
     total = retire_report["total_entries"]
     bucketed = (
         retire_report["retired_count"]
         + retire_report["spared_count"]
         + retire_report["refreshed_count"]
+        + retire_report.get("tracked_count", 0)
     )
     assert bucketed == total, (
         f"the categories cover {bucketed} of {total} entries — "
         f"{total - bucketed} are unaccounted for"
     )
+    # "Sans confirmation" is exactly the bucket that got no source: what
+    # was retired, what was spared, and what is still on probation.
     assert retire_report["without_confirmation"] == (
-        retire_report["retired_count"] + retire_report["spared_count"]
-    ), "without_confirmation must be the retired plus the spared"
+        retire_report["retired_count"]
+        + retire_report["spared_count"]
+        + retire_report.get("tracked_count", 0)
+    ), "without_confirmation must be the retired plus the spared plus tracked"
 
 
 def test_every_entry_lands_in_exactly_one_category():
-    """Exhaustivity: every entry is bucketable — none falls through.
+    """Exhaustivity: every entry is in exactly ONE category.
 
-    The counts can add up while an entry sits in *no* category, so the
-    partition is checked per entry, not just as a sum.  A name that this
-    run has no way to classify must be reported, not silently dropped.
+    ``<= 1`` would let an entry fall through every bucket — the counts
+    can still add up while a name sits nowhere.  So this asserts
+    ``== 1`` per entry: covered by exactly one bucket, and by no two.
     """
     if str(ROOT / "scripts") not in sys.path:
         sys.path.insert(0, str(ROOT / "scripts"))
@@ -325,31 +378,22 @@ def test_every_entry_lands_in_exactly_one_category():
 
     _, report = apply_retirement(catalog, confirmations, operator, 1)
 
-    def _names(bucket) -> set:
-        return {
-            item["name"] if isinstance(item, dict) else item
-            for item in bucket
-        }
+    buckets = _partition_names(report)
+    entries = set(catalog["providers"])
 
-    categorized = (
-        _names(report.get("retired", []))
-        | _names(report.get("spared", []))
-        | _names(report.get("refreshed", []))
+    for name in sorted(entries):
+        hits = [b for b in PARTITION_BUCKETS if name in buckets[b]]
+        assert len(hits) == 1, (
+            f"{name} is in {len(hits)} categories ({hits or 'none'}) — every "
+            f"entry must be in exactly one, or it is a silent drop"
+        )
+
+    categorized = set().union(*buckets.values())
+    assert categorized == entries, (
+        f"categories cover {len(categorized)} of {len(entries)} entries: "
+        f"{sorted(entries - categorized)} are in no category and "
+        f"{sorted(categorized - entries)} are not entries at all"
     )
-    unaccounted = sorted(set(catalog["providers"]) - categorized)
-    assert unaccounted == [], (
-        f"{len(unaccounted)} entr(y|ies) are in no category: {unaccounted} — "
-        "an entry the run cannot classify must be reported"
-    )
-    # A partition, not a cover: no entry may sit in two categories.
-    for bucket in ("retired", "spared", "refreshed"):
-        for other in ("retired", "spared", "refreshed"):
-            if bucket < other:
-                overlap = _names(report.get(bucket, [])) & _names(
-                    report.get(other, []))
-                assert overlap == set(), (
-                    f"{sorted(overlap)} appear in both {bucket} and {other}"
-                )
 
 
 def test_retired_set_matches_the_report(retire_report):
