@@ -195,18 +195,27 @@ def _reconstruct_entry(provider: dict, model: dict) -> dict:
     return _ordered_entry(entry, is_proxy)
 
 
-def build_catalog(providers_dir: Path) -> dict:
+def build_catalog(providers_dir: Path,
+                  catalog_path: Path | None = None) -> dict:
     """Build the full catalog dict from provider folders.
 
     Supplementary sections (model_caps, model_versions, routing_modes) are
     preserved from the existing catalog if present.  The ``generated_at``
     timestamp is also preserved so that a no-change run produces zero diff.
     Returns a dict ready to serialise as catalog.v1.json.
+
+    *catalog_path* defaults to the checked-in ``providers/catalog.v1.json``;
+    pass another path to build a copy of the tree elsewhere (the FAI-247-F
+    tests do this to check the rule's output round-trips through the
+    rebuild without touching the working tree).
     """
+    if catalog_path is None:
+        catalog_path = providers_dir / "catalog.v1.json"
+
     # Load the existing catalog to preserve supplementary sections
     existing = {}
-    if CATALOG_PATH.exists():
-        existing = json.loads(CATALOG_PATH.read_text())
+    if catalog_path.exists():
+        existing = json.loads(catalog_path.read_text())
 
     catalog: dict = {
         "schema_version": "fusionaize-provider-catalog/v1.4",
@@ -246,11 +255,27 @@ def build_catalog(providers_dir: Path) -> dict:
 
 
 def main() -> None:
-    catalog = build_catalog(PROVIDERS_DIR)
-    CATALOG_PATH.write_text(
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Rebuild catalog.v1.json from the provider folders."
+    )
+    parser.add_argument(
+        "providers_dir", nargs="?", type=Path, default=PROVIDERS_DIR,
+        help="provider folder root (default: providers/)",
+    )
+    parser.add_argument(
+        "--catalog", type=Path, default=None,
+        help="catalog file to write (default: <providers_dir>/catalog.v1.json)",
+    )
+    args = parser.parse_args()
+
+    catalog_path = args.catalog or args.providers_dir / "catalog.v1.json"
+    catalog = build_catalog(args.providers_dir, catalog_path)
+    catalog_path.write_text(
         json.dumps(catalog, indent=2, ensure_ascii=False) + "\n"
     )
-    print(f"Wrote {CATALOG_PATH}")
+    print(f"Wrote {catalog_path}")
 
 
 if __name__ == "__main__":

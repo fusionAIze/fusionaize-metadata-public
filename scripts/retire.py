@@ -89,22 +89,115 @@ def load_operator_list(path: Path) -> set[str]:
     return set(data)
 
 
+# ----------------------------------------------------------------------
+# Folder sync: the catalog is the source, the folders hold the copies
+# ----------------------------------------------------------------------
+#
+# The catalog is rebuilt by ``scripts/build-catalog.py`` from the provider
+# folders; every catalog entry is reconstructed from the ``_original``
+# block of the model whose ``_source`` matches its name.  So a change the
+# retirement rule makes to the catalog has to be mirrored back into that
+# block, or the *next* rebuild silently reverts it.  That is why the sync
+# lives here and not in the test: without it the cleanup run is not a
+# run, it is an edit that the build undoes.
+
+_RETIREMENT_FIELDS = ("tier_status", "retirement")
+
+
+def _retirement_state(entry: dict[str, Any]) -> dict[str, Any]:
+    """Return the catalog fields that belong in a folder's ``_original``."""
+    return {field: entry[field] for field in _RETIREMENT_FIELDS
+            if field in entry}
+
+
+def sync_folders(
+    providers_dir: Path,
+    catalog: dict[str, Any],
+) -> int:
+    """Copy ``tier_status`` and ``retirement`` from *catalog* into folders.
+
+    Returns the number of folders whose ``index.json`` was rewritten.
+    Only the folders that disagree are touched, so a second call is a
+    no-op — the same idempotence ``build-catalog.py`` relies on.
+    """
+    updated = 0
+    for folder in sorted(providers_dir.iterdir()):
+        idx_path = folder / "index.json"
+        if not folder.is_dir() or not idx_path.exists():
+            continue
+
+        provider = json.loads(idx_path.read_text())
+        folder_changed = False
+
+        for model in provider.get("models", []):
+            state = _retirement_state(
+                catalog["providers"].get(model["_source"], {})
+            )
+            if not state:
+                continue
+
+            original = model.get("_original", {})
+            if all(original.get(k) == v for k, v in state.items()):
+                continue
+
+            for key, value in state.items():
+                original[key] = value
+            model["_original"] = original
+            folder_changed = True
+
+        if folder_changed:
+            # ensure_ascii=False: the folders are UTF-8 documents, and the
+            # catalog is written the same way.  Escaping here would make
+            # the two disagree the moment a note carries a real dash.
+            idx_path.write_text(
+                json.dumps(provider, indent=2, ensure_ascii=False) + "\n"
+            )
+            updated += 1
+
+    return updated
+
+
 def _last_source_info(entry: dict[str, Any], confirmations: dict[str, Any],
-                      name: str) -> tuple[str, str]:
-    """Return (source_description, date) for the last known confirmation."""
+                      name: str) -> tuple[str | None, str | None]:
+    """Return ``(source_description, date)`` for the last known confirmation.
+
+    Both are ``None`` when *no source has ever confirmed the entry* — an
+    entry that appeared in this round's catalog but in no confirmation
+    set and with no recorded retirement.  Returning the string
+    ``"unknown"`` here would dress that absence up as a source name and
+    a date, so ``last_confirming_source`` read ``unknown on unknown``;
+    the caller reports the absence explicitly instead.
+    """
     if name in confirmations:
         conf = confirmations[name]
         sources = ", ".join(conf.get("sources", []))
-        last_at = conf.get("last_confirmed_at", "unknown")
-        return (sources, last_at)
+        return (sources or None, conf.get("last_confirmed_at"))
 
     retirement = entry.get("retirement", {})
     if retirement:
         return (
-            retirement.get("last_confirmed_by", "unknown"),
-            retirement.get("last_confirmed_at", "unknown"),
+            retirement.get("last_confirmed_by"),
+            retirement.get("last_confirmed_at"),
         )
-    return ("unknown", "unknown")
+    return (None, None)
+
+
+#: Entries whose home folder belongs to another lane (FAI-247-C) and must
+#: be left exactly as that lane leaves them.  The folder is the source for
+#: the catalog rebuild, so any field this rule stamped on such an entry
+#: would be reverted — or, worse, resurrected — by the next merge.  The
+#: cleanup therefore touches none of them: not their ``retirement`` block,
+#: not their ``tier_status``.  This is the same kind of carve-out as the
+#: operator list, for the same reason: an entry the rule does not own is
+#: an entry the rule does not rewrite.
+FOREIGN_ENTRIES = frozenset({
+    "byteplus",
+    "deepseek-v4-flash",
+    "deepseek-v4-pro",
+    "deepseek-flash-vision-exp",
+    "mistral",
+    "openrouter-fallback",
+})
 
 
 def apply_retirement(
@@ -112,11 +205,16 @@ def apply_retirement(
     confirmations: dict[str, Any],
     operator_names: set[str],
     threshold: int,
+    foreign_names: frozenset[str] = FOREIGN_ENTRIES,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """Apply the retirement rule.
 
     Returns ``(modified_catalog, report)``.  The catalog is mutated in
     place; the caller is responsible for writing it back.
+
+    *foreign_names* are entries the rule leaves untouched (see
+    ``FOREIGN_ENTRIES``); they are not counted as refreshed, spared or
+    retired — they are simply not this rule's to write.
     """
     today = date.today().isoformat()
     conf_map = confirmations.get("confirmations", {})
@@ -170,6 +268,12 @@ def apply_retirement(
     # --- operator guard: end ---
 
     for name, entry in catalog["providers"].items():
+        # --- Foreign entry: leave it exactly as its owning lane left it ---
+        # No confirmation stamp, no miss, no retirement — the folder is the
+        # source of truth for these entries and the sync must not write them.
+        if name in foreign_names:
+            continue
+
         confirmed_this_round = name in conf_map
 
         if confirmed_this_round:
@@ -216,6 +320,17 @@ def apply_retirement(
         # Track / increment misses
         if "retirement" not in entry:
             entry["retirement"] = {}
+
+        # An entry that is already retired stays as it was retired.  Re-
+        # running the rule — on the same collection round, or on the very
+        # catalog its previous run wrote — must not move the counter: the
+        # retirement is a finished event, and ``misses: N`` records the
+        # round in which it happened, not a tally that grows forever.
+        # Advancing it would make every ``retire.py --write`` rewrite the
+        # whole catalog and the rebuild that follows would never settle.
+        if entry.get("tier_status") == "deprecated":
+            continue
+
         misses = entry["retirement"].get("misses", 0) + 1
         entry["retirement"]["misses"] = misses
 
@@ -232,7 +347,13 @@ def apply_retirement(
             report["retired"].append({
                 "name": name,
                 "reason": entry["retirement"]["reason"],
-                "last_confirming_source": f"{last_source} on {last_at}",
+                # No source ever confirmed this entry, so there is no
+                # "last" source to name — say that, rather than emitting
+                # the sentinel "unknown on unknown" as if it were a fact.
+                "last_confirming_source": (
+                    f"{last_source} on {last_at}" if last_source and last_at
+                    else None
+                ),
                 "retired_at": today,
             })
         else:
@@ -244,12 +365,18 @@ def apply_retirement(
     # ------------------------------------------------------------------
     # Counts.  ``without_confirmation`` is the size of the bucket that got
     # no source at all (retired + spared + still-tracked), and the three
-    # disjoint categories cover every entry exactly once:
+    # disjoint categories cover every entry this rule owns exactly once:
     #
-    #     refreshed + retired + spared + tracked == total_entries
+    #     refreshed + retired + spared + tracked == total_entries - foreign
     #
     # A spared entry *was* unconfirmed, so it belongs to the without-
     # confirmation count as well; it is not retired, which is the point.
+    #
+    # The foreign entries are counted in ``total_entries`` (the run still
+    # sees the whole catalog) but in none of the buckets: they are not
+    # this rule's to write, and the partition test below them is what
+    # keeps the arithmetic honest — the buckets plus the foreign set cover
+    # the catalog and nothing else.
     # ------------------------------------------------------------------
     report["refreshed_count"] = len(report["refreshed"])
     report["retired_count"] = len(report["retired"])
@@ -261,6 +388,8 @@ def apply_retirement(
         + report["spared_count"]
         + report["tracked_count"]
     )
+    report["foreign"] = sorted(set(catalog["providers"]) & foreign_names)
+    report["foreign_count"] = len(report["foreign"])
 
     return catalog, report
 
@@ -286,8 +415,14 @@ def main() -> None:
         help="Number of unconfirmed rounds before retirement",
     )
     parser.add_argument(
+        "--providers-dir", type=Path, default=None,
+        help="Provider folder root to mirror the result into "
+             "(default: the directory holding --catalog)",
+    )
+    parser.add_argument(
         "--write", action="store_true",
-        help="Write the modified catalog back to --catalog",
+        help="Write the modified catalog back to --catalog and mirror "
+             "tier_status/retirement into the provider folders",
     )
     args = parser.parse_args()
 
@@ -311,7 +446,14 @@ def main() -> None:
         sys.exit(2)
 
     if args.write and not report.get("aborted"):
-        args.catalog.write_text(json.dumps(catalog, indent=2) + "\n")
+        # ensure_ascii=False: the catalog carries real UTF-8 (en dashes,
+        # arrows).  Escaping it here would differ from the checked-in
+        # file that ``build-catalog.py`` writes from the folders.
+        args.catalog.write_text(
+            json.dumps(catalog, indent=2, ensure_ascii=False) + "\n"
+        )
+        providers_dir = args.providers_dir or args.catalog.parent
+        report["folders_updated"] = sync_folders(providers_dir, catalog)
 
     print(json.dumps(report, indent=2))
 
