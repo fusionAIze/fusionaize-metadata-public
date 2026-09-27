@@ -476,9 +476,28 @@ def test_expected_retired_set_is_exact(catalog):
     )
 
 
+#: The folders the run's source tree is built from.  Every catalog entry
+#: the rule *owns* is mirrored into exactly one of them, so the number of
+#: ``retirement`` blocks compared below is fixed by the catalog; a sync
+#: that silently skipped a folder would make this count drop and fail.
+EXPECTED_FOLDERS = frozenset(
+    p.name for p in PROVIDERS_DIR.iterdir() if p.is_dir()
+) - EXPECTED_FOREIGN
+
+
 def test_folder_indexes_agree_with_catalog(catalog):
-    """Every provider folder's _original block matches the catalog entry."""
-    checked = 0
+    """Every provider folder's _original block matches the catalog entry.
+
+    The comparison is only worth anything if it actually compared
+    something, so it is counted: every catalog entry the rule owns must
+    be reached through a folder, and the number of comparisons must be
+    exactly the size of that set.  A vacuous pass — an empty candidate
+    set, or a folder the sync skipped — is caught by the count, not
+    waved through by ``checked > 0``.
+    """
+    owned = set(catalog["providers"]) - EXPECTED_FOREIGN
+    checked: set[str] = set()
+
     for folder in sorted(PROVIDERS_DIR.iterdir()):
         if not folder.is_dir():
             continue
@@ -489,26 +508,37 @@ def test_folder_indexes_agree_with_catalog(catalog):
         provider = json.loads(idx_path.read_text())
         for model in provider.get("models", []):
             source_name = model["_source"]
-            cat_entry = catalog["providers"].get(source_name)
-            if cat_entry is None:
+            if source_name in EXPECTED_FOREIGN:
                 continue
+            cat_entry = catalog["providers"].get(source_name)
+            assert cat_entry is not None, (
+                f"{folder.name}/{source_name}: the folder holds a model the "
+                f"catalog does not — the rebuild would resurrect it"
+            )
 
             orig = model.get("_original", {})
             cat_ts = cat_entry.get("tier_status")
-            if cat_ts is not None:
-                assert orig.get("tier_status") == cat_ts, (
-                    f"{source_name}: catalog tier_status={cat_ts} but "
-                    f"folder _original has tier_status={orig.get('tier_status')}"
-                )
+            assert orig.get("tier_status") == cat_ts, (
+                f"{source_name}: catalog tier_status={cat_ts} but "
+                f"folder _original has tier_status={orig.get('tier_status')}"
+            )
             cat_ret = cat_entry.get("retirement")
-            if cat_ret is not None:
-                assert orig.get("retirement") == cat_ret, (
-                    f"{source_name}: retirement mismatch "
-                    f"catalog={cat_ret} vs folder={orig.get('retirement')}"
-                )
-            checked += 1
+            assert cat_ret is not None, (
+                f"{source_name}: owned catalog entry carries no retirement "
+                f"block — the sync never ran for {folder.name}"
+            )
+            assert orig.get("retirement") == cat_ret, (
+                f"{source_name}: retirement mismatch "
+                f"catalog={cat_ret} vs folder={orig.get('retirement')}"
+            )
+            checked.add(source_name)
 
-    assert checked > 0, "no folder/model pairs were checked — the sync never ran"
+    assert checked == owned, (
+        f"compared {len(checked)} folder entries against the catalog; the "
+        f"rule owns {len(owned)} — folders never reached: "
+        f"{sorted(owned - checked)}, unexpected: {sorted(checked - owned)}"
+    )
+    assert checked, "no folder/model pairs were checked — the sync never ran"
 
 
 # ── AC2: no operator-configured entry is missing or deprecated ──────────
@@ -520,19 +550,39 @@ def test_operator_list_is_not_empty(operator_names):
     )
 
 
-def test_every_operator_name_that_is_in_the_catalog_is_active(
+def test_operator_names_missing_from_the_catalog_are_stated(
     catalog, operator_names,
 ):
-    """An operator-configured entry is never deprecated."""
-    present = [n for n in sorted(operator_names) if n in catalog["providers"]]
-    assert present, "no operator name matched the catalog — the run is wrong"
+    """The operator list is a superset of the catalog — say how much so.
 
-    for name in present:
-        entry = catalog["providers"][name]
-        assert entry.get("tier_status") != "deprecated", (
-            f"Riegel: operator-configured '{name}' is deprecated "
-            f"(tier_status={entry.get('tier_status')}) — the carve-out failed"
-        )
+    The operator configures routes that are not catalog entries; 23 of
+    the 38 names are absent.  Reporting only the intersection, as the
+    predecessor test did, hides that: the run's coverage claim would be
+    built on the 15 names it happened to match and never mention the 23
+    it did not.  This test states the *difference* as its own claim, so
+    a shrinking catalog — an entry an operator route silently vanished
+    into — is a failure here rather than an invisible filter.
+    """
+    missing = set(operator_names) - set(catalog["providers"])
+    catalog_side = set(operator_names) & set(catalog["providers"])
+
+    # Nothing is claimed about which side a name lands on a priori; what
+    # is claimed is that the partition is reported and non-trivial: the
+    # list reaches past the catalog (there really are operator-only
+    # names), and it overlaps it (there really are catalog routes to
+    # protect).  Either half collapsing to empty means the operator list
+    # and the catalog have drifted apart, not that the run succeeded.
+    assert missing, (
+        "the operator list has no names outside the catalog — the "
+        "operator-only routes the list exists to carry are gone"
+    )
+    assert catalog_side, (
+        "no operator name is a catalog entry — the carve-out has nothing "
+        "to protect and the run's coverage claim is empty"
+    )
+    assert missing | catalog_side == set(operator_names), (
+        "every operator name is either a catalog entry or a missing one"
+    )
 
 
 def test_operator_entries_present_in_catalog_are_not_retired(operator_names):
@@ -1095,44 +1145,60 @@ def test_control_without_the_guard_empties_the_operator_routes(
     )
 
 
-# ── FAI-247-C folders ───────────────────────────────────────────────────
+# ── FAI-247-C: the entries this rule does not own ───────────────────────
 #
-# FAI-247-C owns the ``byteplus``, ``deepseek``, ``mistral`` and
-# ``openrouter-fallback`` folders and merges them separately.  This lane
-# does not single them out: its sync is driven by the catalog, so a
-# confirmed entry gets its block wherever it lives.  The invariant that
-# matters is not "these folders are untouched" — it is that no folder the
-# rebuild will read back disagrees with the catalog, and that the lane
-# never *deprecates* an entry owner C is still working on.
+# FAI-247-C merges the ``byteplus``, ``deepseek``, ``mistral`` and
+# ``openrouter-fallback`` folders separately.  A folder *name* is the
+# wrong key for that: ``deepseek`` is not a catalog entry at all — the
+# entries are ``deepseek-v4-flash`` and friends — and the lane also owns
+# the ``deepseek-flash-vision-exp`` entry that lives in another folder.
+# The set that matters is the one the rule itself carves out, named by
+# *entry*: ``EXPECTED_FOREIGN``.  These tests prove the carve-out holds
+# against the artifact, and check it against the rule's own declaration
+# so the two cannot drift.
 
-FAI247C_FOLDERS = ("byteplus", "deepseek", "mistral", "openrouter-fallback")
 
+def test_foreign_entries_are_untouched_in_the_catalog(catalog):
+    """The six FAI-247-C entries carry nothing this lane wrote.
 
-def test_fai247c_folders_agree_with_the_catalog():
-    """The FAI-247-C folders carry no deprecation and match the catalog.
-
-    A folder that disagreed would be reverted by the next rebuild; a
-    deprecation would be this lane retiring an entry C still owns.
+    A ``retirement`` block or a ``deprecated`` status on one of them
+    would be reverted — or resurrected — by that lane's next merge,
+    because the folder it owns is the source this catalog is rebuilt
+    from.  The rule sees them (they are in ``total_entries``) and writes
+    none of them.
     """
-    catalog = json.loads(CATALOG_PATH.read_text())
-    for source in FAI247C_FOLDERS:
-        idx_path = PROVIDERS_DIR / source / "index.json"
-        assert idx_path.exists(), f"{source}/index.json is missing"
-        provider = json.loads(idx_path.read_text())
-        for model in provider.get("models", []):
-            orig = model.get("_original", {})
-            assert orig.get("tier_status") != "deprecated", (
-                f"{source}/{model['_source']}: FAI-247-C folder was deprecated "
-                f"by this lane"
-            )
-            cat_ret = catalog["providers"].get(model["_source"], {}).get(
-                "retirement"
-            )
-            assert orig.get("retirement") == cat_ret, (
-                f"{source}/{model['_source']}: folder retirement "
-                f"{orig.get('retirement')!r} disagrees with catalog "
-                f"{cat_ret!r}"
-            )
+    for source in sorted(EXPECTED_FOREIGN):
+        assert source in catalog["providers"], (
+            f"{source}: expected an FAI-247-C entry in the catalog — the "
+            f"carve-out set no longer names the entries it protects"
+        )
+        entry = catalog["providers"][source]
+        assert "retirement" not in entry, (
+            f"{source}: FAI-247-C entry carries a retirement block this "
+            f"lane wrote — the next merge would revert it"
+        )
+        assert entry.get("tier_status") != "deprecated", (
+            f"{source}: FAI-247-C entry was deprecated by this lane"
+        )
+
+
+def test_rule_and_folders_agree_on_the_foreign_set():
+    """The rule's declared carve-out is exactly the set the tests guard.
+
+    ``FOREIGN_ENTRIES`` in ``retire.py`` is the one place the carve-out
+    is declared; ``EXPECTED_FOREIGN`` here is the one place it is
+    asserted.  If they drift, one of the two is wrong and the cleanup
+    silently starts writing an entry another lane owns.
+    """
+    if str(ROOT / "scripts") not in sys.path:
+        sys.path.insert(0, str(ROOT / "scripts"))
+    from retire import FOREIGN_ENTRIES  # noqa: PLC0415
+
+    assert set(FOREIGN_ENTRIES) == set(EXPECTED_FOREIGN), (
+        f"retire.py carves out {sorted(FOREIGN_ENTRIES)} but the tests "
+        f"guard {sorted(EXPECTED_FOREIGN)} — the definition and the proof "
+        f"have drifted"
+    )
 
 
 # ── Invariant: rebuild is stable ────────────────────────────────────────
