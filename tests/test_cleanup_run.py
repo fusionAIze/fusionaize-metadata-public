@@ -5,11 +5,11 @@ correct outcome when it is fed the real operator list and the real
 collection result, and that the resulting catalog is synced into the
 per-provider folders and rebuilt deterministically.
 
-The two inputs are the real artifacts of the run, kept outside the
-repository:
+The two inputs are the real artifacts of the run, committed with the
+tests so a fresh checkout can run the suite:
 
-``/tmp/confirmations.json``   59 confirmations from three sources
-``/tmp/operator-list.json``   the 38 names the operator has configured
+``tests/fixtures/confirmations.json``  59 confirmations from three sources
+``tests/fixtures/operator-list.json``  the 38 names the operator configured
 
 ``tests/fai247f_inputs.py`` derives both from the raw collection and
 operator documents and reproduces them byte-for-byte, so the inputs are
@@ -38,10 +38,11 @@ BUILD_SCRIPT = ROOT / "scripts" / "build-catalog.py"
 CATALOG_PATH = ROOT / "providers" / "catalog.v1.json"
 PROVIDERS_DIR = ROOT / "providers"
 
-# The real inputs of the run (FAI-247-F).  These are the operator's live
-# provider list and the collected confirmation result — see the lane note.
-CONFIRMATIONS_PATH = Path("/tmp/confirmations.json")
-OPERATOR_PATH = Path("/tmp/operator-list.json")
+# The real inputs of the run (FAI-247-F): the operator's live provider
+# list and the collected confirmation result, committed under tests/ so
+# the suite reads the repository, never a file in ``$HOME`` or ``/tmp``.
+CONFIRMATIONS_PATH = ROOT / "tests" / "fixtures" / "confirmations.json"
+OPERATOR_PATH = ROOT / "tests" / "fixtures" / "operator-list.json"
 
 # FAI-247-C owns these providers/folders and they are merged separately.
 # This lane must not touch them.

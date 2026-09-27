@@ -1,0 +1,399 @@
+{
+  "collected_at": "2026-09-27",
+  "sources": [
+    "litellm",
+    "omniroutes",
+    "openrouter"
+  ],
+  "confirmations": {
+    "amazon-bedrock": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "anthropic": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "anthropic-claude": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "anthropic-haiku": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "anthropic-sonnet": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "baidu-ernie": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "blackbox-free": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "byteplus": {
+      "sources": [
+        "litellm",
+        "omniroutes"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "byteplus-plan": {
+      "sources": [
+        "litellm"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "cerebras": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "claude-code": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "cohere": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "deepseek-flash-vision-exp": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "deepseek-v4-flash": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "deepseek-v4-pro": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "gemini-flash": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "gemini-flash-lite": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "gemini-pro-high": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "gemini-pro-low": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "github-copilot": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "google": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "google-antigravity": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "google-gemini-3-6-flash": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "google-gemini-3-7-flash": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "google-gemini-3-8-flash": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "google-gemini-cli": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "google-vertex": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "groq": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "huggingface": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "kilo-opus": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "kilo-sonnet": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "kilocode": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "kimi-coding": {
+      "sources": [
+        "litellm"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "kiro": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "litellm": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "microsoft-phi": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "minimax": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "mistral": {
+      "sources": [
+        "litellm"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "moonshot": {
+      "sources": [
+        "litellm"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "nvidia-nim": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "ollama": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "openai": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "openai-codex": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "openai-gpt-oss-120b": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "openai-gpt4o": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "openai-images": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "opencode": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "openrouter-fallback": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "pollinations": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "qoder": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "qwen": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "qwen-portal": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "synthetic": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "tencent-hunyuan": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "vercel-ai-gateway": {
+      "sources": [
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "volcengine": {
+      "sources": [
+        "litellm"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "volcengine-plan": {
+      "sources": [
+        "litellm"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "xai": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    },
+    "zai": {
+      "sources": [
+        "litellm",
+        "openrouter"
+      ],
+      "last_confirmed_at": "2026-09-27"
+    }
+  }
+}
