@@ -391,26 +391,28 @@ def apply_retirement(
     report["operator_names_unresolved"] = sorted(unresolved_operator_names)
 
     # ------------------------------------------------------------------
-    # Guard 3: an empty operator list retires nothing, and says why.
+    # Guard 3: an empty operator list raises, and says why.
     #
     # The operator carve-out is what keeps live routes routable.  With
     # no operator names the rule has no way to tell a genuinely dead
     # entry from one the operator is actively serving, so it may not
     # deprecate anything — retiring on a missing operator list would be
-    # the same failure as retiring on a missing survey.  The run is
-    # reported as aborted with the reason named, and the catalog is left
-    # exactly as it was: a rule that reports success while doing nothing
-    # hides the broken input it exists to catch, so the report carries
-    # ``aborted``/``abort_reason`` rather than a green verdict.
+    # the same failure as retiring on a missing survey.
+    #
+    # This raises rather than returning an ``aborted`` report.  Returning
+    # one let the CLI exit 0 and still pass ``--write``, so a run that
+    # explicitly refused to act was indistinguishable from a successful
+    # one at the process level — and it rewrote the catalog on the way.
+    # The docstring above and the CLI's own contract ("name the reason,
+    # exit non-zero, write nothing") both require the raise: an input
+    # that cannot support a decision is an error, not a shrug.
     # ------------------------------------------------------------------
     if not operator_names:
-        report["aborted"] = True
-        report["abort_reason"] = (
+        raise ValueError(
             "empty operator list: without the operator carve-out the rule "
             "cannot tell a dead entry from a live route the operator is "
             "actively serving — refusing to retire anything"
         )
-        return catalog, report
 
     for name, entry in catalog["providers"].items():
         confirmed_this_round = name in conf_map
@@ -567,6 +569,15 @@ def main() -> None:
     except ValueError as exc:
         # Loud failure: name the reason, exit non-zero, write nothing.
         print(json.dumps({"error": str(exc)}, indent=2))
+        sys.exit(2)
+
+    # An aborted report is not a success.  Guards that abort rather than
+    # raise (a failed collection, an empty legacy source set) must not
+    # report exit 0 or let ``--write`` touch the catalog: "did nothing"
+    # is not "succeeded", and a caller checking ``$?`` would read the
+    # refusal as a green run.
+    if report.get("aborted"):
+        print(json.dumps(report, indent=2))
         sys.exit(2)
 
     if args.write:

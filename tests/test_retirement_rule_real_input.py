@@ -32,7 +32,9 @@ Three criteria are covered:
    second time.
 3. An empty survey or an empty operator list makes the rule FAIL and
    name the reason — it neither passes silently nor silently retires
-   everything.
+   everything.  This is pinned both at the API level and at the process
+   level: the CLI must exit non-zero and write nothing, because a batch
+   caller only sees ``$?``.
 
 No test reaches the network.
 
@@ -42,6 +44,8 @@ Run with ``python3 -m pytest -q``.
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -49,9 +53,28 @@ FIXTURES = Path(__file__).resolve().parent / "fixtures"
 CATALOG = ROOT / "providers" / "catalog.v1.json"
 COLLECTED = FIXTURES / "collected.json"
 OPERATOR = FIXTURES / "operator-providers.json"
+RETIRE = ROOT / "scripts" / "retire.py"
 
-import sys
 sys.path.insert(0, str(ROOT / "scripts"))
+
+
+def _run_cli(catalog_path, survey_path, operator_path, threshold, *extra):
+    """Run scripts/retire.py as a subprocess and return the CompletedProcess.
+
+    Uses ``sys.executable`` so the test runs under whatever interpreter
+    runs the suite.  No network is touched: the CLI only reads local files.
+    """
+    return subprocess.run(
+        [
+            sys.executable, str(RETIRE),
+            "--catalog", str(catalog_path),
+            "--confirmations", str(survey_path),
+            "--operator", str(operator_path),
+            "--threshold", str(threshold),
+            *extra,
+        ],
+        capture_output=True, text=True, cwd=str(ROOT),
+    )
 
 
 def _call_retirement(catalog, survey, operator_names, threshold):
@@ -557,4 +580,82 @@ def test_loud_failure_is_not_a_silent_success():
     assert report.get("aborted") is True and report.get("abort_reason"), (
         "the rule neither raised nor marked the run aborted: 'did nothing' "
         "is not 'aborted and named'"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Criterion 3 at the process level — an input that cannot support a
+# decision must not exit 0, and must not write.
+#
+# The API-level tests above accept "raises" OR "returns an aborted
+# report".  For a batch caller -- the ``--write`` path exists exactly for
+# that -- only ``$?`` is visible, so an aborted run that exits 0 and
+# rewrites the catalog is the "reports success and does nothing" failure
+# the criterion forbids.  These tests pin the process contract directly.
+# ---------------------------------------------------------------------------
+
+def test_cli_empty_survey_exits_nonzero_and_writes_nothing(tmp_path):
+    """An empty survey makes the CLI exit non-zero and leave the file alone."""
+    target = tmp_path / "catalog.json"
+    target.write_bytes(CATALOG.read_bytes())
+    before = target.read_bytes()
+
+    empty_survey = tmp_path / "empty-survey.json"
+    empty_survey.write_text(json.dumps({
+        "schema_version": "fusionaize-collected/v1",
+        "enrichment": {},
+        "contradictions": [],
+        "coverage": {},
+    }))
+
+    result = _run_cli(target, empty_survey, OPERATOR, 1, "--write")
+
+    assert result.returncode != 0, (
+        "an empty survey must fail loudly; the process exited 0 with "
+        f"stdout={result.stdout!r}"
+    )
+    assert target.read_bytes() == before, (
+        "a failed run must not write the catalog"
+    )
+
+
+def test_cli_empty_operator_list_exits_nonzero_and_writes_nothing(tmp_path):
+    """An empty operator list makes the CLI exit non-zero and leave the file alone.
+
+    This is the process-level half of criterion 3.  The rule refused to
+    act (the abort was named) but the process still exited 0 and rewrote
+    the catalog — a caller reading ``$?`` saw a green run.
+    """
+    target = tmp_path / "catalog.json"
+    target.write_bytes(CATALOG.read_bytes())
+    before = target.read_bytes()
+
+    empty_operator = tmp_path / "empty-operator.json"
+    empty_operator.write_text(json.dumps({"providers": []}))
+
+    result = _run_cli(target, COLLECTED, empty_operator, 1, "--write")
+
+    assert result.returncode != 0, (
+        "an empty operator list must fail loudly; the process exited 0 with "
+        f"stdout={result.stdout!r}"
+    )
+    assert target.read_bytes() == before, (
+        "a failed run must not write the catalog"
+    )
+
+
+def test_cli_empty_operator_list_names_the_reason_on_stderr_or_stdout(tmp_path):
+    """The non-zero exit is accompanied by a reason naming the operator list."""
+    target = tmp_path / "catalog.json"
+    target.write_bytes(CATALOG.read_bytes())
+
+    empty_operator = tmp_path / "empty-operator.json"
+    empty_operator.write_text(json.dumps({"providers": []}))
+
+    result = _run_cli(target, COLLECTED, empty_operator, 1)
+
+    combined = (result.stdout + result.stderr).lower()
+    assert "operator" in combined, (
+        "the failure must name the operator list as the reason; got "
+        f"stdout={result.stdout!r} stderr={result.stderr!r}"
     )
