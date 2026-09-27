@@ -476,8 +476,29 @@ def _call_retirement_real(catalog, survey, operator_names, threshold):
     the ``{sources, confirmations}`` map the rule consumes.  This is the
     production wiring (retire.py's CLI uses it too) — the test does not
     build its own input.
+
+    The adapter is imported lazily for the same reason
+    ``_call_retirement`` is: at the base commit it does not exist.  Let
+    the ``ImportError`` escape here and the tests fail during collection
+    with a traceback that proves nothing; catch it and return an empty
+    report instead, so each test reaches its own assertion and fails
+    with a real ``AssertionError``.  A red proof has to be an assertion
+    the fix flips, not a missing import.
     """
-    from retire import adapt_collected_survey, apply_retirement
+    try:
+        from retire import adapt_collected_survey, apply_retirement
+    except ImportError:
+        return catalog, {
+            "threshold": threshold,
+            "sources": [],
+            "total_entries": len(catalog.get("providers", {})),
+            "retired": [],
+            "spared": [],
+            "revived": [],
+            "tracked": [],
+            "operator_names_resolved": 0,
+            "operator_names_unresolved": [],
+        }
 
     confirmations = adapt_collected_survey(survey)
     return apply_retirement(catalog, confirmations, operator_names, threshold)
