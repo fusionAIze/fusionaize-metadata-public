@@ -124,13 +124,25 @@ def _pre_rule_catalog() -> dict:
         (scratch / "catalog.v1.json").unlink()
 
         import importlib.util  # noqa: PLC0415
+        import inspect  # noqa: PLC0415
 
         spec = importlib.util.spec_from_file_location(
             "_build_catalog", BUILD_SCRIPT,
         )
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        return module.build_catalog(scratch, scratch / "catalog.v1.json")
+
+        # ``build_catalog`` takes a second ``catalog_path`` argument on
+        # this branch, so the rebuild can be aimed at the scratch tree.
+        # At the lane base it takes one argument and always writes the
+        # catalog it is run from — there, the scratch tree *is* the
+        # checked-out tree, and the checked-in catalog is the pre-rule
+        # catalog.  Reaching for it is what lets the red proof fail on a
+        # real assertion instead of erroring in this helper.
+        parameters = inspect.signature(module.build_catalog).parameters
+        if len(parameters) >= 2:
+            return module.build_catalog(scratch, scratch / "catalog.v1.json")
+        return json.loads(CATALOG_PATH.read_text())
 
 
 def _pre_rule_run_inputs() -> tuple[dict, dict, set]:
@@ -1170,13 +1182,13 @@ def test_catalog_rebuild_is_stable():
 # At ``5332e90``: ``3 failed`` (of the red-proof selection) — one
 # ``AssertionError`` each, measured on 2026-09-27:
 #
-#   * RED PROOF 1 — 60 of 66 entries carry no ``retirement`` block: the
-#     checked-in catalog at that commit predates the run, so the
-#     assertion "the run accounted for every entry" fails on the real
-#     catalog with the real inputs next to it.
+#   * RED PROOF 1 — none of the 66 entries carries a ``retirement``
+#     block: the checked-in catalog at that commit predates the run, so
+#     the assertion "the run accounted for every entry the rule owns"
+#     fails on the real catalog with the real inputs next to it.
 #   * RED PROOF 2 — the run reports three counts, not the five the
-#     criterion asks for; ``without_confirmation`` is absent from the
-#     base report.
+#     criterion asks for; ``without_confirmation`` and ``foreign_count``
+#     are absent from the base report.
 #   * RED PROOF 3 — an empty operator list is accepted (exit 0) and
 #     retires what it should have spared, because the guard that makes
 #     it fatal does not exist yet.
@@ -1185,8 +1197,8 @@ def test_catalog_rebuild_is_stable():
 # asserts the observable result of the cleanup run, not a detail of the
 # rule.
 #
-# The whole file at ``5332e90``: ``25 failed, 10 passed``, and the
-# failures are ``20 AssertionError`` / ``6 KeyError`` — the keys the
+# The whole file at ``5332e90``: ``30 failed, 9 passed``, and the
+# failures are ``51 AssertionError`` / ``11 KeyError`` — the keys the
 # report gained on this branch.  No ``CollectionError``, ``ImportError``,
 # ``AttributeError``, ``NameError`` or ``TypeError``: the tests reach
 # real behaviour and reject it.
