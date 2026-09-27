@@ -184,6 +184,88 @@ def test_matching_entry_preserves_original_evidence():
 
 
 # ---------------------------------------------------------------------------
+# Criterion 4 — Correction delta measurement
+# ---------------------------------------------------------------------------
+
+# Expected deltas: (provider_id, src_name, superseded, probe, delta)
+_EXPECTED_DELTAS: list[tuple[str, str, int, int, int]] = [
+    ("byteplus",              "byteplus",              245760, 131072, -114688),
+    ("deepseek",              "deepseek-v4-flash",    1048576,  65536, -983040),
+    ("deepseek",              "deepseek-v4-pro",      1048576,  65536, -983040),
+    ("openrouter-fallback",   "openrouter-fallback",   128000, 200000,   72000),
+    ("mistral",               "mistral",               128000, 131072,    3072),
+]
+
+
+def test_each_correction_delta_is_recorded():
+    """Every corrected entry has a measurable delta (probe − superseded).
+
+    The delta documents the magnitude of the correction.  Negative means
+    the probe was smaller than the catalog claim; positive means the probe
+    discovered a larger window than documented.
+    """
+    for prov_id, src_name, catalog_val, probe_val, expected_delta in _EXPECTED_DELTAS:
+        provider = _load_index(prov_id)
+        model = _model_by_source(provider, src_name)
+        assert model is not None, (
+            f"{prov_id}/{src_name}: model not found"
+        )
+        evidence = model.get("_original", {}).get("context_evidence", {})
+        superseded = evidence.get("superseded_value")
+        assert superseded == catalog_val, (
+            f"{prov_id}/{src_name}: expected superseded_value={catalog_val}, "
+            f"got {superseded}"
+        )
+        current = model["contextLength"]
+        assert current == probe_val, (
+            f"{prov_id}/{src_name}: expected contextLength={probe_val}, "
+            f"got {current}"
+        )
+        delta = current - superseded
+        assert delta == expected_delta, (
+            f"{prov_id}/{src_name}: expected delta={expected_delta} "
+            f"(probe {probe_val} − catalog {catalog_val}), got {delta}"
+        )
+
+
+def test_correction_delta_distribution():
+    """Report the distribution of correction deltas across all five entries.
+
+    Three entries shrank (negative delta), two grew (positive delta).
+    The largest absolute correction is 983040 tokens (DeepSeek V4 Flash/Pro).
+    The smallest absolute correction is 3072 tokens (Mistral Large Latest).
+    """
+    deltas: dict[str, int] = {}
+    for prov_id, src_name, catalog_val, probe_val, _expected_delta in _EXPECTED_DELTAS:
+        provider = _load_index(prov_id)
+        model = _model_by_source(provider, src_name)
+        assert model is not None
+        current = model["contextLength"]
+        delta = current - catalog_val
+        deltas[f"{prov_id}/{src_name}"] = delta
+
+    # Distribution report as structured assertion.
+    expected_deltas = {
+        "byteplus/byteplus":                    -114688,
+        "deepseek/deepseek-v4-flash":           -983040,
+        "deepseek/deepseek-v4-pro":             -983040,
+        "openrouter-fallback/openrouter-fallback": 72000,
+        "mistral/mistral":                          3072,
+    }
+    assert deltas == expected_deltas, (
+        f"Correction delta distribution changed: "
+        f"expected {expected_deltas}, got {deltas}.  "
+        f"If the change is intentional, update _EXPECTED_DELTAS."
+    )
+
+    # Summary invariants
+    negative = sum(1 for d in deltas.values() if d < 0)
+    positive = sum(1 for d in deltas.values() if d > 0)
+    assert negative == 3, f"expected 3 negative deltas, got {negative}"
+    assert positive == 2, f"expected 2 positive deltas, got {positive}"
+
+
+# ---------------------------------------------------------------------------
 # RED PROOF — against base commit 5332e90
 # ---------------------------------------------------------------------------
 
