@@ -567,7 +567,8 @@ def test_contradictory_context_windows_are_named():
     #   claude-opus-4-7  200000 anthropic          | 1000000 anthropic   <- same provider
     #   gemini-2.5-pro   128000 antigravity, cli   | 1048576 vertex
     #   glm-5            128000 kilocode           | 131072 zai
-    known = {"MiniMax-M2.1", "claude-opus-4-6", "claude-opus-4-7", "gemini-2.5-pro", "glm-5"}
+    #   auto-router      128000 clawrouter          | 200000 openrouter-fallback (FAI-247-C)
+    known = {"MiniMax-M2.1", "claude-opus-4-6", "claude-opus-4-7", "gemini-2.5-pro", "glm-5", "auto-router"}
     windows: dict[str, set] = {}
     for entry in _folders().values():
         for m in entry.get("models", []) or []:
