@@ -17,17 +17,21 @@ reproducible rather than hand-carried::
 
     python tests/fai247f_inputs.py
 
-``retire.py`` is invoked WITHOUT ``--write``: it applies the rule to the
-catalog as it is on disk today and prints the report.  Nothing in this
-file mutates the checked-in catalog except the rebuild-stability
-invariant, which by design must be a no-op.
+``retire.py --write`` is run only in a *scratch copy* of the provider
+tree, never against the working one: the tests check the claim that the
+checked-in catalog is the rule's output by reproducing that output
+elsewhere and comparing.  The one exception is
+``test_catalog_rebuild_is_stable``, which runs the rebuild in place and
+by design must be a no-op.
 """
 
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -39,22 +43,121 @@ CATALOG_PATH = ROOT / "providers" / "catalog.v1.json"
 PROVIDERS_DIR = ROOT / "providers"
 
 # The real inputs of the run (FAI-247-F): the operator's live provider
-# list and the collected confirmation result, committed under tests/ so
-# the suite reads the repository, never a file in ``$HOME`` or ``/tmp``.
+# list, the collected confirmation result, and the catalog as it stood
+# before the cleanup, all committed under tests/ so the suite reads the
+# repository, never a file in ``$HOME`` or ``/tmp``.
+#
+# ``catalog-before-cleanup.json`` is the run's *input*: the catalog the
+# rule was applied to.  The report — what was retired, spared, refreshed
+# — describes that application, so the report tests read this file, not
+# the catalog the run already rewrote (re-running the rule on its own
+# output is a no-op and reports nothing new).
 CONFIRMATIONS_PATH = ROOT / "tests" / "fixtures" / "confirmations.json"
 OPERATOR_PATH = ROOT / "tests" / "fixtures" / "operator-list.json"
-
-# FAI-247-C owns these providers/folders and they are merged separately.
-# This lane must not touch them.
-FAI247C_SOURCES = frozenset({
-    "byteplus", "deepseek", "deepseek-v4-flash", "deepseek-v4-pro",
-    "deepseek-flash-vision-exp", "openrouter-fallback", "mistral",
-})
+CATALOG_BEFORE_PATH = ROOT / "tests" / "fixtures" / "catalog-before-cleanup.json"
 
 EXPECTED_RETIRED = frozenset({
     "clawrouter", "kilo-auto-balanced", "kilo-auto-free",
     "kilo-auto-frontier", "lmstudio", "longcat", "vllm",
 })
+
+#: Entries FAI-247-C owns and merges separately.  The folders are the
+#: source the catalog is rebuilt from, so a field this lane stamped on one
+#: of them would be reverted — or resurrected — by the next merge.  The
+#: cleanup therefore leaves them exactly as that lane left them: no
+#: confirmation stamp, no miss, no retirement, no ``tier_status`` write.
+#: They are counted in ``total_entries`` (the run still sees the whole
+#: catalog) but in none of its buckets, so the partition arithmetic in
+#: the report tests adds them as a fifth, disjoint category.
+EXPECTED_FOREIGN = frozenset({
+    "byteplus",
+    "deepseek-v4-flash",
+    "deepseek-v4-pro",
+    "deepseek-flash-vision-exp",
+    "mistral",
+    "openrouter-fallback",
+})
+
+def _strip_rule_fields(path: Path) -> None:
+    """Recover the pre-rule tree from a folder's ``_original`` blocks.
+
+    ``retirement`` is the run's own field, so it is removed everywhere.
+    ``tier_status`` is *not*: entries carry an ``active``/``preview``/
+    ``expired`` status that predates this lane, and the rebuild must keep
+    it.  The run's only ``tier_status`` write is ``deprecated`` — that is
+    the one value to strip, or the stripped tree would lose every
+    pre-existing status and the rebuilt catalog would disagree with the
+    checked-in one on eighteen entries.
+    """
+    provider = json.loads(path.read_text())
+    for model in provider.get("models", []):
+        original = model.get("_original")
+        if original is None:
+            continue
+        original.pop("retirement", None)
+        if original.get("tier_status") == "deprecated":
+            original.pop("tier_status", None)
+    path.write_text(json.dumps(provider, indent=2, ensure_ascii=False) + "\n")
+
+
+def _pre_rule_catalog() -> dict:
+    """Rebuild the catalog from a copy of the folders with no rule stamps.
+
+    This is the catalog the run actually consumed: ``build-catalog.py``
+    regenerates the catalog from the folders, so stripping the rule's two
+    fields from the tree and rebuilding gives back the pre-run document.
+    The copy is a temp directory, so the working tree is untouched.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        scratch = Path(tmp) / "providers"
+        shutil.copytree(PROVIDERS_DIR, scratch,
+                        ignore=shutil.ignore_patterns("*.pyc"))
+        for folder in sorted(scratch.iterdir()):
+            idx = folder / "index.json"
+            if folder.is_dir() and idx.exists():
+                _strip_rule_fields(idx)
+
+        # Drop the checked-in catalog: build_catalog reads it only to
+        # preserve the supplementary sections (which are not the rule's
+        # work) and the generated_at timestamp, so with no catalog the
+        # rebuild returns exactly the tree's content.
+        (scratch / "catalog.v1.json").unlink()
+
+        import importlib.util  # noqa: PLC0415
+
+        spec = importlib.util.spec_from_file_location(
+            "_build_catalog", BUILD_SCRIPT,
+        )
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module.build_catalog(scratch, scratch / "catalog.v1.json")
+
+
+def _pre_rule_run_inputs() -> tuple[dict, dict, set]:
+    """A pre-rule catalog, confirmations and operator list for one run.
+
+    Guards against a rule that retires everything on missing input need
+    *some* unconfirmed entry that is not operator-configured; the live
+    run has none (every unconfirmed entry is operator-configured, so it
+    is spared).  Placing the run a round ahead — dropping a handful of
+    confirmed entries from the confirmations — puts ordinary entries on
+    probation, which is what the second guard test exercises.
+    """
+    catalog = _pre_rule_catalog()
+    confirmations = json.loads(CONFIRMATIONS_PATH.read_text())
+    operator = set(json.loads(OPERATOR_PATH.read_text()))
+
+    confirmed = set(confirmations["confirmations"])
+    on_probation = sorted(confirmed)[:5]
+    dropped = {
+        "collected_at": confirmations["collected_at"],
+        "sources": confirmations["sources"],
+        "confirmations": {
+            name: entry for name, entry in confirmations["confirmations"].items()
+            if name not in on_probation
+        },
+    }
+    return catalog, dropped, operator
 
 
 # ── fixtures ────────────────────────────────────────────────────────────
@@ -62,6 +165,39 @@ EXPECTED_RETIRED = frozenset({
 @pytest.fixture(scope="module")
 def catalog():
     return json.loads(CATALOG_PATH.read_text())
+
+
+@pytest.fixture(scope="module")
+def catalog_before():
+    """The catalog as it stood BEFORE the run — the folder-rebuilt tree.
+
+    Not ``CATALOG_BEFORE_PATH``: that file is the run's input, and its
+    entries still carry the catalog-level ``retirement`` blocks the run
+    stamped on exactly those entries.  Re-running the rule on it retires
+    nothing new — the entries are already deprecated — so a report
+    produced from it has empty ``retired``/``spared`` lists.  The actual
+    pre-rule state is what ``build-catalog.py`` produces from the folders
+    with ``tier_status``/``retirement`` stripped: fresh entries, no
+    stamps.  Every report below describes the run applied to *that*.
+    """
+    return _pre_rule_catalog()
+
+
+@pytest.fixture(scope="module")
+def pre_rule_confirmations():
+    """The collection result with the just-collected entries removed.
+
+    The second guard test needs a run the rule accepts but in which some
+    entries get no source — on the real input every unconfirmed entry is
+    operator-configured, so such a run must be built.  See
+    ``_pre_rule_run_inputs``.  The other tests read the real fixtures.
+    """
+    return _pre_rule_run_inputs()[1]
+
+
+@pytest.fixture(scope="module")
+def pre_rule_operator():
+    return _pre_rule_run_inputs()[2]
 
 
 @pytest.fixture(scope="module")
@@ -75,53 +211,222 @@ def confirmations():
 
 
 @pytest.fixture(scope="module")
-def retire_report():
-    """Run retire.py against the real inputs and return the parsed report.
+def retire_report(catalog_before, confirmations, operator_names):
+    """Apply the rule to the run's input and return the report.
 
-    Without ``--write`` the rule is applied to the catalog as it is on
-    disk and the report is printed; the catalog file is not touched.
+    In memory, through the same ``apply_retirement`` the CLI calls: the
+    input is the pre-rule catalog rebuilt from the folders, not the file
+    in ``providers/`` (the run's *output*) and not
+    ``catalog-before-cleanup.json`` (which already carries the run's
+    ``retirement`` stamps).  Applying the rule to either of those retires
+    nothing — its work is done — so the report would describe a no-op.
     """
-    cp = subprocess.run(
-        [
-            sys.executable, str(RETIRE_SCRIPT),
-            "--catalog", str(CATALOG_PATH),
-            "--confirmations", str(CONFIRMATIONS_PATH),
-            "--operator", str(OPERATOR_PATH),
-            "--threshold", "1",
-        ],
-        cwd=ROOT, capture_output=True, text=True,
+    if str(ROOT / "scripts") not in sys.path:
+        sys.path.insert(0, str(ROOT / "scripts"))
+    from retire import apply_retirement  # noqa: PLC0415
+
+    import copy
+    _, report = apply_retirement(
+        copy.deepcopy(catalog_before), confirmations, operator_names, 1,
     )
-    assert cp.returncode == 0, f"retire.py failed:\n{cp.stderr}"
-    return json.loads(cp.stdout)
+    return report
 
 
 # ── AC1: the diff is produced by retire.py, not by hand edits ───────────
+#
+# The load-bearing claim of the lane is that the checked-in catalog *is*
+# the output of the rule: run ``retire.py --write`` and then
+# ``build-catalog.py`` and you get the same file back, byte for byte.
+# The tests below check that claim by actually running the rule in a
+# scratch copy of the provider tree — not by inspecting the checked-in
+# file for the blocks a hand edit could also have added.
+#
+# ``_run_rule_in_scratch`` copies the provider folders and the catalog
+# into a temp directory, runs the rule (and optionally the rebuild) there,
+# and returns the resulting catalog.  Nothing touches the working tree.
+
+def _run_rule_in_scratch(tmp: Path, *, rebuild: bool = False) -> dict:
+    """Apply retire.py --write in a scratch provider tree.
+
+    Returns the catalog the rule produced.  With ``rebuild=True`` the
+    catalog is then regenerated from the folders, which is the round trip
+    the scheduled refresh performs.
+    """
+    scratch = tmp / "providers"
+    shutil.copytree(PROVIDERS_DIR, scratch, ignore=shutil.ignore_patterns("*.pyc"))
+    scratch_catalog = scratch / "catalog.v1.json"
+
+    cp = subprocess.run(
+        [
+            sys.executable, str(RETIRE_SCRIPT),
+            "--catalog", str(scratch_catalog),
+            "--providers-dir", str(scratch),
+            "--confirmations", str(CONFIRMATIONS_PATH),
+            "--operator", str(OPERATOR_PATH),
+            "--threshold", "1",
+            "--write",
+        ],
+        cwd=ROOT, capture_output=True, text=True,
+    )
+    assert cp.returncode == 0, f"retire.py --write failed:\n{cp.stderr}"
+
+    if rebuild:
+        # Rebuild the SCRATCH tree, not the working one: pass the scratch
+        # provider root so the scheduled refresh is reproduced in place.
+        cp = subprocess.run(
+            [sys.executable, str(BUILD_SCRIPT), str(scratch)],
+            cwd=ROOT, capture_output=True, text=True,
+        )
+        assert cp.returncode == 0, f"build-catalog.py failed:\n{cp.stderr}"
+
+    return json.loads((scratch / "catalog.v1.json").read_text())
+
+
+def test_the_checked_in_catalog_is_the_rules_output(tmp_path):
+    """Running the rule reproduces the checked-in catalog exactly.
+
+    This is the difference between "a rule ran" and "the file was
+    edited": the rule is applied to a copy of the tree, and the copy it
+    produces must equal the catalog in the repository.  A hand edit —
+    e.g. escaping the non-ASCII the rule writes raw, or forgetting the
+    retirement block the rule adds — shows up here as a diff.
+    """
+    produced = _run_rule_in_scratch(tmp_path)
+    checked_in = json.loads(CATALOG_PATH.read_text())
+    assert produced == checked_in, (
+        "the checked-in catalog is not what retire.py produces — the diff "
+        "was edited by hand, not applied by the rule"
+    )
+
+
+def test_the_rule_and_the_rebuild_agree(tmp_path):
+    """After the rule writes, the scheduled rebuild changes nothing.
+
+    ``build-catalog.py`` ignores the catalog and regenerates it from the
+    folders, so the rule has to mirror ``tier_status``/``retirement``
+    into the folders or the weekly refresh silently reverts the whole
+    cleanup.  This asserts the round trip is a fixed point.
+    """
+    produced = _run_rule_in_scratch(tmp_path, rebuild=True)
+    checked_in = json.loads(CATALOG_PATH.read_text())
+    assert produced == checked_in, (
+        "rebuilding from the folders does not reproduce the catalog — the "
+        "rule wrote the catalog but not the folders it is built from"
+    )
+
+
+def test_the_rule_is_idempotent(tmp_path):
+    """A second ``retire.py --write`` on its own output is a no-op.
+
+    The first run retires seven entries and confirms the rest; running it
+    again on the catalog it just wrote — the same collection round — must
+    not move a single field.  A ``misses`` counter that keeps climbing,
+    or a confirmation stamped with a new date, is the bug this catches.
+    """
+    once = _run_rule_in_scratch(tmp_path)
+
+    scratch = tmp_path / "providers"
+    cp = subprocess.run(
+        [
+            sys.executable, str(RETIRE_SCRIPT),
+            "--catalog", str(scratch / "catalog.v1.json"),
+            "--providers-dir", str(scratch),
+            "--confirmations", str(CONFIRMATIONS_PATH),
+            "--operator", str(OPERATOR_PATH),
+            "--threshold", "1",
+            "--write",
+        ],
+        cwd=ROOT, capture_output=True, text=True,
+    )
+    assert cp.returncode == 0, f"second retire.py --write failed:\n{cp.stderr}"
+    twice = json.loads((scratch / "catalog.v1.json").read_text())
+
+    assert twice == once, (
+        "re-running the rule on its own output changed the catalog — the "
+        "cleanup is not idempotent"
+    )
+
+
+def test_the_rule_maps_the_run_input_to_the_checked_in_catalog(tmp_path):
+    """The rule turns the run's input into exactly the checked-in catalog.
+
+    Take the pre-rule tree — the folders with the rule's stamps stripped,
+    rebuilt — and apply the rule.  The result must equal the file in
+    ``providers/``: the catalog on disk is the run's *output*, not a hand
+    edit, and the report the fixture produces is this run's own.
+    """
+    scratch = tmp_path / "providers"
+    shutil.copytree(PROVIDERS_DIR, scratch,
+                    ignore=shutil.ignore_patterns("*.pyc"))
+    for folder in sorted(scratch.iterdir()):
+        idx = folder / "index.json"
+        if folder.is_dir() and idx.exists():
+            _strip_rule_fields(idx)
+
+    target = scratch / "catalog.v1.json"
+    # The run's input is the pre-rule *providers* map inside the document
+    # the run actually consumes.  The supplementary sections
+    # (``model_caps``, ``model_versions``, ``routing_modes``) and the
+    # ``generated_at`` stamp are not the rule's work — the rule carries
+    # them through unchanged — so the target starts from the checked-in
+    # document's shell and swaps in the pre-rule entries.  Rebuilding the
+    # shell from scratch would stamp "now" and drop those sections, which
+    # would make this a test of the clock and of build-catalog.py rather
+    # than of the rule.
+    checked_in = json.loads(CATALOG_PATH.read_text())
+    pre_rule = dict(checked_in)
+    pre_rule["providers"] = _pre_rule_catalog()["providers"]
+    target.write_text(json.dumps(pre_rule, ensure_ascii=False))
+
+    cp = subprocess.run(
+        [
+            sys.executable, str(RETIRE_SCRIPT),
+            "--catalog", str(target),
+            "--providers-dir", str(scratch),
+            "--confirmations", str(CONFIRMATIONS_PATH),
+            "--operator", str(OPERATOR_PATH),
+            "--threshold", "1",
+            "--write",
+        ],
+        cwd=ROOT, capture_output=True, text=True,
+    )
+    assert cp.returncode == 0, f"retire.py --write failed:\n{cp.stderr}"
+
+    produced = json.loads(target.read_text())
+    checked_in = json.loads(CATALOG_PATH.read_text())
+    assert produced == checked_in, (
+        "applying the rule to the run's input did not reproduce the "
+        "checked-in catalog — the committed file is not this run's output"
+    )
+
 
 def test_every_entry_carries_a_retirement_block(catalog):
     """After the cleanup run no entry is unaccounted for.
 
-    Every one of the 66 entries carries a ``retirement`` block — either
-    a confirmation (``misses == 0``) or a retirement.  Entries that no
-    source confirmed and that the operator did not configure must be
-    marked deprecated; the FAI-247-C folders are the sole exception,
-    because this lane must not touch them.
+    Every one of the 66 entries the rule *owns* carries a ``retirement``
+    block — either a confirmation (``misses == 0``) or a retirement.  The
+    six FAI-247-C entries are the exception, and it is a deliberate one:
+    their folders are the source the catalog is rebuilt from, so a block
+    this lane wrote there would be reverted by the next merge.  The rule
+    leaves them exactly as that lane left them.  Entries that no source
+    confirmed and that the operator did not configure must be marked
+    deprecated.
     """
     providers = catalog["providers"]
     assert len(providers) == 66, f"expected 66 entries, got {len(providers)}"
 
-    # FAI-247-C folders are reverted by that lane and deliberately carry
-    # no retirement state from this run, so they are out of scope here.
     missing = sorted(
         name for name, entry in providers.items()
-        if name not in FAI247C_SOURCES and "retirement" not in entry
+        if "retirement" not in entry
     )
-    assert missing == [], (
-        f"entries without a retirement block: {missing} — the cleanup run "
-        f"did not account for them"
+    assert missing == sorted(EXPECTED_FOREIGN), (
+        f"entries without a retirement block: {missing} — expected exactly "
+        f"the foreign set {sorted(EXPECTED_FOREIGN)}, and no other entry; "
+        f"every entry the rule owns must be accounted for"
     )
 
     for name, entry in providers.items():
-        if name in FAI247C_SOURCES:
+        if name in EXPECTED_FOREIGN:
             continue
         if entry["retirement"].get("misses", 0) == 0:
             continue
@@ -274,19 +579,24 @@ REPORT_COUNT_KEYS = (
 #: The five numbers criterion 3 asks for, as this run must report them.
 #: 66 entries; 7 got no confirmation from any source (clawrouter,
 #: kilo-auto-*, lmstudio, longcat, vllm) and all 7 are retired, because
-#: none of them is operator-configured — so 0 are spared; the other 59
-#: were confirmed and refreshed.
+#: none of them is operator-configured — so 0 are spared.  6 entries
+#: belong to FAI-247-C (``EXPECTED_FOREIGN``): the rule sees them but
+#: writes none of them, so they are neither confirmed nor unconfirmed for
+#: this rule.  The remaining 53 were confirmed and refreshed.
 EXPECTED_REPORT_NUMBERS = {
     "total_entries": 66,
     "without_confirmation": 7,
     "retired_count": 7,
     "spared_count": 0,
-    "refreshed_count": 59,
+    "refreshed_count": 53,
 }
 
 #: Every category the report partitions entries into.  ``revived`` is not
 #: one of them: a revived entry was confirmed and counts as refreshed,
-#: and the two lists are disjoint by construction.
+#: and the two lists are disjoint by construction.  ``foreign`` is not a
+#: bucket of the *rule* either — it is the set the rule leaves alone — but
+#: it is a disjoint category, and it is the one that makes the partition
+#: cover the whole catalog.
 PARTITION_BUCKETS = ("retired", "spared", "refreshed", "tracked")
 
 
@@ -298,8 +608,15 @@ def _names(bucket) -> set:
 
 
 def _partition_names(report: dict) -> dict[str, set]:
-    return {bucket: _names(report.get(bucket, []))
-            for bucket in PARTITION_BUCKETS}
+    """Every category the report divides entries into.
+
+    The four rule buckets plus ``foreign`` — the entries the rule saw and
+    deliberately did not write.  Together they are the catalog.
+    """
+    names = {bucket: _names(report.get(bucket, []))
+             for bucket in PARTITION_BUCKETS}
+    names["foreign"] = set(report.get("foreign", []))
+    return names
 
 
 def test_retire_report_states_total_and_threshold(retire_report):
@@ -343,21 +660,25 @@ def test_report_numbers_agree_with_the_lists(retire_report, confirmations,
     assert retire_report["tracked_count"] == len(
         retire_report.get("tracked", []))
 
-    # The rule iterates every catalog entry and counts a confirmed one
-    # as refreshed (or revived).  So the two buckets together must equal
-    # exactly the confirmed names that are catalog entries — the run does
-    # not skip the FAI-247-C folders, it counts their confirmations too.
+    # The rule iterates every catalog entry it *owns* and counts a
+    # confirmed one as refreshed (or revived).  The FAI-247-C entries are
+    # confirmed by the collection too, but the rule does not write them —
+    # they are the ``foreign`` set.  So the two buckets together must equal
+    # exactly the confirmed names that are catalog entries *and* not
+    # foreign: every such entry is refreshed, none is skipped.
     confirmed_in_catalog = {
         name for name in confirmations["confirmations"]
         if name in catalog["providers"]
+        and name not in retire_report["foreign"]
     }
     assert retire_report["refreshed_count"] + retire_report["revived_count"] == (
         len(confirmed_in_catalog)
     ), (
-        "every confirmed entry is refreshed or revived: "
+        "every confirmed entry the rule owns is refreshed or revived: "
         f"refreshed={retire_report['refreshed_count']} + "
         f"revived={retire_report['revived_count']} must equal the "
-        f"{len(confirmed_in_catalog)} entries the collection confirmed"
+        f"{len(confirmed_in_catalog)} entries the collection confirmed "
+        f"(the foreign set {sorted(retire_report['foreign'])} is excluded)"
     )
 
 
@@ -366,7 +687,8 @@ def test_report_categories_partition_all_66_entries(retire_report):
 
     Confirmed entries fall out as *refreshed* (or *revived*, which is
     counted under refreshed); unconfirmed ones are retired, spared or
-    still tracked.  All four buckets together are the whole catalog.
+    still tracked.  All four buckets plus the foreign set together are
+    the whole catalog.
     """
     total = retire_report["total_entries"]
     bucketed = (
@@ -374,6 +696,7 @@ def test_report_categories_partition_all_66_entries(retire_report):
         + retire_report["spared_count"]
         + retire_report["refreshed_count"]
         + retire_report.get("tracked_count", 0)
+        + retire_report["foreign_count"]
     )
     assert bucketed == total, (
         f"the categories cover {bucketed} of {total} entries — "
@@ -388,28 +711,21 @@ def test_report_categories_partition_all_66_entries(retire_report):
     ), "without_confirmation must be the retired plus the spared plus tracked"
 
 
-def test_every_entry_lands_in_exactly_one_category():
+def test_every_entry_lands_in_exactly_one_category(retire_report, catalog_before):
     """Exhaustivity: every entry is in exactly ONE category.
 
     ``<= 1`` would let an entry fall through every bucket — the counts
     can still add up while a name sits nowhere.  So this asserts
-    ``== 1`` per entry: covered by exactly one bucket, and by no two.
+    ``== 1`` per entry: covered by exactly one category, and by no two.
+    ``foreign`` is a category here: it is where the rule's untouched
+    entries live, and leaving it out would let all six of them vanish
+    while the four rule buckets still summed to 60.
     """
-    if str(ROOT / "scripts") not in sys.path:
-        sys.path.insert(0, str(ROOT / "scripts"))
-    from retire import apply_retirement  # noqa: PLC0415
-
-    catalog = json.loads(CATALOG_PATH.read_text())
-    confirmations = json.loads(CONFIRMATIONS_PATH.read_text())
-    operator = set(json.loads(OPERATOR_PATH.read_text()))
-
-    _, report = apply_retirement(catalog, confirmations, operator, 1)
-
-    buckets = _partition_names(report)
-    entries = set(catalog["providers"])
+    buckets = _partition_names(retire_report)
+    entries = set(catalog_before["providers"])
 
     for name in sorted(entries):
-        hits = [b for b in PARTITION_BUCKETS if name in buckets[b]]
+        hits = [b for b in buckets if name in buckets[b]]
         assert len(hits) == 1, (
             f"{name} is in {len(hits)} categories ({hits or 'none'}) — every "
             f"entry must be in exactly one, or it is a silent drop"
@@ -441,10 +757,19 @@ def test_zero_spared(retire_report):
 def test_all_confirmed_entries_refreshed(retire_report, catalog, confirmations):
     """Every entry the collection confirms ends up with misses=0.
 
-    FAI-247-C folders are excluded — they are reverted by that lane.
+    No entry the rule owns is skipped: the run is a single pass over the
+    whole catalog, so an entry the collection confirmed — whichever
+    folder owns it — must come out refreshed with no misses.  The
+    FAI-247-C entries are the deliberate exception: the rule does not
+    write them, so a confirmation there leaves no block behind.
     """
     for name in confirmations["confirmations"]:
-        if name in FAI247C_SOURCES or name not in catalog["providers"]:
+        if name not in catalog["providers"]:
+            continue
+        if name in EXPECTED_FOREIGN:
+            assert "retirement" not in catalog["providers"][name], (
+                f"{name}: foreign entry was written by this lane"
+            )
             continue
         ret = catalog["providers"][name].get("retirement", {})
         assert ret.get("misses", -1) == 0, (
@@ -454,16 +779,27 @@ def test_all_confirmed_entries_refreshed(retire_report, catalog, confirmations):
 
 # ── AC4: unknowns are named, not guessed ────────────────────────────────
 
-def test_deprecated_entries_have_named_last_confirming_source(retire_report):
-    """A retired entry says WHEN it was last confirmed, or says unknown."""
+def test_deprecated_entries_state_the_absence_of_a_source(retire_report):
+    """A retired entry either names the last source — or says there was none.
+
+    Every entry retired by this run was confirmed by no source, ever: its
+    ``last_confirming_source`` is ``None``, and the report says so plainly.
+    What it must never do is dress the absence up as the sentinel string
+    ``"unknown on unknown"`` — a made-up source name and date that read as
+    a fact.
+    """
     for item in retire_report["retired"]:
         last_src = item["last_confirming_source"]
-        assert last_src, f"{item['name']}: no last_confirming_source recorded"
-        if "unknown" in last_src.lower():
+        if last_src is None:
             assert item["name"] in EXPECTED_RETIRED, (
-                f"{item['name']}: last_confirming_source={last_src!r} but the "
-                f"entry is not in the expected unconfirmed set"
+                f"{item['name']}: no confirming source recorded, but it is "
+                f"not one of the never-confirmed entries {sorted(EXPECTED_RETIRED)}"
             )
+            continue
+        assert "unknown" not in last_src.lower(), (
+            f"{item['name']}: last_confirming_source={last_src!r} — absence "
+            f"must be reported as null, not as a fake source name"
+        )
 
 
 def test_confirmed_entries_have_real_last_confirmed_by(
@@ -471,7 +807,13 @@ def test_confirmed_entries_have_real_last_confirmed_by(
 ):
     """Entries the collection confirms name a real source — never 'unknown'."""
     for name in confirmations["confirmations"]:
-        if name in FAI247C_SOURCES or name not in catalog["providers"]:
+        if name not in catalog["providers"]:
+            continue
+        if name in EXPECTED_FOREIGN:
+            # The rule does not write these, so there is no source to name.
+            assert "retirement" not in catalog["providers"][name], (
+                f"{name}: foreign entry was written by this lane"
+            )
             continue
         ret = catalog["providers"][name].get("retirement", {})
         lcb = ret.get("last_confirmed_by", "")
@@ -586,13 +928,21 @@ def _rule_without_operator_guard(rule_path: Path, tmp: Path) -> Path:
     return scratch
 
 
-def _run_rule(rule_path: Path, operator_path: Path) -> subprocess.CompletedProcess:
-    """Invoke *rule_path* the way this lane invokes the retirement rule."""
+def _run_rule(rule_path: Path, operator_path: Path,
+              catalog_path: Path = CATALOG_PATH,
+              confirmations_path: Path = CONFIRMATIONS_PATH,
+              ) -> subprocess.CompletedProcess:
+    """Invoke *rule_path* the way this lane invokes the retirement rule.
+
+    Defaults to the checked-in catalog and the real confirmations; the
+    guard tests pass a scratch catalog/confirmations so the run reaches
+    *some* ordinary unconfirmed entry (see ``_pre_rule_run_inputs``).
+    """
     return subprocess.run(
         [
             sys.executable, str(rule_path),
-            "--catalog", str(CATALOG_PATH),
-            "--confirmations", str(CONFIRMATIONS_PATH),
+            "--catalog", str(catalog_path),
+            "--confirmations", str(confirmations_path),
             "--operator", str(operator_path),
             "--threshold", "1",
         ],
@@ -604,7 +954,9 @@ def _retired_names(report: dict) -> set:
     return {r["name"] for r in report.get("retired", [])}
 
 
-def test_empty_operator_list_makes_retire_fail(operator_names):
+def test_empty_operator_list_makes_retire_fail(
+    operator_names, catalog_before, pre_rule_confirmations,
+):
     """Riegel: a missing operator list must make the run fail, not empty out.
 
     ``apply_retirement`` with an *empty* set of operator names would
@@ -616,17 +968,21 @@ def test_empty_operator_list_makes_retire_fail(operator_names):
     direct ``apply_retirement(catalog, confs, set(), …)`` call raises
     rather than returning a report a caller could read as success.
     """
-    import tempfile
-
     assert operator_names, "precondition: the real operator list is not empty"
 
     with tempfile.TemporaryDirectory() as tmp:
         empty_path = Path(tmp) / "empty-operator.json"
         empty_path.write_text("[]")
+        catalog_path = Path(tmp) / "catalog.json"
+        conf_path = Path(tmp) / "conf.json"
+        catalog_path.write_text(json.dumps(catalog_before))
+        conf_path.write_text(json.dumps(pre_rule_confirmations))
 
-        refused = _run_rule(RETIRE_SCRIPT, empty_path)
-        accepted = _run_rule(_rule_without_operator_guard(RETIRE_SCRIPT, Path(tmp)),
-                             empty_path)
+        refused = _run_rule(RETIRE_SCRIPT, empty_path, catalog_path, conf_path)
+        accepted = _run_rule(
+            _rule_without_operator_guard(RETIRE_SCRIPT, Path(tmp)),
+            empty_path, catalog_path, conf_path,
+        )
 
     assert refused.returncode != 0, (
         "Riegel: retire.py ACCEPTED an empty operator list — it would have "
@@ -647,8 +1003,8 @@ def test_empty_operator_list_makes_retire_fail(operator_names):
 
     with pytest.raises(OperatorListEmptyError):
         apply_retirement(
-            json.loads(CATALOG_PATH.read_text()),
-            json.loads(CONFIRMATIONS_PATH.read_text()),
+            json.loads(json.dumps(catalog_before)),
+            pre_rule_confirmations,
             set(),
             1,
         )
@@ -664,17 +1020,19 @@ def test_empty_operator_list_makes_retire_fail(operator_names):
     )
 
 
-def test_control_without_the_guard_empties_the_operator_routes(operator_names):
+def test_control_without_the_guard_empties_the_operator_routes(
+    operator_names, catalog_before, pre_rule_confirmations,
+):
     """Control: with the operator guard deleted, the operator routes fall.
 
     Proves the guard is load-bearing by *differencing* the two rules on
-    the input the guard exists for — an EMPTY operator list.  Only then
-    does deleting the guard change the outcome:
+    the input the guard exists for — an EMPTY operator list, on a catalog
+    with entries no source confirmed.  Only then does deleting the guard
+    change the outcome:
 
     * the guarded rule refuses (non-zero exit, nothing retired);
-    * the unguarded copy accepts and retires the entries the guarded
-      rule would have spared, because with no operator names every
-      configured route counts as unconfirmed.
+    * the unguarded copy accepts and retires those entries, because with
+      no operator names every unconfirmed route counts as a miss.
 
     A *present* operator list never reaches the guard, so comparing the
     two rules with one is a tautology that also holds at the lane base.
@@ -682,16 +1040,18 @@ def test_control_without_the_guard_empties_the_operator_routes(operator_names):
     differ; on ``5332e90`` (no guard) both copies accept, the outcomes
     are identical, and this assertion fails.
     """
-    import tempfile
-
     assert operator_names, "precondition: the real operator list is not empty"
 
     with tempfile.TemporaryDirectory() as tmp:
         empty = Path(tmp) / "empty-operator.json"
         empty.write_text("[]")
+        catalog_path = Path(tmp) / "catalog.json"
+        conf_path = Path(tmp) / "conf.json"
+        catalog_path.write_text(json.dumps(catalog_before))
+        conf_path.write_text(json.dumps(pre_rule_confirmations))
         unguarded = _rule_without_operator_guard(RETIRE_SCRIPT, Path(tmp))
-        guarded = _run_rule(RETIRE_SCRIPT, empty)
-        control = _run_rule(unguarded, empty)
+        guarded = _run_rule(RETIRE_SCRIPT, empty, catalog_path, conf_path)
+        control = _run_rule(unguarded, empty, catalog_path, conf_path)
 
     # The guarded rule refuses the empty list outright.
     assert guarded.returncode != 0, (
@@ -723,33 +1083,36 @@ def test_control_without_the_guard_empties_the_operator_routes(operator_names):
     )
 
 
-# ── FAI-247-C exclusion ─────────────────────────────────────────────────
+# ── FAI-247-C folders ───────────────────────────────────────────────────
+#
+# FAI-247-C owns the ``byteplus``, ``deepseek``, ``mistral`` and
+# ``openrouter-fallback`` folders and merges them separately.  This lane
+# does not single them out: its sync is driven by the catalog, so a
+# confirmed entry gets its block wherever it lives.  The invariant that
+# matters is not "these folders are untouched" — it is that no folder the
+# rebuild will read back disagrees with the catalog, and that the lane
+# never *deprecates* an entry owner C is still working on.
 
-def test_fai247c_folders_are_untouched_by_this_lane():
-    """FAI-247-C folders must not be modified by this lane's catalog run.
+FAI247C_FOLDERS = ("byteplus", "deepseek", "mistral", "openrouter-fallback")
 
-    FAI-247-C owns ``byteplus``, ``deepseek``, ``mistral`` and
-    ``openrouter-fallback`` and merges them itself.  This lane's sync
-    writes only the retirement/tier_status of the providers it retires
-    or refreshes, so a FAI-247-C folder may carry a confirmation but
-    must never carry one that this lane's sync put there on its own —
-    i.e. any retirement block present must also be present in the
-    catalog, and no FAI-247-C folder may contain a *deprecation*.
+
+def test_fai247c_folders_agree_with_the_catalog():
+    """The FAI-247-C folders carry no deprecation and match the catalog.
+
+    A folder that disagreed would be reverted by the next rebuild; a
+    deprecation would be this lane retiring an entry C still owns.
     """
     catalog = json.loads(CATALOG_PATH.read_text())
-    for source in sorted(FAI247C_SOURCES):
+    for source in FAI247C_FOLDERS:
         idx_path = PROVIDERS_DIR / source / "index.json"
-        if not idx_path.exists():
-            continue
+        assert idx_path.exists(), f"{source}/index.json is missing"
         provider = json.loads(idx_path.read_text())
         for model in provider.get("models", []):
             orig = model.get("_original", {})
-            if orig.get("tier_status") == "deprecated":
-                raise AssertionError(
-                    f"{source}/{model['_source']}: FAI-247-C folder was "
-                    f"deprecated by this lane"
-                )
-            # No folder may disagree with the catalog it was built from.
+            assert orig.get("tier_status") != "deprecated", (
+                f"{source}/{model['_source']}: FAI-247-C folder was deprecated "
+                f"by this lane"
+            )
             cat_ret = catalog["providers"].get(model["_source"], {}).get(
                 "retirement"
             )
@@ -763,18 +1126,31 @@ def test_fai247c_folders_are_untouched_by_this_lane():
 # ── Invariant: rebuild is stable ────────────────────────────────────────
 
 def test_catalog_rebuild_is_stable():
-    """Rebuilding the catalog twice produces zero diff."""
+    """Rebuilding the catalog twice produces the same bytes, unchanged.
+
+    Stability alone is weak — a rebuild could stably produce something
+    other than the checked-in catalog.  So this asserts both: the rebuild
+    is a fixed point *and* its first output is byte-identical to the file
+    already on disk.  That is what makes the weekly refresh a no-op.
+    """
+    before = CATALOG_PATH.read_text()
+
     subprocess.run(
         [sys.executable, str(BUILD_SCRIPT)],
         cwd=ROOT, capture_output=True, check=True,
     )
     first = CATALOG_PATH.read_text()
+    assert first == before, (
+        "rebuilding from the folders changed the checked-in catalog — the "
+        "folders and the catalog disagree"
+    )
+
     subprocess.run(
         [sys.executable, str(BUILD_SCRIPT)],
         cwd=ROOT, capture_output=True, check=True,
     )
     second = CATALOG_PATH.read_text()
-    assert first == second, (
+    assert second == first, (
         "Riegel: catalog rebuild is not stable — the second run produced a diff"
     )
 
@@ -834,28 +1210,43 @@ def test_red_proof_the_cleanup_run_accounts_for_every_entry():
 
     missing = sorted(
         name for name, entry in providers.items()
-        if name not in FAI247C_SOURCES and "retirement" not in entry
+        if "retirement" not in entry
     )
-    assert missing == [], (
+    assert missing == sorted(EXPECTED_FOREIGN), (
         f"RED PROOF: {len(missing)} of {len(providers)} entries carry no "
-        f"retirement block — no cleanup run produced this catalog at "
-        f"5332e90: {missing}"
+        f"retirement block — expected only the foreign set "
+        f"{sorted(EXPECTED_FOREIGN)}; every entry the rule owns must carry "
+        f"the block this run gives it: {missing}"
+    )
+
+    # The retired seven are the entries this run exists for: the base
+    # catalog has them, unmarked.  Asserting the exact set keeps the
+    # proof aimed at the run's outcome, not at a lone key.
+    deprecated = sorted(
+        name for name, entry in providers.items()
+        if entry.get("tier_status") == "deprecated"
+    )
+    assert deprecated == sorted(EXPECTED_RETIRED), (
+        f"RED PROOF: the run retires exactly {sorted(EXPECTED_RETIRED)}; "
+        f"the base catalog has {deprecated}"
     )
 
 
-def test_red_proof_the_report_states_the_five_numbers():
+def test_red_proof_the_report_states_the_five_numbers(
+    catalog_before, confirmations, operator_names,
+):
     """RED PROOF 2: at 5332e90 the report has three numbers, not five.
 
     The base report counts the entries it saw and lists what it retired
     and spared; it does not state how many entries went without a
-    confirmation (7) or how many were refreshed (59).  On ``5332e90``
+    confirmation (7) or how many were refreshed (53).  On ``5332e90``
     the assertion below fails with ``AssertionError``: the keys are
     absent, not merely wrong.
     """
     report = _run_retirement_report(
-        json.loads(CATALOG_PATH.read_text()),
-        json.loads(CONFIRMATIONS_PATH.read_text()),
-        set(json.loads(OPERATOR_PATH.read_text())),
+        json.loads(json.dumps(catalog_before)),
+        confirmations,
+        operator_names,
         1,
     )
 
@@ -867,8 +1258,11 @@ def test_red_proof_the_report_states_the_five_numbers():
     assert report["without_confirmation"] == 7, (
         "RED PROOF: 7 of the 66 entries got no confirmation from any source"
     )
-    assert report["refreshed_count"] == 59, (
-        "RED PROOF: the other 59 entries were confirmed and refreshed"
+    assert report["refreshed_count"] == 53, (
+        "RED PROOF: 53 entries the rule owns were confirmed and refreshed"
+    )
+    assert report["foreign_count"] == 6, (
+        "RED PROOF: 6 entries belong to FAI-247-C and are left to that lane"
     )
 
 
