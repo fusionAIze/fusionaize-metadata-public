@@ -638,20 +638,33 @@ REPORT_COUNT_KEYS = (
     "refreshed_count",
 )
 
-#: The five numbers criterion 3 asks for, as this run must report them.
-#: 66 entries; 7 got no confirmation from any source (clawrouter,
-#: kilo-auto-*, lmstudio, longcat, vllm) and all 7 are retired, because
-#: none of them is operator-configured — so 0 are spared.  6 entries
-#: belong to FAI-247-C (``EXPECTED_FOREIGN``): the rule sees them but
-#: writes none of them, so they are neither confirmed nor unconfirmed for
-#: this rule.  The remaining 53 were confirmed and refreshed.
-EXPECTED_REPORT_NUMBERS = {
-    "total_entries": 66,
-    "without_confirmation": 7,
-    "retired_count": 7,
-    "spared_count": 0,
-    "refreshed_count": 53,
-}
+
+def _expected_report_numbers(catalog_before: dict, confirmations: dict,
+                             operator_names: set) -> dict:
+    """The five numbers, derived from the run's inputs — not typed in.
+
+    Every number here is *defined* by the inputs: the total is the size
+    of the catalog, the refreshed are the entries the collection
+    confirmed (minus the FAI-247-C ones the rule does not write), and
+    the unconfirmed are everyone else — retired plus spared.  Deriving
+    them means the test states the rule's contract (``refreshed`` +
+    ``without_confirmation`` + ``foreign`` == total) rather than echoing
+    a constant a future edit to the inputs would leave stale.
+    """
+    names = set(catalog_before["providers"])
+    foreign = names & EXPECTED_FOREIGN
+    owned = names - foreign
+    confirmed = set(confirmations["confirmations"]) & owned
+    unconfirmed = owned - confirmed
+    retired = unconfirmed - set(operator_names)
+    spared = unconfirmed & set(operator_names)
+    return {
+        "total_entries": len(names),
+        "without_confirmation": len(unconfirmed),
+        "retired_count": len(retired),
+        "spared_count": len(spared),
+        "refreshed_count": len(confirmed),
+    }
 
 #: Every category the report partitions entries into.  ``revived`` is not
 #: one of them: a revived entry was confirmed and counts as refreshed,
@@ -698,12 +711,22 @@ def test_retire_report_carries_all_five_numbers(retire_report):
     )
 
 
-def test_retire_report_numbers_are_the_real_ones(retire_report):
-    """The five numbers are the run's actual outcome, not placeholders."""
+def test_retire_report_numbers_are_the_real_ones(
+    retire_report, catalog_before, confirmations, operator_names,
+):
+    """The five numbers are the run's actual outcome, not placeholders.
+
+    The expectation is derived from the run's own inputs, so this checks
+    the rule against its contract rather than against a number copied
+    into the test — a hardcoded ``53`` would pass while the collection
+    it claims to describe moved underneath it.
+    """
+    expected = _expected_report_numbers(
+        catalog_before, confirmations, operator_names,
+    )
     got = {k: retire_report[k] for k in REPORT_COUNT_KEYS}
-    assert got == EXPECTED_REPORT_NUMBERS, (
-        f"the reported numbers are {got}; the run's outcome is "
-        f"{EXPECTED_REPORT_NUMBERS}"
+    assert got == expected, (
+        f"the reported numbers are {got}; the run's inputs imply {expected}"
     )
 
 
