@@ -1117,17 +1117,142 @@ def test_cli_empty_operator_list_names_the_reason_on_stderr_or_stdout(tmp_path):
     )
 
 
-if __name__ == "__main__":
-    import sys as _sys
+# ---------------------------------------------------------------------------
+# The NON-RAISING abort paths at the process level.
+#
+# The two CLI tests above both reach their non-zero exit through the
+# ``except ValueError`` handler: an empty survey and an empty operator
+# list both *raise*.  The rule has two further guards that ABORT instead
+# of raising — a failed collection (``failed: true``) and a legacy
+# confirmation document with no sources and no confirmations.  Those
+# return an ordinary ``report`` carrying ``aborted``/``abort_reason``,
+# and it is ``main()``'s ``if report.get("aborted"): sys.exit(2)`` branch
+# that turns the refusal into a non-zero exit and keeps ``--write`` from
+# touching the catalog.
+#
+# Nothing drove those inputs through the CLI, so deleting that branch
+# left the whole suite green while the CLI exited 0 and rewrote the
+# catalog — the exact "reports success on an aborted run" failure the
+# raise-based tests were believed to cover.  A raise never reaches the
+# branch; only these tests do.
+# ---------------------------------------------------------------------------
 
+def _legacy_empty_sources():
+    """The legacy shape's documented "nothing ran this round" signal."""
+    return {"collected_at": "2026-09-26", "sources": [], "confirmations": {}}
+
+
+def _failed_collection():
+    """A collection that ran and failed."""
+    return {
+        "collected_at": "2026-09-26",
+        "sources": ["openrouter"],
+        "failed": True,
+        "confirmations": {},
+    }
+
+
+def _drive_aborted_cli(tmp_path, document):
+    """Run the CLI with an input that aborts without raising.
+
+    Returns ``(CompletedProcess, before_bytes, target_path)`` so each
+    test can assert the process-level contract (exit code, untouched
+    file) and, where useful, the named reason.
+    """
+    target = tmp_path / "catalog.json"
+    target.write_bytes(CATALOG.read_bytes())
+    before = target.read_bytes()
+
+    survey = tmp_path / "aborting-input.json"
+    survey.write_text(json.dumps(document))
+
+    # A real, non-empty operator list: the abort must come from the
+    # collection guard, not from the operator guard that would raise.
+    result = _run_cli(target, survey, OPERATOR, 1, "--write")
+    return result, before, target
+
+
+def test_cli_failed_collection_exits_nonzero_and_writes_nothing(tmp_path):
+    """A failed collection must not exit 0 and must not write the catalog.
+
+    ``apply_retirement`` returns an aborted report for ``failed: true``
+    rather than raising, so the only thing standing between a batch
+    caller and a rewritten catalog is ``main()``'s ``aborted`` branch.
+    Remove that branch and this test fails with ``returncode == 0`` and
+    a changed catalog.
+    """
+    result, before, target = _drive_aborted_cli(tmp_path, _failed_collection())
+
+    assert result.returncode != 0, (
+        "a failed collection must fail loudly; the process exited 0 with "
+        f"stdout={result.stdout!r}"
+    )
+    assert target.read_bytes() == before, (
+        "an aborted run must not write the catalog"
+    )
+
+
+def test_cli_legacy_empty_source_set_exits_nonzero_and_writes_nothing(tmp_path):
+    """A legacy empty-source document must not exit 0 nor write either.
+
+    The same non-raising abort through the other input shape.  The
+    empty-``sources`` document is FAI-247-B's own precedent for the
+    ``aborted``/``abort_reason`` contract, so it has to observe the same
+    process-level rule.
+    """
+    result, before, target = _drive_aborted_cli(tmp_path, _legacy_empty_sources())
+
+    assert result.returncode != 0, (
+        "an empty legacy source set must fail loudly; the process exited 0 "
+        f"with stdout={result.stdout!r}"
+    )
+    assert target.read_bytes() == before, (
+        "an aborted run must not write the catalog"
+    )
+
+
+def test_cli_aborted_run_names_the_reason(tmp_path):
+    """The non-zero exit on a non-raising abort is accompanied by a reason.
+
+    Pins that the exit is the guard's refusal and not a crash: the
+    process must exit non-zero (a reason printed on a green run is the
+    false signal this whole block exists to close) and the report must
+    name the missing input.
+    """
+    result, _, _ = _drive_aborted_cli(tmp_path, _failed_collection())
+
+    assert result.returncode != 0, (
+        "a run that aborted must not exit 0; got stdout="
+        f"{result.stdout!r}"
+    )
+    combined = (result.stdout + result.stderr).lower()
+    assert "fail" in combined or "aborted" in combined or "collection" in combined, (
+        "the aborted run must name the reason it did not act; got "
+        f"stdout={result.stdout!r} stderr={result.stderr!r}"
+    )
+
+
+if __name__ == "__main__":
+    import inspect
+    import sys as _sys
+    import tempfile
+
+    # ``pytest`` supplies ``tmp_path``; this fallback runner is used when
+    # the file is executed directly, so it has to supply the fixture
+    # itself.  Each test gets its own fresh directory, mirroring pytest.
     tests = [
         name for name, fn in sorted(globals().items())
         if name.startswith("test_") and callable(fn)
     ]
     failures = []
     for name in tests:
+        fn = globals()[name]
         try:
-            globals()[name]()
+            if "tmp_path" in inspect.signature(fn).parameters:
+                with tempfile.TemporaryDirectory() as tmp:
+                    fn(Path(tmp))
+            else:
+                fn()
             print(f"PASS {name}")
         except AssertionError as exc:
             failures.append(name)
