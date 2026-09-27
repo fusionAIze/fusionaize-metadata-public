@@ -15,7 +15,7 @@
   "signup_url": "https://platform.moonshot.cn/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "Moonshot AI \u2013 long-context Chinese/English models.",
+  "notes": "Moonshot AI – long-context Chinese/English models.",
   "auth_modes": [
     "api_key"
   ],

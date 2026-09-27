@@ -300,7 +300,9 @@ def sync_retirement_from_catalog(providers_dir: Path, catalog_path: Path) -> int
                 folder_changed = True
 
         if folder_changed:
-            idx_path.write_text(json.dumps(provider, indent=2) + "\n")
+            idx_path.write_text(
+                json.dumps(provider, indent=2, ensure_ascii=False) + "\n"
+            )
             updated += 1
 
     return updated

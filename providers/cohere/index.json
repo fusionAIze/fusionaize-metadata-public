@@ -15,7 +15,7 @@
   "signup_url": "https://dashboard.cohere.com/",
   "last_reviewed": "2026-08-20",
   "offer_track": "direct",
-  "notes": "Cohere Command A/R \u2014 enterprise-grade LLM with tool use",
+  "notes": "Cohere Command A/R — enterprise-grade LLM with tool use",
   "auth_modes": [
     "api_key"
   ],

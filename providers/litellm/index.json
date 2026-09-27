@@ -15,7 +15,7 @@
   "signup_url": "https://litellm.ai/",
   "last_reviewed": "2026-04-01",
   "offer_track": "aggregator",
-  "notes": "LiteLLM \u2013 unified API for 100+ LLM providers.",
+  "notes": "LiteLLM – unified API for 100+ LLM providers.",
   "auth_modes": [
     "api_key"
   ],
@@ -50,7 +50,7 @@
         "context_evidence": {
           "level": "plausible",
           "unknown_kind": "runtime_dependent",
-          "unknown_reason": "proxy \u2014 the window belongs to the model it is pointed at",
+          "unknown_reason": "proxy — the window belongs to the model it is pointed at",
           "source": "LiteLLM model map",
           "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "gpt-3.5-turbo",

@@ -15,7 +15,7 @@
   "signup_url": "https://huggingface.co/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "Hugging Face Inference Endpoints \u2013 hosted open-weight models.",
+  "notes": "Hugging Face Inference Endpoints – hosted open-weight models.",
   "auth_modes": [
     "api_key"
   ],

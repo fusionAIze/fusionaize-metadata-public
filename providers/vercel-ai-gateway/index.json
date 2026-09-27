@@ -15,7 +15,7 @@
   "signup_url": "https://vercel.com/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "Vercel AI Gateway \u2013 multi-model proxy",
+  "notes": "Vercel AI Gateway – multi-model proxy",
   "auth_modes": [
     "api_key"
   ],

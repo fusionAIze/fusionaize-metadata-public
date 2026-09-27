@@ -126,7 +126,7 @@
           "level": "unconfirmed",
           "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'gpt-image-1', so the figure stays unverified.",
           "unknown_kind": "not_applicable",
-          "unknown_reason": "image generation \u2014 there is no text context window"
+          "unknown_reason": "image generation — there is no text context window"
         },
         "retirement": {
           "misses": 0,

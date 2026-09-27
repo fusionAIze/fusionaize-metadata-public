@@ -15,7 +15,7 @@
   "signup_url": "https://github.com/features/copilot",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "GitHub Copilot \u2013 requires GH_TOKEN / COPILOT_GITHUB_TOKEN",
+  "notes": "GitHub Copilot – requires GH_TOKEN / COPILOT_GITHUB_TOKEN",
   "auth_modes": [
     "oauth",
     "api_key"

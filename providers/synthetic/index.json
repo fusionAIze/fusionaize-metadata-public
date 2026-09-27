@@ -15,7 +15,7 @@
   "signup_url": "https://synthetic.com/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "Synthetic \u2013 Anthropic-compat; exposes HuggingFace models (MiniMax, etc.)",
+  "notes": "Synthetic – Anthropic-compat; exposes HuggingFace models (MiniMax, etc.)",
   "auth_modes": [
     "api_key"
   ],

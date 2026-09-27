@@ -15,7 +15,7 @@
   "signup_url": "https://console.mistral.ai/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "Mistral AI \u2013 Mistral Large, Codestral, etc.",
+  "notes": "Mistral AI – Mistral Large, Codestral, etc.",
   "auth_modes": [
     "api_key"
   ],
@@ -51,11 +51,6 @@
           "level": "plausible",
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure/mistral-large-latest=32000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
-        },
-        "retirement": {
-          "misses": 0,
-          "last_confirmed_by": "litellm",
-          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

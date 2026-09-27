@@ -15,7 +15,7 @@
   "signup_url": "https://kilo.ai/",
   "last_reviewed": "2026-08-20",
   "offer_track": "gateway-paid",
-  "notes": "Kilo Auto Balanced lane \u2013 balanced routing through Kilo gateway",
+  "notes": "Kilo Auto Balanced lane – balanced routing through Kilo gateway",
   "auth_modes": [
     "api_key",
     "byok"
@@ -51,7 +51,7 @@
           "level": "unconfirmed",
           "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kilo-auto/balanced', so the figure stays unverified.",
           "unknown_kind": "runtime_dependent",
-          "unknown_reason": "router tier \u2014 the window belongs to the model picked per request"
+          "unknown_reason": "router tier — the window belongs to the model picked per request"
         },
         "tier_status": "deprecated",
         "retirement": {
@@ -110,7 +110,7 @@
           "level": "unconfirmed",
           "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kilo-auto/frontier', so the figure stays unverified.",
           "unknown_kind": "runtime_dependent",
-          "unknown_reason": "router tier \u2014 the window belongs to the model picked per request"
+          "unknown_reason": "router tier — the window belongs to the model picked per request"
         },
         "tier_status": "deprecated",
         "retirement": {

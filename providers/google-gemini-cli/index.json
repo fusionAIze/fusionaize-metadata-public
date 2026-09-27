@@ -15,7 +15,7 @@
   "signup_url": "https://cloud.google.com/vertex-ai",
   "last_reviewed": "2026-08-20",
   "offer_track": "oauth",
-  "notes": "Google Gemini via Vertex AI \u2013 uses gcloud ADC; requires: gcloud auth login",
+  "notes": "Google Gemini via Vertex AI – uses gcloud ADC; requires: gcloud auth login",
   "auth_modes": [
     "oauth"
   ],

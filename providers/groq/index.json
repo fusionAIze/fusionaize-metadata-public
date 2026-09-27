@@ -15,7 +15,7 @@
   "signup_url": "https://console.groq.com/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "Groq \u2013 ultra-fast inference (LPU), Llama / DeepSeek models.",
+  "notes": "Groq – ultra-fast inference (LPU), Llama / DeepSeek models.",
   "auth_modes": [
     "api_key"
   ],

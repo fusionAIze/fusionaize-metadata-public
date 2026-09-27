@@ -15,7 +15,7 @@
   "signup_url": "https://cerebras.ai/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "Cerebras \u2013 fast inference, zai-glm-4.7 / zai-glm-4.6 compatible",
+  "notes": "Cerebras – fast inference, zai-glm-4.7 / zai-glm-4.6 compatible",
   "auth_modes": [
     "api_key"
   ],

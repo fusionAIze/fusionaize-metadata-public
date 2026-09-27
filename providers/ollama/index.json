@@ -15,7 +15,7 @@
   "signup_url": "https://ollama.com/",
   "last_reviewed": "2026-04-01",
   "offer_track": "local",
-  "notes": "Ollama \u2013 local LLM runner, no API key required.",
+  "notes": "Ollama – local LLM runner, no API key required.",
   "auth_modes": [
     "none"
   ],
@@ -51,7 +51,7 @@
         "context_evidence": {
           "level": "plausible",
           "unknown_kind": "runtime_dependent",
-          "unknown_reason": "local runner \u2014 the window is whatever model the operator pulled",
+          "unknown_reason": "local runner — the window is whatever model the operator pulled",
           "source": "Ollama documentation, docs/context-length.mdx",
           "source_url": "https://github.com/ollama/ollama/blob/main/docs/context-length.mdx",
           "as_of": "2026-09-22",

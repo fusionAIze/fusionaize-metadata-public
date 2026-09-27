@@ -15,7 +15,7 @@
   "signup_url": "https://modelscope.cn/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "Qwen OAuth (free tier) \u2013 device-code flow; requires: openclaw plugins enable qwen-portal-auth",
+  "notes": "Qwen OAuth (free tier) – device-code flow; requires: openclaw plugins enable qwen-portal-auth",
   "auth_modes": [
     "none"
   ],

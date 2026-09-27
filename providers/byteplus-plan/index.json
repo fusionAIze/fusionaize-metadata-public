@@ -13,7 +13,7 @@
   "signup_url": "https://www.byteplus.com/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "BytePlus ARK \u2013 international access to Volcano Engine models",
+  "notes": "BytePlus ARK – international access to Volcano Engine models",
   "auth_modes": [
     "api_key"
   ],

@@ -15,7 +15,7 @@
   "signup_url": "https://console.anthropic.com/",
   "last_reviewed": "2026-08-20",
   "offer_track": "oauth",
-  "notes": "Claude Code \u2013 special coding model via Anthropic OAuth",
+  "notes": "Claude Code – special coding model via Anthropic OAuth",
   "auth_modes": [
     "oauth"
   ],

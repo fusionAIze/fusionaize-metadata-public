@@ -373,11 +373,6 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
-      "retirement": {
-        "misses": 0,
-        "last_confirmed_by": "litellm, omniroutes",
-        "last_confirmed_at": "2026-09-27"
-      },
       "auth_modes": [
         "api_key"
       ],
@@ -633,11 +628,6 @@
       "offer_track": "direct",
       "provider_type": "direct",
       "tier_status": "active",
-      "retirement": {
-        "misses": 0,
-        "last_confirmed_by": "litellm, openrouter",
-        "last_confirmed_at": "2026-09-27"
-      },
       "auth_modes": [
         "api_key"
       ],
@@ -688,11 +678,6 @@
       "offer_track": "direct",
       "provider_type": "direct",
       "tier_status": "active",
-      "retirement": {
-        "misses": 0,
-        "last_confirmed_by": "litellm, openrouter",
-        "last_confirmed_at": "2026-09-27"
-      },
       "auth_modes": [
         "api_key"
       ],
@@ -743,11 +728,6 @@
       "offer_track": "direct",
       "provider_type": "direct",
       "tier_status": "preview",
-      "retirement": {
-        "misses": 0,
-        "last_confirmed_by": "litellm, openrouter",
-        "last_confirmed_at": "2026-09-27"
-      },
       "auth_modes": [
         "api_key"
       ],
@@ -2150,11 +2130,6 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
-      "retirement": {
-        "misses": 0,
-        "last_confirmed_by": "litellm",
-        "last_confirmed_at": "2026-09-27"
-      },
       "auth_modes": [
         "api_key"
       ],
@@ -2673,11 +2648,6 @@
       "track": "stable",
       "offer_track": "byok",
       "provider_type": "aggregator",
-      "retirement": {
-        "misses": 0,
-        "last_confirmed_by": "litellm, openrouter",
-        "last_confirmed_at": "2026-09-27"
-      },
       "auth_modes": [
         "api_key",
         "byok"

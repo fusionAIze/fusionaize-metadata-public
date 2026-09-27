@@ -15,7 +15,7 @@
   "signup_url": "https://www.minimaxi.com/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "MiniMax \u2013 Anthropic-compat custom endpoint",
+  "notes": "MiniMax – Anthropic-compat custom endpoint",
   "auth_modes": [
     "api_key"
   ],

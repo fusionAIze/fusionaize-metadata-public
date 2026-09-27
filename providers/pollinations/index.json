@@ -20,7 +20,7 @@
   "signup_url": "https://enter.pollinations.ai",
   "last_reviewed": "2026-08-20",
   "offer_track": "free",
-  "notes": "Pollinations free text+image+video+audio \u2014 no API key required",
+  "notes": "Pollinations free text+image+video+audio — no API key required",
   "auth_modes": [
     "none"
   ],
