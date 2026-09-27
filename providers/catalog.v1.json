@@ -564,11 +564,11 @@
       "watch_sources": [],
       "last_reviewed": "2026-08-20",
       "retirement": {
-        "misses": 2,
-        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
-        "last_confirmed_by": "unknown",
-        "last_confirmed_at": "unknown"
+        "last_confirmed_by": null,
+        "last_confirmed_at": null
       },
       "tier_status": "deprecated"
     },
@@ -1593,11 +1593,11 @@
       "watch_sources": [],
       "last_reviewed": "2026-08-20",
       "retirement": {
-        "misses": 2,
-        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
-        "last_confirmed_by": "unknown",
-        "last_confirmed_at": "unknown"
+        "last_confirmed_by": null,
+        "last_confirmed_at": null
       },
       "tier_status": "deprecated"
     },
@@ -1640,11 +1640,11 @@
       "watch_sources": [],
       "last_reviewed": "2026-08-20",
       "retirement": {
-        "misses": 2,
-        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
-        "last_confirmed_by": "unknown",
-        "last_confirmed_at": "unknown"
+        "last_confirmed_by": null,
+        "last_confirmed_at": null
       },
       "tier_status": "deprecated"
     },
@@ -1688,11 +1688,11 @@
       "watch_sources": [],
       "last_reviewed": "2026-08-20",
       "retirement": {
-        "misses": 2,
-        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
-        "last_confirmed_by": "unknown",
-        "last_confirmed_at": "unknown"
+        "last_confirmed_by": null,
+        "last_confirmed_at": null
       },
       "tier_status": "deprecated"
     },
@@ -1947,11 +1947,11 @@
       "provider_type": "local",
       "tier_status": "deprecated",
       "retirement": {
-        "misses": 2,
-        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
-        "last_confirmed_by": "unknown",
-        "last_confirmed_at": "unknown"
+        "last_confirmed_by": null,
+        "last_confirmed_at": null
       },
       "auth_modes": [
         "none"
@@ -2024,11 +2024,11 @@
       ],
       "last_reviewed": "2026-08-20",
       "retirement": {
-        "misses": 2,
-        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
-        "last_confirmed_by": "unknown",
-        "last_confirmed_at": "unknown"
+        "last_confirmed_by": null,
+        "last_confirmed_at": null
       },
       "tier_status": "deprecated"
     },
@@ -2994,11 +2994,11 @@
       "provider_type": "local",
       "tier_status": "deprecated",
       "retirement": {
-        "misses": 2,
-        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
-        "last_confirmed_by": "unknown",
-        "last_confirmed_at": "unknown"
+        "last_confirmed_by": null,
+        "last_confirmed_at": null
       },
       "auth_modes": [
         "none"
