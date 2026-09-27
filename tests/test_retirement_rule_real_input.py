@@ -342,6 +342,14 @@ def test_second_run_over_its_own_output_changes_nothing():
     output is fed back in unchanged.  The second run must produce the
     same catalog and the same verdict — in particular ``misses`` must
     not climb, because nothing about the survey changed between runs.
+
+    The comparison runs against an *independent snapshot* of the
+    first-run catalog, not against the object the first run returned.
+    ``apply_retirement`` mutates its argument in place and returns the
+    same object, so ``after_second == after_first`` compares the run-1
+    object with itself and is true even for a rule that is not a fixed
+    point at all.  A deep snapshot makes the assertion falsifiable: a
+    genuinely non-idempotent rule fails it.
     """
     survey = _real_survey()
     operator_names = _real_operator_names()
@@ -349,13 +357,22 @@ def test_second_run_over_its_own_output_changes_nothing():
     after_first, first = _call_retirement(
         _real_catalog(), survey, operator_names, 3,
     )
+    # Snapshot BEFORE the second run: a rule that mutates in place (and
+    # returns the same object) would otherwise carry the second run's
+    # changes into the comparison and make it vacuous.
+    snapshot_after_first = json.loads(json.dumps(after_first))
+
     after_second, second = _call_retirement(
         after_first, survey, operator_names, 3,
     )
 
-    assert after_second == after_first, (
+    assert after_second == snapshot_after_first, (
         "the rule has no fixed point: applying it to its own output changed "
         "the catalog"
+    )
+    assert json.loads(json.dumps(after_second)) == snapshot_after_first, (
+        "the rule has no fixed point: the second run's output differs from "
+        "the first run's output"
     )
     assert second["retired"] == first["retired"]
     assert second["spared"] == first["spared"]
@@ -369,6 +386,11 @@ def test_misses_do_not_escalate_across_runs_on_an_unchanged_survey():
     same unchanged survey twice is not two collection rounds, and an
     entry must not creep from tracked to retired just because the rule
     was invoked again.
+
+    The preconditions pin that the first run actually *recorded* a miss:
+    without them the "misses did not escalate" assertion would also hold
+    for a rule that does nothing at all, and the test would pass for the
+    wrong reason.
     """
     survey = _real_survey()
     operator_names = _real_operator_names()
@@ -381,6 +403,14 @@ def test_misses_do_not_escalate_across_runs_on_an_unchanged_survey():
         name: entry.get("retirement", {}).get("misses", 0)
         for name, entry in catalog["providers"].items()
     }
+
+    assert first["tracked"], (
+        "precondition: the first run must have recorded misses to track"
+    )
+    assert any(m > 0 for m in misses_first.values()), (
+        "precondition: at least one entry must carry a real miss count, "
+        "otherwise 'did not escalate' is vacuous"
+    )
 
     catalog, second = _call_retirement(
         catalog, survey, operator_names, threshold,
