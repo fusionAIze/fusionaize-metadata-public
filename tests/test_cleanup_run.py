@@ -547,6 +547,8 @@ def test_empty_confirmation_set_does_not_retire(catalog):
 # Finding 3 of the review.  ``apply_retirement(catalog, confs, set(), …)``
 # must not succeed: an empty or missing operator list silently retires
 # every operator route, which is exactly what this PRD exists to prevent.
+# The rule raises ``OperatorListEmptyError``; the CLI turns that into a
+# non-zero exit, and the direct-call contract is asserted too.
 #
 # The two tests below run the rule *invoked the way this lane invokes it*
 # — read the operator list from JSON, call ``apply_retirement``, act on
@@ -608,6 +610,10 @@ def test_empty_operator_list_makes_retire_fail(operator_names):
     treat every operator-configured entry as unconfirmed and retire it.
     The run must refuse the empty list instead — succeeding here is the
     exact failure this test exists to catch.
+
+    Refusal has to hold on *both* ways in: the CLI exits non-zero, and a
+    direct ``apply_retirement(catalog, confs, set(), …)`` call raises
+    rather than returning a report a caller could read as success.
     """
     import tempfile
 
@@ -631,6 +637,20 @@ def test_empty_operator_list_makes_retire_fail(operator_names):
         f"the failure must name its reason; got stdout={refused.stdout!r} "
         f"stderr={refused.stderr!r}"
     )
+
+    # The direct-call contract: a caller that bypasses ``main()`` must not
+    # be able to treat the refusal as a successful (empty) run either.
+    if str(ROOT / "scripts") not in sys.path:
+        sys.path.insert(0, str(ROOT / "scripts"))
+    from retire import OperatorListEmptyError, apply_retirement  # noqa: PLC0415
+
+    with pytest.raises(OperatorListEmptyError):
+        apply_retirement(
+            json.loads(CATALOG_PATH.read_text()),
+            json.loads(CONFIRMATIONS_PATH.read_text()),
+            set(),
+            1,
+        )
 
     assert accepted.returncode == 0, (
         "the control must not refuse — deleting the guard must be what "

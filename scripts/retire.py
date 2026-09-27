@@ -56,6 +56,19 @@ from pathlib import Path
 from typing import Any
 
 
+class OperatorListEmptyError(ValueError):
+    """Raised when the operator provider list is empty or missing.
+
+    An empty list is *fatal*, not permissive: the carve-out in
+    ``apply_retirement`` is what keeps actively configured routes
+    routable, and without it every operator name counts as unconfirmed
+    and gets retired — the rule would empty the gateway it exists to
+    protect.  Raising makes the refusal impossible for a caller to read
+    as success, whether it invokes the script or calls the rule
+    directly.
+    """
+
+
 def load_catalog(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text())
 
@@ -140,22 +153,20 @@ def apply_retirement(
     # carve-out below is what keeps actively configured routes routable;
     # without it every operator name counts as unconfirmed and is retired.
     # A cleanup that silently empties the gateway is the exact failure
-    # this rule exists to prevent, so the run refuses instead of
-    # succeeding.  ``main()`` turns the refusal into exit code 2.
+    # this rule exists to prevent, so the rule RAISES instead of
+    # returning a report a caller could mistake for success.  ``main()``
+    # turns the raise into exit code 2.
     #
     # The markers delimit this guard: the FAI-247-F tests copy this file
     # with everything between them deleted, to prove the guard is the
     # thing that makes the empty list fatal.
     # ------------------------------------------------------------------
     if not operator_names:
-        report["refused"] = True
-        report["aborted"] = True
-        report["abort_reason"] = (
+        raise OperatorListEmptyError(
             "refused: the operator provider list is empty or missing — "
             "without it every actively configured route would be retired, "
             "so the run is aborted instead of emptying the gateway"
         )
-        return catalog, report
     # --- operator guard: end ---
 
     for name, entry in catalog["providers"].items():
@@ -288,9 +299,16 @@ def main() -> None:
         print(json.dumps({"error": "threshold must be >= 1"}, indent=2))
         sys.exit(2)
 
-    catalog, report = apply_retirement(
-        catalog, confirmations, operator_names, args.threshold,
-    )
+    try:
+        catalog, report = apply_retirement(
+            catalog, confirmations, operator_names, args.threshold,
+        )
+    except OperatorListEmptyError as exc:
+        # The refusal is a failure, not an empty report: print the
+        # reason so it is on the record and exit non-zero.
+        print(json.dumps({"refused": True, "aborted": True,
+                          "abort_reason": str(exc)}, indent=2))
+        sys.exit(2)
 
     if args.write and not report.get("aborted"):
         args.catalog.write_text(json.dumps(catalog, indent=2) + "\n")

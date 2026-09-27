@@ -16,7 +16,6 @@ of the folder structure.
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 PROVIDERS_DIR = ROOT / "providers"
@@ -244,68 +243,6 @@ def build_catalog(providers_dir: Path) -> dict:
 # ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
-
-
-def sync_retirement_from_catalog(providers_dir: Path, catalog_path: Path) -> int:
-    """Sync tier_status and retirement from catalog back to provider folders.
-
-    After ``retire.py --write`` updates the catalog, this function copies
-    ``tier_status`` and ``retirement`` into the ``_original`` block of the
-    corresponding model in each provider folder.  Returns the number of
-    folders updated.
-    """
-    catalog = json.loads(catalog_path.read_text())
-    catalog_providers = catalog.get("providers", {})
-
-    # Build a source → (tier_status, retirement) map from the catalog.
-    source_info: dict[str, dict[str, Any]] = {}
-    for source_name, entry in catalog_providers.items():
-        info: dict[str, Any] = {}
-        if "tier_status" in entry:
-            info["tier_status"] = entry["tier_status"]
-        if "retirement" in entry:
-            info["retirement"] = entry["retirement"]
-        if info:
-            source_info[source_name] = info
-
-    updated = 0
-    for folder in sorted(providers_dir.iterdir()):
-        if not folder.is_dir():
-            continue
-        idx_path = folder / "index.json"
-        if not idx_path.exists():
-            continue
-
-        provider = json.loads(idx_path.read_text())
-        folder_changed = False
-
-        for model in provider.get("models", []):
-            source_name = model["_source"]
-            if source_name not in source_info:
-                continue
-
-            orig = model.get("_original", {})
-            info = source_info[source_name]
-            changed = False
-
-            if "tier_status" in info and orig.get("tier_status") != info["tier_status"]:
-                orig["tier_status"] = info["tier_status"]
-                changed = True
-            if "retirement" in info and orig.get("retirement") != info["retirement"]:
-                orig["retirement"] = info["retirement"]
-                changed = True
-
-            if changed:
-                model["_original"] = orig
-                folder_changed = True
-
-        if folder_changed:
-            idx_path.write_text(
-                json.dumps(provider, indent=2, ensure_ascii=False) + "\n"
-            )
-            updated += 1
-
-    return updated
 
 
 def main() -> None:
