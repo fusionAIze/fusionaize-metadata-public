@@ -42,19 +42,16 @@ BUILD_SCRIPT = ROOT / "scripts" / "build-catalog.py"
 CATALOG_PATH = ROOT / "providers" / "catalog.v1.json"
 PROVIDERS_DIR = ROOT / "providers"
 
-# The real inputs of the run (FAI-247-F): the operator's live provider
-# list, the collected confirmation result, and the catalog as it stood
-# before the cleanup, all committed under tests/ so the suite reads the
-# repository, never a file in ``$HOME`` or ``/tmp``.
-#
-# ``catalog-before-cleanup.json`` is the run's *input*: the catalog the
-# rule was applied to.  The report — what was retired, spared, refreshed
-# — describes that application, so the report tests read this file, not
-# the catalog the run already rewrote (re-running the rule on its own
-# output is a no-op and reports nothing new).
+# The real inputs of the run (FAI-247-F): the operator's configured
+# provider list and the collected confirmation result, both committed
+# under tests/ so the suite reads the repository, never a file in
+# ``$HOME`` or ``/tmp``.  The catalog the rule was applied *to* is not a
+# third fixture: it is the folder tree with the rule's own stamps
+# stripped and rebuilt (``_pre_rule_catalog``), which is what the pre-rule
+# catalog actually was — a file checked in beside them would be a copy
+# that could drift from that tree.
 CONFIRMATIONS_PATH = ROOT / "tests" / "fixtures" / "confirmations.json"
 OPERATOR_PATH = ROOT / "tests" / "fixtures" / "operator-list.json"
-CATALOG_BEFORE_PATH = ROOT / "tests" / "fixtures" / "catalog-before-cleanup.json"
 
 EXPECTED_RETIRED = frozenset({
     "clawrouter", "kilo-auto-balanced", "kilo-auto-free",
@@ -183,14 +180,13 @@ def catalog():
 def catalog_before():
     """The catalog as it stood BEFORE the run — the folder-rebuilt tree.
 
-    Not ``CATALOG_BEFORE_PATH``: that file is the run's input, and its
-    entries still carry the catalog-level ``retirement`` blocks the run
-    stamped on exactly those entries.  Re-running the rule on it retires
-    nothing new — the entries are already deprecated — so a report
-    produced from it has empty ``retired``/``spared`` lists.  The actual
-    pre-rule state is what ``build-catalog.py`` produces from the folders
-    with ``tier_status``/``retirement`` stripped: fresh entries, no
-    stamps.  Every report below describes the run applied to *that*.
+    The checked-in catalog already has the rule's ``retirement`` blocks
+    and ``deprecated`` statuses on it, so re-running the rule on it
+    retires nothing new and a report produced from it has empty
+    ``retired``/``spared`` lists.  The pre-rule state is what
+    ``build-catalog.py`` produces from the folders with those two fields
+    stripped: fresh entries, no stamps.  Every report below describes
+    the run applied to *that*.
     """
     return _pre_rule_catalog()
 
@@ -228,9 +224,8 @@ def retire_report(catalog_before, confirmations, operator_names):
 
     In memory, through the same ``apply_retirement`` the CLI calls: the
     input is the pre-rule catalog rebuilt from the folders, not the file
-    in ``providers/`` (the run's *output*) and not
-    ``catalog-before-cleanup.json`` (which already carries the run's
-    ``retirement`` stamps).  Applying the rule to either of those retires
+    in ``providers/`` (the run's *output*, which already carries the
+    ``retirement`` stamps).  Applying the rule to the output retires
     nothing — its work is done — so the report would describe a no-op.
     """
     if str(ROOT / "scripts") not in sys.path:
