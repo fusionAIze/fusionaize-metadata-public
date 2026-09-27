@@ -118,18 +118,45 @@ def apply_retirement(
         "spared": [],
         "revived": [],
         "tracked": [],
+        "refreshed": [],
     }
 
     # ------------------------------------------------------------------
-    # Guards: an empty source set or a failed collection retires nothing
+    # Guards: a failed collection retires nothing
     # ------------------------------------------------------------------
     if not sources_list or confirmations.get("failed") is True:
+        report["refused"] = True
         report["aborted"] = True
         report["abort_reason"] = (
-            "no sources were collected — "
-            if not sources_list else "collection failed — "
+            "refused: no sources were collected — "
+            if not sources_list else "refused: the collection failed — "
         ) + "a rule that retires everything on missing input is worse than no rule"
         return catalog, report
+
+    # ------------------------------------------------------------------
+    # --- operator guard: begin ---
+    #
+    # An EMPTY (or missing) operator list is fatal, not permissive.  The
+    # carve-out below is what keeps actively configured routes routable;
+    # without it every operator name counts as unconfirmed and is retired.
+    # A cleanup that silently empties the gateway is the exact failure
+    # this rule exists to prevent, so the run refuses instead of
+    # succeeding.  ``main()`` turns the refusal into exit code 2.
+    #
+    # The markers delimit this guard: the FAI-247-F tests copy this file
+    # with everything between them deleted, to prove the guard is the
+    # thing that makes the empty list fatal.
+    # ------------------------------------------------------------------
+    if not operator_names:
+        report["refused"] = True
+        report["aborted"] = True
+        report["abort_reason"] = (
+            "refused: the operator provider list is empty or missing — "
+            "without it every actively configured route would be retired, "
+            "so the run is aborted instead of emptying the gateway"
+        )
+        return catalog, report
+    # --- operator guard: end ---
 
     for name, entry in catalog["providers"].items():
         confirmed_this_round = name in conf_map
@@ -155,6 +182,13 @@ def apply_retirement(
                     "name": name,
                     "confirmed_by": entry_sources,
                     "revived_at": today,
+                })
+            else:
+                # Freshly confirmed: this is the "refresh" the report counts.
+                report["refreshed"].append({
+                    "name": name,
+                    "confirmed_by": entry_sources,
+                    "confirmed_at": last_at,
                 })
             continue
 
@@ -195,6 +229,27 @@ def apply_retirement(
                 "name": name,
                 "misses": misses,
             })
+
+    # ------------------------------------------------------------------
+    # Counts.  ``without_confirmation`` is the size of the bucket that got
+    # no source at all (retired + spared + still-tracked), and the three
+    # disjoint categories cover every entry exactly once:
+    #
+    #     refreshed + retired + spared + tracked == total_entries
+    #
+    # A spared entry *was* unconfirmed, so it belongs to the without-
+    # confirmation count as well; it is not retired, which is the point.
+    # ------------------------------------------------------------------
+    report["refreshed_count"] = len(report["refreshed"])
+    report["retired_count"] = len(report["retired"])
+    report["spared_count"] = len(report["spared"])
+    report["tracked_count"] = len(report["tracked"])
+    report["revived_count"] = len(report["revived"])
+    report["without_confirmation"] = (
+        report["retired_count"]
+        + report["spared_count"]
+        + report["tracked_count"]
+    )
 
     return catalog, report
 
@@ -237,10 +292,16 @@ def main() -> None:
         catalog, confirmations, operator_names, args.threshold,
     )
 
-    if args.write:
+    if args.write and not report.get("aborted"):
         args.catalog.write_text(json.dumps(catalog, indent=2) + "\n")
 
     print(json.dumps(report, indent=2))
+
+    # A refused run is a failure, not a no-op: the caller must not read
+    # an aborted report as "nothing to retract".  The report still goes
+    # to stdout so the reason is on the record.
+    if report.get("aborted"):
+        sys.exit(2)
 
 
 if __name__ == "__main__":

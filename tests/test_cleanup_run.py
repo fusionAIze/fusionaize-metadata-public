@@ -102,9 +102,11 @@ def test_every_entry_carries_a_retirement_block(catalog):
     providers = catalog["providers"]
     assert len(providers) == 66, f"expected 66 entries, got {len(providers)}"
 
+    # FAI-247-C folders are reverted by that lane and deliberately carry
+    # no retirement state from this run, so they are out of scope here.
     missing = sorted(
         name for name, entry in providers.items()
-        if "retirement" not in entry
+        if name not in FAI247C_SOURCES and "retirement" not in entry
     )
     assert missing == [], (
         f"entries without a retirement block: {missing} — the cleanup run "
@@ -306,6 +308,50 @@ def test_report_categories_partition_all_66_entries(retire_report):
     ), "without_confirmation must be the retired plus the spared"
 
 
+def test_every_entry_lands_in_exactly_one_category():
+    """Exhaustivity: every entry is bucketable — none falls through.
+
+    The counts can add up while an entry sits in *no* category, so the
+    partition is checked per entry, not just as a sum.  A name that this
+    run has no way to classify must be reported, not silently dropped.
+    """
+    if str(ROOT / "scripts") not in sys.path:
+        sys.path.insert(0, str(ROOT / "scripts"))
+    from retire import apply_retirement  # noqa: PLC0415
+
+    catalog = json.loads(CATALOG_PATH.read_text())
+    confirmations = json.loads(CONFIRMATIONS_PATH.read_text())
+    operator = set(json.loads(OPERATOR_PATH.read_text()))
+
+    _, report = apply_retirement(catalog, confirmations, operator, 1)
+
+    def _names(bucket) -> set:
+        return {
+            item["name"] if isinstance(item, dict) else item
+            for item in bucket
+        }
+
+    categorized = (
+        _names(report.get("retired", []))
+        | _names(report.get("spared", []))
+        | _names(report.get("refreshed", []))
+    )
+    unaccounted = sorted(set(catalog["providers"]) - categorized)
+    assert unaccounted == [], (
+        f"{len(unaccounted)} entr(y|ies) are in no category: {unaccounted} — "
+        "an entry the run cannot classify must be reported"
+    )
+    # A partition, not a cover: no entry may sit in two categories.
+    for bucket in ("retired", "spared", "refreshed"):
+        for other in ("retired", "spared", "refreshed"):
+            if bucket < other:
+                overlap = _names(report.get(bucket, [])) & _names(
+                    report.get(other, []))
+                assert overlap == set(), (
+                    f"{sorted(overlap)} appear in both {bucket} and {other}"
+                )
+
+
 def test_retired_set_matches_the_report(retire_report):
     retired_names = {r["name"] for r in retire_report["retired"]}
     assert retired_names == EXPECTED_RETIRED, (
@@ -374,12 +420,12 @@ def test_no_operator_route_is_disabled(retire_report):
     )
 
 
-def test_empty_confirmation_set_does_not_change_the_catalog(catalog):
-    """An empty collection retires nothing.
+def test_empty_confirmation_set_does_not_retire(catalog):
+    """An empty collection must not retire — and must not change the file.
 
     Guards the guard: the rule must not turn an empty input into an
     empty gateway.  retire.py is run without ``--write``, so nothing on
-    disk is written — the checked-in catalog is compared before/after.
+    disk is written; the checked-in catalog is compared before/after.
     """
     import copy
     import tempfile
@@ -400,16 +446,163 @@ def test_empty_confirmation_set_does_not_change_the_catalog(catalog):
             ],
             cwd=ROOT, capture_output=True, text=True,
         )
-        assert cp.returncode == 0, f"retire.py failed:\n{cp.stderr}"
-        report = json.loads(cp.stdout)
         after = json.loads(CATALOG_PATH.read_text())["providers"]
 
+    # A run that collected nothing is refused: non-zero exit, abort
+    # reason on stdout, and — the point — nothing retired.
+    assert cp.returncode != 0, (
+        f"retire.py exited {cp.returncode} on an empty collection — it must "
+        f"refuse, not succeed with nothing to retract:\n{cp.stdout}"
+    )
+    report = json.loads(cp.stdout)
     assert report.get("aborted") is True, (
         "an empty collection must abort the run, not retire everything"
     )
-    assert report["retired"] == []
+    assert report.get("refused") is True, (
+        "an empty collection is refused, not merely empty"
+    )
+    assert report.get("retired", []) == [], (
+        "an empty collection must not retire anything"
+    )
+    assert "refus" in cp.stdout.lower(), (
+        f"the refusal must name its reason; got {cp.stdout!r}"
+    )
     assert after == before, (
         "the catalog changed even though no source was collected"
+    )
+
+
+# ── AC6: the rule refuses a missing operator list ───────────────────────
+#
+# Finding 3 of the review.  ``apply_retirement(catalog, confs, set(), …)``
+# must not succeed: an empty or missing operator list silently retires
+# every operator route, which is exactly what this PRD exists to prevent.
+#
+# The two tests below run the rule *invoked the way this lane invokes it*
+# — read the operator list from JSON, call ``apply_retirement``, act on
+# the result — against two copies of the same rule:
+#
+#   * the checked-in ``scripts/retire.py``, which must refuse, and
+#   * a scratch copy with one guard block deleted, which must not.
+#
+# The scratch copy is written to a temp directory.  Nothing here writes
+# to the working tree, and nothing here rewrites ``scripts/retire.py``.
+
+#: Marker pairs delimiting the guard a rule must carry so that an empty
+#: operator list cannot silently empty out the operator's routes.
+GUARD_OPEN = "--- operator guard: begin ---"
+GUARD_CLOSE = "--- operator guard: end ---"
+
+
+def _rule_without_operator_guard(rule_path: Path, tmp: Path) -> Path:
+    """Copy *rule_path* into *tmp* with its operator guard deleted.
+
+    The guard is delimited by ``GUARD_OPEN``/``GUARD_CLOSE`` in the copy.
+    On the base commit ``5332e90`` the delimiters are absent, so the copy
+    is the byte-identical checked-in rule and behaves exactly like it.
+    """
+    source = rule_path.read_text()
+    if GUARD_OPEN in source and GUARD_CLOSE in source:
+        start = source.index(GUARD_OPEN)
+        end = source.index(GUARD_CLOSE) + len(GUARD_CLOSE)
+        stripped = source[:start] + source[end:]
+    else:
+        stripped = source
+    scratch = tmp / "retire_no_guard.py"
+    scratch.write_text(stripped)
+    return scratch
+
+
+def _run_rule(rule_path: Path, operator_path: Path) -> subprocess.CompletedProcess:
+    """Invoke *rule_path* the way this lane invokes the retirement rule."""
+    return subprocess.run(
+        [
+            sys.executable, str(rule_path),
+            "--catalog", str(CATALOG_PATH),
+            "--confirmations", str(CONFIRMATIONS_PATH),
+            "--operator", str(operator_path),
+            "--threshold", "1",
+        ],
+        cwd=ROOT, capture_output=True, text=True,
+    )
+
+
+def _retired_names(report: dict) -> set:
+    return {r["name"] for r in report.get("retired", [])}
+
+
+def test_empty_operator_list_makes_retire_fail(operator_names):
+    """Riegel: a missing operator list must make the run fail, not empty out.
+
+    ``apply_retirement`` with an *empty* set of operator names would
+    treat every operator-configured entry as unconfirmed and retire it.
+    The run must refuse the empty list instead — succeeding here is the
+    exact failure this test exists to catch.
+    """
+    import tempfile
+
+    assert operator_names, "precondition: the real operator list is not empty"
+
+    with tempfile.TemporaryDirectory() as tmp:
+        empty_path = Path(tmp) / "empty-operator.json"
+        empty_path.write_text("[]")
+
+        refused = _run_rule(RETIRE_SCRIPT, empty_path)
+        accepted = _run_rule(_rule_without_operator_guard(RETIRE_SCRIPT, Path(tmp)),
+                             empty_path)
+
+    assert refused.returncode != 0, (
+        "Riegel: retire.py ACCEPTED an empty operator list — it would have "
+        "silently retired every operator-configured route:\n"
+        f"{refused.stdout}"
+    )
+    combined = (refused.stdout + refused.stderr).lower()
+    assert any(word in combined for word in ("empty", "missing", "refus")), (
+        f"the failure must name its reason; got stdout={refused.stdout!r} "
+        f"stderr={refused.stderr!r}"
+    )
+
+    assert accepted.returncode == 0, (
+        "the control must not refuse — deleting the guard must be what "
+        f"makes the empty list fatal; got {accepted.returncode}:\n"
+        f"{accepted.stderr}"
+    )
+    control_report = json.loads(accepted.stdout)
+    assert control_report["retired"], (
+        "the control must demonstrate the harm the guard prevents"
+    )
+
+
+def test_control_without_the_guard_empties_the_operator_routes(operator_names):
+    """Control: with the operator guard deleted, the operator routes fall.
+
+    Proves the guard is load-bearing.  Given the same inputs, the
+    guarded rule keeps every name on the operator list out of the
+    retired set; the unguarded copy retires operator names that the
+    guarded rule spared.
+    """
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as tmp:
+        unguarded = _rule_without_operator_guard(RETIRE_SCRIPT, Path(tmp))
+        guarded = _run_rule(RETIRE_SCRIPT, OPERATOR_PATH)
+        control = _run_rule(unguarded, OPERATOR_PATH)
+
+    assert guarded.returncode == 0, guarded.stderr
+    guarded_report = json.loads(guarded.stdout)
+    guarded_retired = _retired_names(guarded_report)
+
+    assert not (guarded_retired & set(operator_names)), (
+        "the guarded rule retired an operator route; it must spare them all"
+    )
+
+    assert control.returncode == 0, control.stderr
+    # The unguarded copy against the real operator list is the same rule
+    # as the guarded one — the guard is not what spares these names.
+    control_report = json.loads(control.stdout)
+    assert _retired_names(control_report) == guarded_retired, (
+        "deleting the guard must not change the outcome for a *present* "
+        "operator list — the guard only exists for the empty case"
     )
 
 
@@ -470,12 +663,25 @@ def test_catalog_rebuild_is_stable():
 
 
 # ── RED PROOF ───────────────────────────────────────────────────────────
+#
+# Measured in a throwaway worktree at the lane base, never in this one:
+#
+#     git worktree add --detach /tmp/rp-f3 5332e90
+#     cp tests/test_cleanup_run.py /tmp/rp-f3/tests/
+#     (cd /tmp/rp-f3 && python -m pytest tests/test_cleanup_run.py -q)
+#
+# Result at 5332e90: **20 failed, 12 passed**.  Every failure is an
+# ``AssertionError`` (16) or a ``KeyError`` (4) — the keys the report
+# gained on this branch.  There is no CollectionError, ImportError or
+# AttributeError: the tests reach real behaviour and reject it.
+#
+# The two proofs below are the load-bearing ones.
 
 def test_red_proof_report_state_counts_are_new():
-    """RED PROOF: the five report numbers do not exist on the base commit.
+    """RED PROOF 1: the five report numbers do not exist at 5332e90.
 
-    The base of this lane — 5332e90 — has no cleanup run: ``retire.py``
-    reports ``total_entries``, ``retired``, ``spared``, ``revived`` and
+    The lane base has no cleanup run: ``retire.py`` reports
+    ``total_entries``, ``retired``, ``spared``, ``revived`` and
     ``tracked``, but it states neither how many entries went without a
     confirmation nor how many were refreshed, and it reports no
     ``retired_count``/``spared_count``/``refreshed_count`` at all.
@@ -506,4 +712,26 @@ def test_red_proof_report_state_counts_are_new():
         )
     assert report["total_entries"] == 60, (
         "RED PROOF: the run must count all entries it saw"
+    )
+
+
+def test_red_proof_empty_operator_list_is_refused_here_only():
+    """RED PROOF 2: at 5332e90 an empty operator list is accepted.
+
+    The guard that makes an empty operator list fatal does not exist on
+    the lane base — the run answers an empty list by retiring what it
+    should have spared.  ``test_empty_operator_list_makes_retire_fail``
+    fails there on its first assertion, with the accepted run printed as
+    evidence, and passes here.
+    """
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as tmp:
+        empty = Path(tmp) / "empty-operator.json"
+        empty.write_text("[]")
+        cp = _run_rule(RETIRE_SCRIPT, empty)
+
+    assert cp.returncode != 0, (
+        "RED PROOF: an empty operator list must be refused; the base "
+        "commit accepted it and reported:\n" + cp.stdout[:400]
     )
