@@ -312,7 +312,7 @@ def test_faigate_unknown_kind_distribution():
         "derivable": 4,
         "not_applicable": 1,
         "runtime_dependent": 8,
-        "unlisted": 7,
+        "unlisted": 6,
     }
     assert counts == expected_counts, (
         f"unknown_kind distribution in catalog changed: "

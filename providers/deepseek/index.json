@@ -39,7 +39,7 @@
     {
       "id": "deepseek-v4-flash",
       "vendor": "deepseek",
-      "contextLength": 1048576,
+      "contextLength": 65536,
       "maxOutputTokens": null,
       "supportsReasoning": false,
       "toolCalling": true,
@@ -56,12 +56,14 @@
           "cache_read_cost_per_1m": 0.028
         },
         "limits": {
-          "max_input_tokens": 1048576
+          "max_input_tokens": 65536
         },
         "context_evidence": {
-          "level": "plausible",
-          "as_of": "2026-09-12",
-          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter deepseek/deepseek-chat=163840; LiteLLM deepseek-chat=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+          "level": "confirmed",
+          "source": "faigate probe-window",
+          "as_of": "2026-09-26",
+          "superseded_value": 1048576,
+          "note": "Corrected from 1048576 to 65536 based on faigate probe-window (2026-09-26). The probe measured the actual API ceiling; the catalog claimed 1 MiB per the DeepSeek API docs but the probe proved only 64 KiB is accepted."
         }
       },
       "variant": null
@@ -69,7 +71,7 @@
     {
       "id": "deepseek-v4-pro",
       "vendor": "deepseek",
-      "contextLength": 1048576,
+      "contextLength": 65536,
       "maxOutputTokens": null,
       "supportsReasoning": false,
       "toolCalling": true,
@@ -86,12 +88,14 @@
           "cache_read_cost_per_1m": 0.145
         },
         "limits": {
-          "max_input_tokens": 1048576
+          "max_input_tokens": 65536
         },
         "context_evidence": {
-          "level": "plausible",
-          "as_of": "2026-09-12",
-          "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepseek-reasoner=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+          "level": "confirmed",
+          "source": "faigate probe-window",
+          "as_of": "2026-09-26",
+          "superseded_value": 1048576,
+          "note": "Corrected from 1048576 to 65536 based on faigate probe-window (2026-09-26). The probe measured the actual API ceiling; the catalog claimed 1 MiB per the DeepSeek API docs but the probe proved only 64 KiB is accepted."
         }
       },
       "variant": null

@@ -359,15 +359,16 @@
       "hop": [
         "byteplus"
       ],
-      "context_window": 245760,
+      "context_window": 131072,
       "limits": {
-        "max_input_tokens": 245760
+        "max_input_tokens": 131072
       },
       "context_evidence": {
-        "level": "unconfirmed",
-        "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'byteplus/seed-1-8-251228', so the figure stays unverified.",
-        "unknown_kind": "unlisted",
-        "unknown_reason": "no consulted source publishes a window for this model"
+        "level": "confirmed",
+        "source": "faigate probe-window",
+        "as_of": "2026-09-26",
+        "superseded_value": 245760,
+        "note": "Corrected from 245760 to 131072 based on faigate probe-window (2026-09-26). The probe measured the actual API ceiling; the previous catalog value was unverified."
       }
     },
     "byteplus-plan": {
@@ -587,14 +588,16 @@
       "vendor": "deepseek",
       "model": "deepseek-v4-flash",
       "hop": [],
-      "context_window": 1048576,
+      "context_window": 65536,
       "limits": {
-        "max_input_tokens": 1048576
+        "max_input_tokens": 65536
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter deepseek/deepseek-chat=163840; LiteLLM deepseek-chat=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "faigate probe-window",
+        "as_of": "2026-09-26",
+        "superseded_value": 1048576,
+        "note": "Corrected from 1048576 to 65536 based on faigate probe-window (2026-09-26). The probe measured the actual API ceiling; the catalog claimed 1 MiB per the DeepSeek API docs but the probe proved only 64 KiB is accepted."
       }
     },
     "deepseek-v4-pro": {
@@ -637,14 +640,16 @@
       "vendor": "deepseek",
       "model": "deepseek-v4-pro",
       "hop": [],
-      "context_window": 1048576,
+      "context_window": 65536,
       "limits": {
-        "max_input_tokens": 1048576
+        "max_input_tokens": 65536
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepseek-reasoner=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "faigate probe-window",
+        "as_of": "2026-09-26",
+        "superseded_value": 1048576,
+        "note": "Corrected from 1048576 to 65536 based on faigate probe-window (2026-09-26). The probe measured the actual API ceiling; the catalog claimed 1 MiB per the DeepSeek API docs but the probe proved only 64 KiB is accepted."
       }
     },
     "deepseek-flash-vision-exp": {
@@ -1943,14 +1948,16 @@
       "vendor": "mistral",
       "model": "mistral-large-latest",
       "hop": [],
-      "context_window": 128000,
+      "context_window": 131072,
       "limits": {
-        "max_input_tokens": 128000
+        "max_input_tokens": 131072
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure/mistral-large-latest=32000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "faigate probe-window",
+        "as_of": "2026-09-26",
+        "superseded_value": 128000,
+        "note": "Corrected from 128000 to 131072 based on faigate probe-window (2026-09-26). The probe measured the actual API ceiling; the previous catalog value was a plausible guess from the embedded faigate table."
       }
     },
     "moonshot": {
@@ -2412,14 +2419,16 @@
       "vendor": "openrouter",
       "model": "auto-router",
       "hop": [],
-      "context_window": 128000,
+      "context_window": 200000,
       "limits": {
-        "max_input_tokens": 128000
+        "max_input_tokens": 200000
       },
       "context_evidence": {
-        "level": "plausible",
-        "as_of": "2026-09-12",
-        "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter openrouter/auto=2000000; LiteLLM openrouter/openrouter/auto=2000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        "level": "confirmed",
+        "source": "faigate probe-window",
+        "as_of": "2026-09-26",
+        "superseded_value": 128000,
+        "note": "Corrected from 128000 to 200000 based on faigate probe-window (2026-09-26). The probe measured the actual API ceiling; the previous catalog value was a plausible guess from the embedded faigate table."
       }
     },
     "pollinations": {

@@ -32,7 +32,7 @@
     {
       "id": "seed-1-8-251228",
       "vendor": "volcengine",
-      "contextLength": 245760,
+      "contextLength": 131072,
       "maxOutputTokens": null,
       "supportsReasoning": false,
       "toolCalling": true,
@@ -45,13 +45,14 @@
           "freshness_status": "unknown"
         },
         "limits": {
-          "max_input_tokens": 245760
+          "max_input_tokens": 131072
         },
         "context_evidence": {
-          "level": "unconfirmed",
-          "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'byteplus/seed-1-8-251228', so the figure stays unverified.",
-          "unknown_kind": "unlisted",
-          "unknown_reason": "no consulted source publishes a window for this model"
+          "level": "confirmed",
+          "source": "faigate probe-window",
+          "as_of": "2026-09-26",
+          "superseded_value": 245760,
+          "note": "Corrected from 245760 to 131072 based on faigate probe-window (2026-09-26). The probe measured the actual API ceiling; the previous catalog value was unverified."
         }
       },
       "variant": null
