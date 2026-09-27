@@ -72,7 +72,7 @@
       "tier_status": "active",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -126,7 +126,7 @@
       "tier_status": "active",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -179,7 +179,7 @@
       "tier_status": "active",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -233,7 +233,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -373,6 +373,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm, omniroutes",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -459,7 +464,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -564,8 +569,8 @@
       "watch_sources": [],
       "last_reviewed": "2026-08-20",
       "retirement": {
-        "misses": 1,
-        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "misses": 2,
+        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
         "last_confirmed_by": "unknown",
         "last_confirmed_at": "unknown"
@@ -606,7 +611,7 @@
       "last_reviewed": "2026-08-20",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       }
     },
@@ -628,6 +633,11 @@
       "offer_track": "direct",
       "provider_type": "direct",
       "tier_status": "active",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm, openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -678,6 +688,11 @@
       "offer_track": "direct",
       "provider_type": "direct",
       "tier_status": "active",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm, openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -728,6 +743,11 @@
       "offer_track": "direct",
       "provider_type": "direct",
       "tier_status": "preview",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm, openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -803,7 +823,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -862,7 +882,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -921,7 +941,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -981,7 +1001,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -1041,7 +1061,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -1099,7 +1119,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -1198,7 +1218,7 @@
       ],
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "tier_status": "active"
@@ -1266,7 +1286,7 @@
       ],
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "tier_status": "active"
@@ -1334,7 +1354,7 @@
       ],
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "tier_status": "active"
@@ -1474,7 +1494,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -1593,8 +1613,8 @@
       "watch_sources": [],
       "last_reviewed": "2026-08-20",
       "retirement": {
-        "misses": 1,
-        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "misses": 2,
+        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
         "last_confirmed_by": "unknown",
         "last_confirmed_at": "unknown"
@@ -1640,8 +1660,8 @@
       "watch_sources": [],
       "last_reviewed": "2026-08-20",
       "retirement": {
-        "misses": 1,
-        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "misses": 2,
+        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
         "last_confirmed_by": "unknown",
         "last_confirmed_at": "unknown"
@@ -1688,8 +1708,8 @@
       "watch_sources": [],
       "last_reviewed": "2026-08-20",
       "retirement": {
-        "misses": 1,
-        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "misses": 2,
+        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
         "last_confirmed_by": "unknown",
         "last_confirmed_at": "unknown"
@@ -1898,7 +1918,7 @@
       "provider_type": "aggregator",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -1947,8 +1967,8 @@
       "provider_type": "local",
       "tier_status": "deprecated",
       "retirement": {
-        "misses": 1,
-        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "misses": 2,
+        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
         "last_confirmed_by": "unknown",
         "last_confirmed_at": "unknown"
@@ -2024,8 +2044,8 @@
       ],
       "last_reviewed": "2026-08-20",
       "retirement": {
-        "misses": 1,
-        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "misses": 2,
+        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
         "last_confirmed_by": "unknown",
         "last_confirmed_at": "unknown"
@@ -2076,7 +2096,7 @@
       },
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "tier_status": "active"
@@ -2090,7 +2110,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -2130,6 +2150,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -2300,7 +2325,7 @@
       "provider_type": "local",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -2353,7 +2378,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -2404,7 +2429,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -2456,7 +2481,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -2542,7 +2567,7 @@
       ],
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "tier_status": "active"
@@ -2561,7 +2586,7 @@
       "tier_status": "active",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -2648,6 +2673,11 @@
       "track": "stable",
       "offer_track": "byok",
       "provider_type": "aggregator",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm, openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key",
         "byok"
@@ -2724,7 +2754,7 @@
       "last_reviewed": "2026-08-20",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       }
     },
@@ -2861,7 +2891,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -2937,7 +2967,7 @@
       },
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "tier_status": "active"
@@ -2994,8 +3024,8 @@
       "provider_type": "local",
       "tier_status": "deprecated",
       "retirement": {
-        "misses": 1,
-        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "misses": 2,
+        "reason": "unconfirmed across 2 collection rounds (threshold: 1)",
         "retired_at": "2026-09-27",
         "last_confirmed_by": "unknown",
         "last_confirmed_at": "unknown"
@@ -3127,7 +3157,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [
@@ -3171,7 +3201,7 @@
       "provider_type": "direct",
       "retirement": {
         "misses": 0,
-        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_by": "litellm, openrouter",
         "last_confirmed_at": "2026-09-27"
       },
       "auth_modes": [

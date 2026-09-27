@@ -64,7 +64,7 @@
         },
         "retirement": {
           "misses": 0,
-          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_by": "litellm, openrouter",
           "last_confirmed_at": "2026-09-27"
         }
       },
@@ -100,7 +100,7 @@
         },
         "retirement": {
           "misses": 0,
-          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_by": "litellm, openrouter",
           "last_confirmed_at": "2026-09-27"
         }
       },
@@ -138,7 +138,7 @@
         },
         "retirement": {
           "misses": 0,
-          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_by": "litellm, openrouter",
           "last_confirmed_at": "2026-09-27"
         }
       },
@@ -172,7 +172,7 @@
         },
         "retirement": {
           "misses": 0,
-          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_by": "litellm, openrouter",
           "last_confirmed_at": "2026-09-27"
         }
       },
