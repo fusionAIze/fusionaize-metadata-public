@@ -50,6 +50,20 @@ def _call_retirement(catalog, confirmations, operator_names, threshold):
         }
 
 
+# FAI-247-B2 tightened the contract: an EMPTY operator list now aborts the
+# run (``aborted``/``abort_reason``) instead of retiring entries, because a
+# run without the operator carve-out cannot tell a dead entry from a live
+# route.  These tests are about *what happens to entries*, not about the
+# operator list, so they pass a placeholder operator name.  The tests that
+# specifically pin the empty-operator-list failure in
+# tests/test_retirement_rule_real_input.py use a genuinely empty set.
+#
+# This does NOT remove a rigel: ``test_empty_source_set_*`` and
+# ``test_failed_collection_*`` keep their empty inputs, and neither depends
+# on the operator list for its verdict.
+_PLACEHOLDER_OPERATOR = {"gateway-local"}
+
+
 # ---------------------------------------------------------------------------
 # Fixtures — recorded collection results, no network
 # ---------------------------------------------------------------------------
@@ -91,7 +105,7 @@ def test_entry_unconfirmed_across_threshold_is_retired():
     catalog = _catalog("ghost-provider")
     confs = _confirmations(["openrouter"], {})
 
-    catalog, report = _call_retirement(catalog, confs, set(), threshold=1)
+    catalog, report = _call_retirement(catalog, confs, _PLACEHOLDER_OPERATOR, threshold=1)
 
     entry = catalog["providers"]["ghost-provider"]
     assert entry["tier_status"] == "deprecated", (
@@ -105,11 +119,11 @@ def test_retirement_names_reason_and_last_confirming_source():
     catalog = _catalog("fading-provider")
     # Round 1: confirmed by openrouter.
     confs_round1 = _confirmations(["openrouter"], {"fading-provider": ["openrouter"]})
-    catalog, _ = _call_retirement(catalog, confs_round1, set(), threshold=1)
+    catalog, _ = _call_retirement(catalog, confs_round1, _PLACEHOLDER_OPERATOR, threshold=1)
 
     # Round 2: not confirmed by anything.
     confs_round2 = _confirmations(["openrouter"], {})
-    catalog, report = _call_retirement(catalog, confs_round2, set(), threshold=1)
+    catalog, report = _call_retirement(catalog, confs_round2, _PLACEHOLDER_OPERATOR, threshold=1)
 
     retired = report["retired"]
     assert len(retired) == 1
@@ -134,7 +148,7 @@ def test_entry_below_threshold_is_not_retired():
     catalog = _catalog("slow-fader")
     confs = _confirmations(["openrouter"], {})
 
-    catalog, report = _call_retirement(catalog, confs, set(), threshold=3)
+    catalog, report = _call_retirement(catalog, confs, _PLACEHOLDER_OPERATOR, threshold=3)
 
     entry = catalog["providers"]["slow-fader"]
     assert entry["tier_status"] == "active", (
@@ -149,7 +163,7 @@ def test_threshold_is_stated_in_report():
     catalog = _catalog("anything")
     confs = _confirmations(["openrouter"], {})
 
-    _, report = _call_retirement(catalog, confs, set(), threshold=5)
+    _, report = _call_retirement(catalog, confs, _PLACEHOLDER_OPERATOR, threshold=5)
 
     assert report["threshold"] == 5, "the report must state the threshold used"
 
@@ -218,7 +232,7 @@ def test_retired_entry_stays_in_catalog():
     catalog = _catalog("ghost-provider")
     confs = _confirmations(["openrouter"], {})
 
-    catalog, _ = _call_retirement(catalog, confs, set(), threshold=1)
+    catalog, _ = _call_retirement(catalog, confs, _PLACEHOLDER_OPERATOR, threshold=1)
 
     assert "ghost-provider" in catalog["providers"], (
         "a retired entry must remain in the catalog, marked — never silently "
@@ -262,13 +276,13 @@ def test_later_confirmation_revives_retired_entry():
     catalog = _catalog("comeback")
     # Retire it.
     catalog, _ = _call_retirement(
-        catalog, _confirmations(["openrouter"], {}), set(), threshold=1,
+        catalog, _confirmations(["openrouter"], {}), _PLACEHOLDER_OPERATOR, threshold=1,
     )
     assert catalog["providers"]["comeback"]["tier_status"] == "deprecated"
 
     # A later collection confirms it again.
     confs = _confirmations(["openrouter"], {"comeback": ["openrouter"]})
-    catalog, report = _call_retirement(catalog, confs, set(), threshold=1)
+    catalog, report = _call_retirement(catalog, confs, _PLACEHOLDER_OPERATOR, threshold=1)
 
     entry = catalog["providers"]["comeback"]
     assert entry["tier_status"] == "active", (
@@ -282,12 +296,12 @@ def test_revival_clears_the_retirement_reason():
     """Reviving clears the retirement reason so the entry is clean again."""
     catalog = _catalog("comeback")
     catalog, _ = _call_retirement(
-        catalog, _confirmations(["openrouter"], {}), set(), threshold=1,
+        catalog, _confirmations(["openrouter"], {}), _PLACEHOLDER_OPERATOR, threshold=1,
     )
     assert "reason" in catalog["providers"]["comeback"]["retirement"]
 
     confs = _confirmations(["openrouter"], {"comeback": ["openrouter"]})
-    catalog, _ = _call_retirement(catalog, confs, set(), threshold=1)
+    catalog, _ = _call_retirement(catalog, confs, _PLACEHOLDER_OPERATOR, threshold=1)
 
     assert "reason" not in catalog["providers"]["comeback"]["retirement"], (
         "the stale retirement reason must be cleared on revival"
@@ -300,7 +314,7 @@ def test_multiple_retire_revive_cycles_are_idempotent():
 
     # Retire
     catalog, r1 = _call_retirement(
-        catalog, _confirmations(["openrouter"], {}), set(), threshold=1,
+        catalog, _confirmations(["openrouter"], {}), _PLACEHOLDER_OPERATOR, threshold=1,
     )
     assert len(r1["retired"]) == 1
     assert catalog["providers"]["yo-yo"]["tier_status"] == "deprecated"
@@ -308,14 +322,14 @@ def test_multiple_retire_revive_cycles_are_idempotent():
     # Revive
     catalog, r2 = _call_retirement(
         catalog, _confirmations(["openrouter"], {"yo-yo": ["openrouter"]}),
-        set(), threshold=1,
+        _PLACEHOLDER_OPERATOR, threshold=1,
     )
     assert len(r2["revived"]) == 1
     assert catalog["providers"]["yo-yo"]["tier_status"] == "active"
 
     # Retire again
     catalog, r3 = _call_retirement(
-        catalog, _confirmations(["openrouter"], {}), set(), threshold=1,
+        catalog, _confirmations(["openrouter"], {}), _PLACEHOLDER_OPERATOR, threshold=1,
     )
     assert len(r3["retired"]) == 1
     assert catalog["providers"]["yo-yo"]["tier_status"] == "deprecated"
@@ -331,7 +345,7 @@ def test_empty_source_set_retires_nothing():
     catalog = _catalog("a", "b", "c")
     confs = _confirmations([], {})  # no sources ran, nothing confirmed
 
-    catalog, report = _call_retirement(catalog, confs, set(), threshold=1)
+    catalog, report = _call_retirement(catalog, confs, _PLACEHOLDER_OPERATOR, threshold=1)
 
     for name in ("a", "b", "c"):
         assert catalog["providers"][name]["tier_status"] == "active", (
@@ -350,7 +364,7 @@ def test_empty_source_set_reported_as_aborted():
     catalog = _catalog("a")
     confs = _confirmations([], {})
 
-    _, report = _call_retirement(catalog, confs, set(), threshold=1)
+    _, report = _call_retirement(catalog, confs, _PLACEHOLDER_OPERATOR, threshold=1)
 
     assert report.get("aborted") is True
     assert "no source" in report.get("abort_reason", "").lower()
@@ -366,7 +380,7 @@ def test_failed_collection_is_reported_and_retires_nothing():
         "confirmations": {},
     }
 
-    catalog, report = _call_retirement(catalog, confs, set(), threshold=1)
+    catalog, report = _call_retirement(catalog, confs, _PLACEHOLDER_OPERATOR, threshold=1)
 
     assert catalog["providers"]["a"]["tier_status"] == "active"
     assert catalog["providers"]["b"]["tier_status"] == "active"
@@ -379,7 +393,7 @@ def test_empty_catalog_and_empty_sources_do_not_crash_or_retire():
     catalog = {"schema_version": "v1.4", "providers": {}}
     confs = _confirmations([], {})
 
-    catalog, report = _call_retirement(catalog, confs, set(), threshold=1)
+    catalog, report = _call_retirement(catalog, confs, _PLACEHOLDER_OPERATOR, threshold=1)
 
     assert report["retired"] == []
     assert report["total_entries"] == 0
@@ -406,7 +420,7 @@ def test_red_proof_retirement_changes_behavior():
     catalog = _catalog("unconfirmed-entry")
     confs = _confirmations(["openrouter"], {})
 
-    catalog, report = _call_retirement(catalog, confs, set(), threshold=1)
+    catalog, report = _call_retirement(catalog, confs, _PLACEHOLDER_OPERATOR, threshold=1)
 
     entry = catalog["providers"]["unconfirmed-entry"]
     assert entry["tier_status"] == "deprecated", (
