@@ -48,6 +48,11 @@
           "as_of": "2026-09-11"
         }
       },
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "tier_status": "active"
     },
     "anthropic": {
@@ -65,6 +70,11 @@
       "offer_track": "direct",
       "provider_type": "direct",
       "tier_status": "active",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -114,6 +124,11 @@
       "offer_track": "direct",
       "provider_type": "direct",
       "tier_status": "active",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -162,6 +177,11 @@
       "offer_track": "direct",
       "provider_type": "direct",
       "tier_status": "active",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -211,6 +231,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -285,6 +310,11 @@
           "as_of": "2026-09-11"
         }
       },
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "tier_status": "active"
     },
     "blackbox-free": {
@@ -294,6 +324,11 @@
       "track": "free",
       "offer_track": "credit",
       "provider_type": "aggregator",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -377,6 +412,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -417,6 +457,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -481,7 +526,12 @@
       "official_source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
       "signup_url": "https://console.anthropic.com/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      }
     },
     "clawrouter": {
       "aliases": [
@@ -512,7 +562,15 @@
       "official_source_url": "https://blockrun.ai/docs/products/routing/clawrouter",
       "signup_url": "https://blockrun.ai/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-27",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "cohere": {
       "aliases": [
@@ -545,7 +603,12 @@
       "official_source_url": "https://docs.cohere.com/",
       "signup_url": "https://dashboard.cohere.com/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      }
     },
     "deepseek-v4-flash": {
       "aliases": [
@@ -738,6 +801,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "oauth",
         "api_key"
@@ -792,6 +860,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -846,6 +919,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -901,6 +979,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -956,6 +1039,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -1009,6 +1097,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -1103,6 +1196,11 @@
       "output_modalities": [
         "text"
       ],
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "tier_status": "active"
     },
     "google-gemini-3-7-flash": {
@@ -1166,6 +1264,11 @@
       "output_modalities": [
         "text"
       ],
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "tier_status": "active"
     },
     "google-gemini-3-8-flash": {
@@ -1229,6 +1332,11 @@
       "output_modalities": [
         "text"
       ],
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "tier_status": "active"
     },
     "google-antigravity": {
@@ -1265,7 +1373,12 @@
       "official_source_url": "https://antigravity.dev/",
       "signup_url": "https://antigravity.dev/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      }
     },
     "google-gemini-cli": {
       "aliases": [
@@ -1299,7 +1412,12 @@
       "official_source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini",
       "signup_url": "https://cloud.google.com/vertex-ai",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      }
     },
     "google-vertex": {
       "aliases": [
@@ -1308,6 +1426,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "oauth",
         "adc"
@@ -1349,6 +1472,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -1391,6 +1519,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -1458,7 +1591,15 @@
       "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
       "signup_url": "https://kilo.ai/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-27",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "kilo-auto-free": {
       "aliases": [
@@ -1497,7 +1638,15 @@
       "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
       "signup_url": "https://kilo.ai/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-27",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "kilo-auto-frontier": {
       "aliases": [
@@ -1537,7 +1686,15 @@
       "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
       "signup_url": "https://kilo.ai/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-27",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "kilocode": {
       "aliases": [
@@ -1551,6 +1708,11 @@
       "offer_track": "free",
       "provider_type": "aggregator",
       "tier_status": "expired",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "expires_at": "2026-04-26",
       "auth_modes": [
         "api_key",
@@ -1628,7 +1790,12 @@
       "watch_sources": [
         "community"
       ],
-      "last_reviewed": "2026-04-26"
+      "last_reviewed": "2026-04-26",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      }
     },
     "kilo-sonnet": {
       "aliases": [
@@ -1668,7 +1835,12 @@
       "watch_sources": [
         "community"
       ],
-      "last_reviewed": "2026-04-26"
+      "last_reviewed": "2026-04-26",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      }
     },
     "kiro": {
       "aliases": [
@@ -1709,7 +1881,12 @@
           "url": "https://github.com/cheahjs/free-llm-api-resources"
         }
       ],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      }
     },
     "litellm": {
       "aliases": [
@@ -1719,6 +1896,11 @@
       "track": "stable",
       "offer_track": "aggregator",
       "provider_type": "aggregator",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -1763,6 +1945,14 @@
       "track": "stable",
       "offer_track": "local",
       "provider_type": "local",
+      "tier_status": "deprecated",
+      "retirement": {
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-27",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
       "auth_modes": [
         "none"
       ],
@@ -1832,7 +2022,15 @@
           "url": "https://github.com/cheahjs/free-llm-api-resources"
         }
       ],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-27",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "microsoft-phi": {
       "aliases": [
@@ -1876,6 +2074,11 @@
           "as_of": "2026-09-11"
         }
       },
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "tier_status": "active"
     },
     "minimax": {
@@ -1885,6 +2088,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -1963,6 +2171,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -2002,6 +2215,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -2064,7 +2282,12 @@
       "official_source_url": "https://build.nvidia.com/",
       "signup_url": "https://build.nvidia.com/explore/discover",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      }
     },
     "ollama": {
       "aliases": [
@@ -2075,6 +2298,11 @@
       "track": "stable",
       "offer_track": "local",
       "provider_type": "local",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "none"
       ],
@@ -2123,6 +2351,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -2169,6 +2402,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -2216,6 +2454,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -2297,6 +2540,11 @@
       "output_modalities": [
         "text"
       ],
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "tier_status": "active"
     },
     "openai-codex": {
@@ -2311,6 +2559,11 @@
       "offer_track": "oauth",
       "provider_type": "direct",
       "tier_status": "active",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "oauth"
       ],
@@ -2350,6 +2603,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -2463,7 +2721,12 @@
           "url": "https://github.com/cheahjs/free-llm-api-resources"
         }
       ],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      }
     },
     "qoder": {
       "aliases": [
@@ -2503,7 +2766,12 @@
           "url": "https://github.com/cheahjs/free-llm-api-resources"
         }
       ],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      }
     },
     "qwen": {
       "aliases": [
@@ -2535,7 +2803,12 @@
       "official_source_url": "https://help.aliyun.com/zh/model-studio/developer-reference/quick-start",
       "signup_url": "https://dashscope.aliyun.com/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      }
     },
     "qwen-portal": {
       "aliases": [
@@ -2544,6 +2817,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "none"
       ],
@@ -2581,6 +2859,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -2652,6 +2935,11 @@
           "as_of": "2026-09-11"
         }
       },
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "tier_status": "active"
     },
     "vercel-ai-gateway": {
@@ -2661,6 +2949,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -2699,6 +2992,14 @@
       "track": "stable",
       "offer_track": "local",
       "provider_type": "local",
+      "tier_status": "deprecated",
+      "retirement": {
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-27",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
       "auth_modes": [
         "none"
       ],
@@ -2739,6 +3040,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -2776,6 +3082,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -2814,6 +3125,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],
@@ -2853,6 +3169,11 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "openrouter, litellm",
+        "last_confirmed_at": "2026-09-27"
+      },
       "auth_modes": [
         "api_key"
       ],

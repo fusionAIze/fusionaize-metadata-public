@@ -20,7 +20,7 @@
   "signup_url": "https://enter.pollinations.ai",
   "last_reviewed": "2026-08-20",
   "offer_track": "free",
-  "notes": "Pollinations free text+image+video+audio — no API key required",
+  "notes": "Pollinations free text+image+video+audio \u2014 no API key required",
   "auth_modes": [
     "none"
   ],
@@ -55,6 +55,11 @@
           "unknown_reason": "the entry names 'gpt-4o', whose cap this catalog already records",
           "derived_from": "model_caps[\"gpt-4o\"]",
           "derived_from_value": 128000
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

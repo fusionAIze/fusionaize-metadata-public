@@ -15,7 +15,7 @@
   "signup_url": "https://lmstudio.ai/",
   "last_reviewed": "2026-04-01",
   "offer_track": "local",
-  "notes": "LM Studio – local LLM GUI with OpenAI-compatible server.",
+  "notes": "LM Studio \u2013 local LLM GUI with OpenAI-compatible server.",
   "auth_modes": [
     "none"
   ],
@@ -50,7 +50,15 @@
           "level": "unconfirmed",
           "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'lmstudio/minimax-m2.1-gs32', so the figure stays unverified.",
           "unknown_kind": "runtime_dependent",
-          "unknown_reason": "local runner — the window is whatever model the operator loaded"
+          "unknown_reason": "local runner \u2014 the window is whatever model the operator loaded"
+        },
+        "tier_status": "deprecated",
+        "retirement": {
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-27",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": null

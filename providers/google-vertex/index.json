@@ -51,6 +51,11 @@
           "derived_from": "model_caps[\"gemini-2.5-pro\"]",
           "derived_from_value": 1048576,
           "note": "Google Vertex entry; derived from model gemini-2.5-pro."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

@@ -56,6 +56,11 @@
           "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "baidu/ernie-4.5-vl-424b-a47b",
           "as_of": "2026-09-12"
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

@@ -61,6 +61,11 @@
           "derived_from": "model_caps[\"claude-opus-4-6\"]",
           "derived_from_value": 1000000,
           "note": "vendor rollup; single window is the flagship Opus. claude-opus-4-7 has no direct cap entry, so derived from family member claude-opus-4-6."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null
@@ -92,6 +97,11 @@
           "level": "plausible",
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-opus-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": "claude"
@@ -125,6 +135,11 @@
           "unknown_reason": "the entry names 'claude-haiku-4-5', whose cap this catalog already records",
           "derived_from": "model_caps[\"claude-haiku-4-5\"]",
           "derived_from_value": 200000
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null
@@ -154,6 +169,11 @@
           "level": "plausible",
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-sonnet-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

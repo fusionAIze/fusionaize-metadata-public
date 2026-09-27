@@ -51,6 +51,11 @@
           "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "azure_ai/global/grok-3",
           "as_of": "2026-09-12"
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

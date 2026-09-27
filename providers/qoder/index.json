@@ -20,7 +20,7 @@
   "signup_url": "https://qoder.ai/",
   "last_reviewed": "2026-08-20",
   "offer_track": "free",
-  "notes": "Qoder free via Google OAuth — kimi-k2-thinking unlimited",
+  "notes": "Qoder free via Google OAuth \u2014 kimi-k2-thinking unlimited",
   "auth_modes": [
     "oauth"
   ],
@@ -52,6 +52,11 @@
           "level": "plausible",
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter moonshotai/kimi-k2=131072; LiteLLM vercel_ai_gateway/moonshotai/kimi-k2=131072. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

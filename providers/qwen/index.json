@@ -44,6 +44,11 @@
           "level": "plausible",
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter qwen/qwen3.6-plus=1000000; LiteLLM openrouter/qwen/qwen3.6-plus=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

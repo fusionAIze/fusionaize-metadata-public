@@ -13,7 +13,7 @@
   "signup_url": "https://www.byteplus.com/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "BytePlus ARK – international access to Volcano Engine models",
+  "notes": "BytePlus ARK \u2013 international access to Volcano Engine models",
   "auth_modes": [
     "api_key"
   ],
@@ -54,6 +54,11 @@
           "derived_from": "model_caps[\"kimi-k2.6\"]",
           "derived_from_value": 262144,
           "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

@@ -66,6 +66,11 @@
           "derived_from": "model_caps[\"gemini-3.1-pro\"]",
           "derived_from_value": 1048576,
           "note": "vendor rollup; derived from primary model gemini-3.1-pro."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null
@@ -98,6 +103,11 @@
           "unknown_reason": "the entry names 'gemini-2.5-flash', whose cap this catalog already records",
           "derived_from": "model_caps[\"gemini-2.5-flash\"]",
           "derived_from_value": 1048576
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null
@@ -130,6 +140,11 @@
           "unknown_reason": "the entry names 'gemini-3-flash-lite', whose cap this catalog already records",
           "derived_from": "model_caps[\"gemini-3-flash-lite\"]",
           "derived_from_value": 1048576
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null
@@ -160,6 +175,11 @@
           "level": "plausible",
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/google/gemini-3.1-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": "high"
@@ -190,6 +210,11 @@
           "level": "plausible",
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/google/gemini-3.1-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": "low"
@@ -230,6 +255,11 @@
           "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "google/gemini-3.6-flash",
           "as_of": "2026-09-12"
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null
@@ -270,6 +300,11 @@
           "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "google/gemini-3.7-flash",
           "as_of": "2026-09-12"
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null
@@ -310,6 +345,11 @@
           "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "google/gemini-3.8-flash",
           "as_of": "2026-09-12"
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

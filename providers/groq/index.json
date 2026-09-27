@@ -15,7 +15,7 @@
   "signup_url": "https://console.groq.com/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "Groq – ultra-fast inference (LPU), Llama / DeepSeek models.",
+  "notes": "Groq \u2013 ultra-fast inference (LPU), Llama / DeepSeek models.",
   "auth_modes": [
     "api_key"
   ],
@@ -55,6 +55,11 @@
           "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "groq/llama-3.3-70b-versatile",
           "as_of": "2026-09-12"
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

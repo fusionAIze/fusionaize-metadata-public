@@ -15,7 +15,7 @@
   "signup_url": "https://dashboard.cohere.com/",
   "last_reviewed": "2026-08-20",
   "offer_track": "direct",
-  "notes": "Cohere Command A/R — enterprise-grade LLM with tool use",
+  "notes": "Cohere Command A/R \u2014 enterprise-grade LLM with tool use",
   "auth_modes": [
     "api_key"
   ],
@@ -45,6 +45,11 @@
           "level": "plausible",
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM command-a-03-2025=256000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

@@ -15,7 +15,7 @@
   "signup_url": "https://console.anthropic.com/",
   "last_reviewed": "2026-08-20",
   "offer_track": "oauth",
-  "notes": "Claude Code – special coding model via Anthropic OAuth",
+  "notes": "Claude Code \u2013 special coding model via Anthropic OAuth",
   "auth_modes": [
     "oauth"
   ],
@@ -44,6 +44,11 @@
           "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'claude-code', so the figure stays unverified.",
           "unknown_kind": "runtime_dependent",
           "unknown_reason": "oauth harness, not a model endpoint"
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

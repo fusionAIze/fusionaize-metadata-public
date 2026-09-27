@@ -15,7 +15,7 @@
   "signup_url": "https://synthetic.com/",
   "last_reviewed": "2026-04-01",
   "offer_track": "direct",
-  "notes": "Synthetic – Anthropic-compat; exposes HuggingFace models (MiniMax, etc.)",
+  "notes": "Synthetic \u2013 Anthropic-compat; exposes HuggingFace models (MiniMax, etc.)",
   "auth_modes": [
     "api_key"
   ],
@@ -50,6 +50,11 @@
           "level": "plausible",
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM gmi/MiniMaxAI/MiniMax-M2.1=196608. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

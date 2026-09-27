@@ -58,6 +58,11 @@
           "derived_from": "model_caps[\"gpt-4o\"]",
           "derived_from_value": 128000,
           "note": "vendor rollup; derived from primary model gpt-4o."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null
@@ -90,6 +95,11 @@
           "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "openai/gpt-4o",
           "as_of": "2026-09-12"
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": "gpt4o"
@@ -116,7 +126,12 @@
           "level": "unconfirmed",
           "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'gpt-image-1', so the figure stays unverified.",
           "unknown_kind": "not_applicable",
-          "unknown_reason": "image generation — there is no text context window"
+          "unknown_reason": "image generation \u2014 there is no text context window"
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null
@@ -155,6 +170,11 @@
           "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "openai/gpt-oss-120b",
           "as_of": "2026-09-12"
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter, litellm",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null

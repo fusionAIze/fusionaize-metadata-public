@@ -15,7 +15,7 @@
   "signup_url": "https://antigravity.dev/",
   "last_reviewed": "2026-08-20",
   "offer_track": "oauth",
-  "notes": "Google Antigravity (VS Code AI fork) – Google OAuth via Authorization Code + PKCE. client_id: 1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com. Token: ~/.gemini/oauth_creds.json. Antigravity's local interface is a gRPC language server (127.0.0.1:<ephemeral-port>/exa.language_server_pb.LanguageServerService/…) – faigate bypasses it and calls the Google Generative Language API (generativelanguage.googleapis.com/v1beta/openai) directly with the OAuth token. Auth: faigate-auth google-antigravity  or sign in to Antigravity IDE.",
+  "notes": "Google Antigravity (VS Code AI fork) \u2013 Google OAuth via Authorization Code + PKCE. client_id: 1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com. Token: ~/.gemini/oauth_creds.json. Antigravity's local interface is a gRPC language server (127.0.0.1:<ephemeral-port>/exa.language_server_pb.LanguageServerService/\u2026) \u2013 faigate bypasses it and calls the Google Generative Language API (generativelanguage.googleapis.com/v1beta/openai) directly with the OAuth token. Auth: faigate-auth google-antigravity  or sign in to Antigravity IDE.",
   "auth_modes": [
     "oauth"
   ],
@@ -48,7 +48,12 @@
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter google/gemini-2.5-pro=1048576; LiteLLM deepinfra/google/gemini-2.5-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
         },
-        "evidence_level_note": "faigate's code table recorded this as 'observed' — a fourth level it invented outside the published enum. Mapped to 'unofficial', which carries the same meaning in this schema: the integration was seen to work, the vendor documents none. The original word is kept here so the mapping is visible, not silent."
+        "evidence_level_note": "faigate's code table recorded this as 'observed' \u2014 a fourth level it invented outside the published enum. Mapped to 'unofficial', which carries the same meaning in this schema: the integration was seen to work, the vendor documents none. The original word is kept here so the mapping is visible, not silent.",
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter",
+          "last_confirmed_at": "2026-09-27"
+        }
       },
       "variant": null
     }

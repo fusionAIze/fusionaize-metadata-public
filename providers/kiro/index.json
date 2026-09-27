@@ -20,7 +20,7 @@
   "signup_url": "https://kiro.dev/",
   "last_reviewed": "2026-08-20",
   "offer_track": "free",
-  "notes": "Kiro free via AWS Builder ID OAuth — Claude Sonnet 4.5 unlimited",
+  "notes": "Kiro free via AWS Builder ID OAuth \u2014 Claude Sonnet 4.5 unlimited",
   "auth_modes": [
     "oauth"
   ],
@@ -52,7 +52,12 @@
           "level": "unconfirmed",
           "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kiro/claude-sonnet', so the figure stays unverified.",
           "unknown_kind": "runtime_dependent",
-          "unknown_reason": "aggregator — the window belongs to the model picked per request"
+          "unknown_reason": "aggregator \u2014 the window belongs to the model picked per request"
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "openrouter",
+          "last_confirmed_at": "2026-09-27"
         }
       },
       "variant": null
