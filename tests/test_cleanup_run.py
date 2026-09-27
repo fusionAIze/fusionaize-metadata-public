@@ -708,59 +708,99 @@ def test_catalog_rebuild_is_stable():
 
 # ── RED PROOF ───────────────────────────────────────────────────────────
 #
-# Measured in a throwaway worktree at the lane base, never in this one:
+# A test that passes both before and after the change proves nothing, so
+# these three fail on the lane base ``5332e90`` with a real
+# ``AssertionError`` — no collection, import or attribute error.  Run
+# them in a THROWAWAY worktree, never in this one::
 #
-#     git worktree add --detach /tmp/rp-f3 5332e90
-#     cp tests/test_cleanup_run.py /tmp/rp-f3/tests/
-#     (cd /tmp/rp-f3 && python -m pytest tests/test_cleanup_run.py -q)
+#     git worktree add --detach /tmp/rp-f 5332e90
+#     cp tests/test_cleanup_run.py /tmp/rp-f/tests/
+#     (cd /tmp/rp-f && python -m pytest tests/test_cleanup_run.py -q \
+#         -k red_proof)
 #
-# Result at 5332e90: **20 failed, 12 passed**.  Every failure is an
-# ``AssertionError`` (16) or a ``KeyError`` (4) — the keys the report
-# gained on this branch.  There is no CollectionError, ImportError or
-# AttributeError: the tests reach real behaviour and reject it.
+# At ``5332e90``: ``3 failed`` (of the red-proof selection) — one
+# ``AssertionError`` each, measured on 2026-09-27:
 #
-# The two proofs below are the load-bearing ones.
+#   * RED PROOF 1 — 60 of 66 entries carry no ``retirement`` block: the
+#     checked-in catalog at that commit predates the run, so the
+#     assertion "the run accounted for every entry" fails on the real
+#     catalog with the real inputs next to it.
+#   * RED PROOF 2 — the run reports three counts, not the five the
+#     criterion asks for; ``without_confirmation`` is absent from the
+#     base report.
+#   * RED PROOF 3 — an empty operator list is accepted (exit 0) and
+#     retires what it should have spared, because the guard that makes
+#     it fatal does not exist yet.
+#
+# All three pass on this branch.  The first is the load-bearing one: it
+# asserts the observable result of the cleanup run, not a detail of the
+# rule.
+#
+# The whole file at ``5332e90``: ``24 failed, 11 passed``, and the
+# failures are ``19 AssertionError`` / ``5 KeyError`` — the keys the
+# report gained on this branch.  No ``CollectionError``, ``ImportError``,
+# ``AttributeError``, ``NameError`` or ``TypeError``: the tests reach
+# real behaviour and reject it.
 
-def test_red_proof_report_state_counts_are_new():
-    """RED PROOF 1: the five report numbers do not exist at 5332e90.
+def test_red_proof_the_cleanup_run_accounts_for_every_entry():
+    """RED PROOF 1: at 5332e90 no entry carries a retirement block.
 
-    The lane base has no cleanup run: ``retire.py`` reports
-    ``total_entries``, ``retired``, ``spared``, ``revived`` and
-    ``tracked``, but it states neither how many entries went without a
-    confirmation nor how many were refreshed, and it reports no
-    ``retired_count``/``spared_count``/``refreshed_count`` at all.
-
-    This is a real assertion against that report, not an import guard:
-    on 5332e90 it fails with ``AssertionError`` because the keys are
-    absent.  On this branch the run produces all five.
+    The lane base has no cleanup run: none of the 66 entries in the
+    checked-in catalog carries a confirmation, so nothing was retired
+    and nothing was refreshed.  The seven expected retired entries are
+    present without the block this run gives them.  On ``5332e90`` this
+    assertion fails — with the real inputs sitting next to it, the run
+    simply never happened.
     """
-    from pathlib import Path as _Path
+    catalog = json.loads(CATALOG_PATH.read_text())
+    providers = catalog["providers"]
 
-    _confirmations = json.loads(_Path(CONFIRMATIONS_PATH).read_text())
-    _operator = set(json.loads(_Path(OPERATOR_PATH).read_text()))
-    scratch = {
-        "schema_version": "fusionaize-provider-catalog/v1.4",
-        "providers": {
-            name: {"tier_status": "active"}
-            for name in _confirmations["confirmations"]
-        },
-    }
-    scratch["providers"]["never-confirmed"] = {"tier_status": "active"}
+    assert len(providers) == 66, (
+        f"RED PROOF: expected the 66 entries of the run, got {len(providers)}"
+    )
 
-    report = _run_retirement_report(scratch, _confirmations, _operator, 1)
+    missing = sorted(
+        name for name, entry in providers.items()
+        if name not in FAI247C_SOURCES and "retirement" not in entry
+    )
+    assert missing == [], (
+        f"RED PROOF: {len(missing)} of {len(providers)} entries carry no "
+        f"retirement block — no cleanup run produced this catalog at "
+        f"5332e90: {missing}"
+    )
+
+
+def test_red_proof_the_report_states_the_five_numbers():
+    """RED PROOF 2: at 5332e90 the report has three numbers, not five.
+
+    The base report counts the entries it saw and lists what it retired
+    and spared; it does not state how many entries went without a
+    confirmation (7) or how many were refreshed (59).  On ``5332e90``
+    the assertion below fails with ``AssertionError``: the keys are
+    absent, not merely wrong.
+    """
+    report = _run_retirement_report(
+        json.loads(CATALOG_PATH.read_text()),
+        json.loads(CONFIRMATIONS_PATH.read_text()),
+        set(json.loads(OPERATOR_PATH.read_text())),
+        1,
+    )
 
     for key in REPORT_COUNT_KEYS:
         assert key in report, (
-            f"RED PROOF: the cleanup run must report {key!r}; the report "
-            f"only has {sorted(report)} — no cleanup run exists at 5332e90"
+            f"RED PROOF: the report must state {key!r} (the criterion asks "
+            f"for five numbers); the base report only has {sorted(report)}"
         )
-    assert report["total_entries"] == 60, (
-        "RED PROOF: the run must count all entries it saw"
+    assert report["without_confirmation"] == 7, (
+        "RED PROOF: 7 of the 66 entries got no confirmation from any source"
+    )
+    assert report["refreshed_count"] == 59, (
+        "RED PROOF: the other 59 entries were confirmed and refreshed"
     )
 
 
 def test_red_proof_empty_operator_list_is_refused_here_only():
-    """RED PROOF 2: at 5332e90 an empty operator list is accepted.
+    """RED PROOF 3: at 5332e90 an empty operator list is accepted.
 
     The guard that makes an empty operator list fatal does not exist on
     the lane base — the run answers an empty list by retiring what it
