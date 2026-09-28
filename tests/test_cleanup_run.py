@@ -175,47 +175,38 @@ def _unresolved_operator_names(catalog, operator_names):
     )
 
 
-def _classify(catalog, survey, operator_names):
-    """Put every catalog entry in exactly one category.
+def _confirmed_entries(catalog, survey, report):
+    """Entries the survey confirms this round that the report does not list.
 
-    * ``refreshed`` — the survey confirms it this round
-      (``api_models`` evidence level ``confirmed``: a provider API
-      answered).
-    * ``spared``    — the operator config resolves to it (by id first,
-      then by alias), so the rule must not retire it even unconfirmed.
-      Fourteen names hit a catalog id directly; the fifteenth is the
-      alias-shaped ``deepseek-v4-flash-vision-exp``, which addresses the
-      id ``deepseek-flash-vision-exp`` — the decisive case for resolving
-      through aliases at all.  The rule's own ``operator_names_resolved``
-      counts both, so this classification does too; a check that counted
-      only ids would disagree with the report it is checking.
-    * ``retired``   — no reachable source: the survey has no entry for it
-      at all and the operator does not address it.
-    * ``covered``   — the survey mentions it (``plausible``, ``unlisted``)
-      but does not confirm it, so the rule only records a miss.
+    ``apply_retirement`` updates the retirement bookkeeping for confirmed
+    entries (zeroes ``misses``, records ``last_confirmed_by``) but does
+    not add them to ``retired``, ``spared``, ``tracked`` or ``revived``
+    — it ``continue``\\ s past them.  These entries are therefore absent
+    from the report's four categories even though they belong to the
+    partition.  They are the most alive entries in the catalog and are
+    counted as ``spared``: the survey confirms them this round, so the
+    rule has no reason to retire them.
 
-    The survey adapts confirmed -> confirmation and everything else
-    (plausible, unlisted, absent) -> a miss, so "retired" and "covered"
-    are the two shapes of a miss the report has to tell apart.  The
-    operator carve-out is checked FIRST for exactly these two: an entry
-    that is both unconfirmed and operator-addressed is spared.
+    This function derives them as the complement of the report so that
+    the test can verify the partition against what the rule actually
+    delivered, not against a separate classifier that lives only in the
+    test.  Every entry it returns must carry evidence level ``confirmed``
+    in the survey; an entry that is neither reported nor confirmed is a
+    gap the test must catch.
     """
-    providers = catalog["providers"]
-    enrichment = survey["enrichment"]
-    operator_ids = set(_resolved_operator_ids(catalog, operator_names).values())
-
-    classification = {}
-    for provider_id in providers:
-        if _evidence_level(enrichment[provider_id]) == "confirmed" \
-                if provider_id in enrichment else False:
-            classification[provider_id] = "refreshed"
-        elif provider_id in operator_ids:
-            classification[provider_id] = "spared"
-        elif provider_id not in enrichment:
-            classification[provider_id] = "retired"
-        else:
-            classification[provider_id] = "covered"
-    return classification
+    reported = set()
+    for key in ("retired", "spared", "tracked", "revived"):
+        reported.update(entry["name"] for entry in report.get(key, []))
+    missing = set(catalog["providers"]) - reported
+    enrichment = survey.get("enrichment", {})
+    for name in missing:
+        if _evidence_level(enrichment.get(name, {})) != "confirmed":
+            raise AssertionError(
+                f"{name!r} is missing from the report but is not confirmed "
+                f"by the survey — it fell through a crack the report does "
+                f"not name"
+            )
+    return missing
 
 
 def _report(catalog, survey, operator_names, threshold):
@@ -518,54 +509,72 @@ def test_before_and_after_counts_are_in_the_report():
 
 def test_the_categories_partition_every_entry_exactly_once():
     """THE exhaustiveness rigel: every one of the 66 entries is in EXACTLY
-    one category.
+    one category — read from the report, not from a test-only classifier.
 
-    The run derives its categories from the fixture survey.  Each
-    catalog id must land in exactly one of them — ``refreshed``,
-    ``spared``, ``retired`` or ``covered`` (mentioned by the survey but
-    not confirmed).  A weaker check ("at most one") lets entries without
-    a category slip through; on the previous attempt 18 of 66 had none.
+    The report's four categories (``retired``, ``spared``, ``tracked``,
+    ``revived``) partition the catalog entries the rule acted on.  Two
+    entries — ``byteplus`` and ``byteplus-plan`` — are confirmed this
+    round; the rule zeroes their ``misses`` but the confirmed branch
+    ``continue``\\ s past them without adding them to any report list.
+    They are the most alive entries in the catalog, so the test counts
+    them as ``spared``: the survey vouches for them, and the rule has no
+    reason to retire them.
+
+    A weaker check ("at most one") lets entries without a category slip
+    through; on the previous attempt 18 of 66 had none.
     """
     catalog = _real_catalog()
     survey = _real_survey()
     names = _operator_names()
 
-    classification = _classify(catalog, survey, names)
-    categories = ("refreshed", "spared", "retired", "covered")
-
-    assert set(classification) == set(catalog["providers"]), (
-        "every catalog entry must be classified"
-    )
-    for provider_id, category in classification.items():
-        assert category in categories, (
-            f"{provider_id!r} landed in {category!r}, which is not one of the "
-            "four categories"
-        )
-
-    counts = {category: 0 for category in categories}
-    for category in classification.values():
-        counts[category] += 1
-
-    assert sum(counts.values()) == 66, "the categories must cover all 66 entries"
-    assert counts == {
-        "refreshed": 2,
-        "spared": 15,
-        "retired": 7,
-        "covered": 42,
-    }, f"the partition is not the one the fixture survey implies: {counts}"
-
-    # Belt and braces: the categorisation is not just arithmetic — the
-    # run's own report agrees with it.
     _, report = _report(catalog, survey, names, 3)
-    assert len(report["revived"]) == 0
-    assert len(report["retired"]) == 0, (
+
+    retired = {e["name"] for e in report["retired"]}
+    spared = {e["name"] for e in report["spared"]}
+    tracked = {e["name"] for e in report["tracked"]}
+    revived = {e["name"] for e in report["revived"]}
+
+    # Confirmed entries are the complement of the report.  They are
+    # actively confirmed this round — the most spared entries in the
+    # catalog.  Count them as spared so the partition is complete.
+    confirmed = _confirmed_entries(catalog, survey, report)
+    spared |= confirmed
+
+    assert revived == set(), "no entry is revived at the fixed point"
+    assert retired == set(), (
         "at threshold 3 a first miss is tracked, not retired"
     )
-    assert len(report["tracked"]) == 48, (
+    assert len(tracked) == 48, (
         "every unconfirmed entry that is not operator-addressed carries a "
-        f"miss to track; the report tracked {len(report['tracked'])}"
+        f"miss to track; the report tracked {len(tracked)}"
     )
-    assert len(report["spared"]) == 16
+    assert len(spared) == 18, (
+        "16 operator-addressed entries + 2 confirmed entries "
+        f"(byteplus, byteplus-plan) = 18; got {len(spared)}: "
+        f"{sorted(spared)}"
+    )
+
+    # Exhaustiveness: every catalog entry in exactly one category.
+    reported = retired | spared | tracked | revived
+    assert reported == set(catalog["providers"]), (
+        f"the partition must cover all 66 entries; "
+        f"missing {sorted(set(catalog['providers']) - reported)}"
+    )
+
+    # Disjointness: no entry in two categories.
+    pairs = [
+        ("retired", retired),
+        ("spared", spared),
+        ("tracked", tracked),
+        ("revived", revived),
+    ]
+    for i, (label_a, set_a) in enumerate(pairs):
+        for label_b, set_b in pairs[i + 1:]:
+            overlap = set_a & set_b
+            assert not overlap, (
+                f"{len(overlap)} entry/ies in both {label_a} and "
+                f"{label_b}: {sorted(overlap)}"
+            )
 
 
 def test_mentioned_but_unconfirmed_entries_are_tracked_not_retired():
