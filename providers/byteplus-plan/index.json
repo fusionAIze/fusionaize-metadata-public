@@ -54,6 +54,11 @@
           "derived_from": "model_caps[\"kimi-k2.6\"]",
           "derived_from_value": 262144,
           "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "litellm, byteplus",
+          "last_confirmed_at": "2026-09-28"
         }
       },
       "variant": null

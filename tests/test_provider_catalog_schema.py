@@ -334,8 +334,12 @@ def test_alias_ambiguity_resolves_via_vendor_model():
     # Splitting into vendor/model must collapse each derived recommended model
     # name to a single (vendor, model) identity regardless of how many provider
     # entries (differing only by hop or variant) carry it.
+    #
+    # gemini-3.1-pro is no longer checked: all three provider entries carrying
+    # that model (google, gemini-pro-high, gemini-pro-low) are now deprecated by
+    # the cleanup run, so the derived recommended model returns None for each.
     by_recommended = _derived_recommended_models(_load_catalog())
-    for ambiguous in ["gpt-4o", "gemini-3.1-pro", "claude-opus-4-7"]:
+    for ambiguous in ["gpt-4o", "claude-opus-4-7"]:
         assert ambiguous in by_recommended
         assert len(by_recommended[ambiguous]) == 1, \
             f"{ambiguous!r} still ambiguous: {by_recommended[ambiguous]}"

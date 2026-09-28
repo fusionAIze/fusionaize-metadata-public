@@ -42,7 +42,7 @@
       "toolCalling": true,
       "_source": "anthropic",
       "_original": {
-        "tier_status": "active",
+        "tier_status": "deprecated",
         "pricing": {
           "source_type": "provider-docs",
           "source_url": "https://www.anthropic.com/claude/opus",
@@ -61,6 +61,14 @@
           "derived_from": "model_caps[\"claude-opus-4-6\"]",
           "derived_from_value": 1000000,
           "note": "vendor rollup; single window is the flagship Opus. claude-opus-4-7 has no direct cap entry, so derived from family member claude-opus-4-6."
+        },
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": null

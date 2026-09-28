@@ -170,6 +170,13 @@ def _reconstruct_entry(provider: dict, model: dict) -> dict:
         if field in original:
             entry[field] = original[field]
 
+    # Retirement bookkeeping (FAI-247-F): the retirement rule writes
+    # per-entry records into catalog.v1.json.  Build-catalog must carry
+    # them forward from _original so a scheduled refresh does not undo
+    # the retirement decision.
+    if "retirement" in original:
+        entry["retirement"] = original["retirement"]
+
     # Renamed fields  (old-name → new-name)
     entry["vendor"] = model["vendor"]
     entry["model"] = model["id"]

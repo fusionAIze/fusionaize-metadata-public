@@ -53,6 +53,11 @@
           "as_of": "2026-09-26",
           "superseded_value": 245760,
           "note": "Corrected from 245760 to 131072 based on faigate probe-window (2026-09-26). The probe measured the actual API ceiling; the previous catalog value was unverified."
+        },
+        "retirement": {
+          "misses": 0,
+          "last_confirmed_by": "litellm, omniroutes, byteplus",
+          "last_confirmed_at": "2026-09-28"
         }
       },
       "variant": null

@@ -66,6 +66,15 @@
           "derived_from": "model_caps[\"gemini-3.1-pro\"]",
           "derived_from_value": 1048576,
           "note": "vendor rollup; derived from primary model gemini-3.1-pro."
+        },
+        "tier_status": "deprecated",
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": null
@@ -160,6 +169,15 @@
           "level": "plausible",
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/google/gemini-3.1-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        },
+        "tier_status": "deprecated",
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": "high"
@@ -190,6 +208,15 @@
           "level": "plausible",
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/google/gemini-3.1-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+        },
+        "tier_status": "deprecated",
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": "low"
@@ -203,7 +230,7 @@
       "toolCalling": true,
       "_source": "google-gemini-3-6-flash",
       "_original": {
-        "tier_status": "active",
+        "tier_status": "deprecated",
         "capacity": {
           "max_input_tokens": 1048576,
           "max_output_tokens": 65536,
@@ -230,6 +257,14 @@
           "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "google/gemini-3.6-flash",
           "as_of": "2026-09-12"
+        },
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": null
@@ -243,7 +278,7 @@
       "toolCalling": true,
       "_source": "google-gemini-3-7-flash",
       "_original": {
-        "tier_status": "active",
+        "tier_status": "deprecated",
         "capacity": {
           "max_input_tokens": 1048576,
           "max_output_tokens": 65536,
@@ -270,6 +305,14 @@
           "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "google/gemini-3.7-flash",
           "as_of": "2026-09-12"
+        },
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": null
@@ -283,7 +326,7 @@
       "toolCalling": true,
       "_source": "google-gemini-3-8-flash",
       "_original": {
-        "tier_status": "active",
+        "tier_status": "deprecated",
         "capacity": {
           "max_input_tokens": 1048576,
           "max_output_tokens": 65536,
@@ -310,6 +353,14 @@
           "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "google/gemini-3.8-flash",
           "as_of": "2026-09-12"
+        },
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": null

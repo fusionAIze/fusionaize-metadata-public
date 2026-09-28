@@ -37,7 +37,7 @@
       "toolCalling": true,
       "_source": "tencent-hunyuan",
       "_original": {
-        "tier_status": "active",
+        "tier_status": "deprecated",
         "capacity": {
           "max_input_tokens": 262144,
           "max_output_tokens": 128000,
@@ -54,6 +54,14 @@
           "level": "plausible",
           "as_of": "2026-09-12",
           "note": "No public listing found for 'hunyuan-3' in OpenRouter or LiteLLM. The entry's own notes cite the OpenRouter entry tencent/hy3 at 262144 input tokens; that figure is carried here as an orientation, not as a verified fact for hunyuan-3 itself."
+        },
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": null

@@ -48,7 +48,15 @@
           "as_of": "2026-09-11"
         }
       },
-      "tier_status": "active"
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "anthropic": {
       "aliases": [
@@ -64,7 +72,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
-      "tier_status": "active",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -97,6 +105,14 @@
         "derived_from": "model_caps[\"claude-opus-4-6\"]",
         "derived_from_value": 1000000,
         "note": "vendor rollup; single window is the flagship Opus. claude-opus-4-7 has no direct cap entry, so derived from family member claude-opus-4-6."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "anthropic-claude": {
@@ -285,7 +301,15 @@
           "as_of": "2026-09-11"
         }
       },
-      "tier_status": "active"
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "blackbox-free": {
       "aliases": [
@@ -369,6 +393,11 @@
         "as_of": "2026-09-26",
         "superseded_value": 245760,
         "note": "Corrected from 245760 to 131072 based on faigate probe-window (2026-09-26). The probe measured the actual API ceiling; the previous catalog value was unverified."
+      },
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm, omniroutes, byteplus",
+        "last_confirmed_at": "2026-09-28"
       }
     },
     "byteplus-plan": {
@@ -409,6 +438,11 @@
         "derived_from": "model_caps[\"kimi-k2.6\"]",
         "derived_from_value": 262144,
         "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
+      },
+      "retirement": {
+        "misses": 0,
+        "last_confirmed_by": "litellm, byteplus",
+        "last_confirmed_at": "2026-09-28"
       }
     },
     "cerebras": {
@@ -418,6 +452,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -450,6 +485,14 @@
         "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'qwen-3-235b-a22b-instruct-2507', so the figure stays unverified.",
         "unknown_kind": "unlisted",
         "unknown_reason": "no consulted source publishes a window for this model"
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "claude-code": {
@@ -482,7 +525,16 @@
       "official_source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
       "signup_url": "https://console.anthropic.com/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "clawrouter": {
       "aliases": [
@@ -513,7 +565,16 @@
       "official_source_url": "https://blockrun.ai/docs/products/routing/clawrouter",
       "signup_url": "https://blockrun.ai/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "cohere": {
       "aliases": [
@@ -546,7 +607,16 @@
       "official_source_url": "https://docs.cohere.com/",
       "signup_url": "https://dashboard.cohere.com/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "deepseek-v4-flash": {
       "aliases": [
@@ -743,6 +813,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "oauth",
         "api_key"
@@ -775,6 +846,14 @@
         "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "source_model_id": "openai/gpt-4o",
         "as_of": "2026-09-12"
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "google": {
@@ -797,6 +876,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -829,6 +909,14 @@
         "derived_from": "model_caps[\"gemini-3.1-pro\"]",
         "derived_from_value": 1048576,
         "note": "vendor rollup; derived from primary model gemini-3.1-pro."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "gemini-flash": {
@@ -961,6 +1049,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -992,6 +1081,14 @@
         "level": "plausible",
         "as_of": "2026-09-12",
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/google/gemini-3.1-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "gemini-pro-low": {
@@ -1014,6 +1111,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -1045,6 +1143,14 @@
         "level": "plausible",
         "as_of": "2026-09-12",
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/google/gemini-3.1-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "google-gemini-3-6-flash": {
@@ -1108,7 +1214,15 @@
       "output_modalities": [
         "text"
       ],
-      "tier_status": "active"
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "google-gemini-3-7-flash": {
       "aliases": [
@@ -1171,7 +1285,15 @@
       "output_modalities": [
         "text"
       ],
-      "tier_status": "active"
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "google-gemini-3-8-flash": {
       "aliases": [
@@ -1234,7 +1356,15 @@
       "output_modalities": [
         "text"
       ],
-      "tier_status": "active"
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "google-antigravity": {
       "aliases": [
@@ -1270,7 +1400,16 @@
       "official_source_url": "https://antigravity.dev/",
       "signup_url": "https://antigravity.dev/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "google-gemini-cli": {
       "aliases": [
@@ -1304,7 +1443,16 @@
       "official_source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini",
       "signup_url": "https://cloud.google.com/vertex-ai",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "google-vertex": {
       "aliases": [
@@ -1313,6 +1461,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "oauth",
         "adc"
@@ -1343,6 +1492,14 @@
         "derived_from": "model_caps[\"gemini-2.5-pro\"]",
         "derived_from_value": 1048576,
         "note": "Google Vertex entry; derived from model gemini-2.5-pro."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "groq": {
@@ -1354,6 +1511,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -1386,6 +1544,14 @@
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "source_model_id": "groq/llama-3.3-70b-versatile",
         "as_of": "2026-09-12"
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "huggingface": {
@@ -1396,6 +1562,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -1423,6 +1590,14 @@
         "level": "plausible",
         "as_of": "2026-09-12",
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM deepinfra/deepseek-ai/DeepSeek-R1=163840. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "kilo-auto-balanced": {
@@ -1463,7 +1638,16 @@
       "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
       "signup_url": "https://kilo.ai/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "kilo-auto-free": {
       "aliases": [
@@ -1502,7 +1686,16 @@
       "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
       "signup_url": "https://kilo.ai/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "kilo-auto-frontier": {
       "aliases": [
@@ -1542,7 +1735,16 @@
       "official_source_url": "https://kilo.ai/docs/gateway/models-and-providers",
       "signup_url": "https://kilo.ai/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "kilocode": {
       "aliases": [
@@ -1714,7 +1916,16 @@
           "url": "https://github.com/cheahjs/free-llm-api-resources"
         }
       ],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "litellm": {
       "aliases": [
@@ -1724,6 +1935,7 @@
       "track": "stable",
       "offer_track": "aggregator",
       "provider_type": "aggregator",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -1759,6 +1971,14 @@
         "as_of": "2026-09-22",
         "superseded_value": 128000,
         "note": "LiteLLM publishes no default window for a model it does not know: it is a proxy, and the window belongs to the target. The figure is therefore taken from the model this entry itself names, gpt-3.5-turbo, which LiteLLM's own map and OpenRouter both put at 16385. It stays plausible because it describes that named model rather than whatever an operator actually points the proxy at. The 128000 it replaces had no source."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "lmstudio": {
@@ -1768,6 +1988,7 @@
       "track": "stable",
       "offer_track": "local",
       "provider_type": "local",
+      "tier_status": "deprecated",
       "auth_modes": [
         "none"
       ],
@@ -1798,6 +2019,14 @@
         "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'lmstudio/minimax-m2.1-gs32', so the figure stays unverified.",
         "unknown_kind": "runtime_dependent",
         "unknown_reason": "local runner — the window is whatever model the operator loaded"
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "longcat": {
@@ -1837,7 +2066,16 @@
           "url": "https://github.com/cheahjs/free-llm-api-resources"
         }
       ],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "microsoft-phi": {
       "aliases": [
@@ -1881,7 +2119,15 @@
           "as_of": "2026-09-11"
         }
       },
-      "tier_status": "active"
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "minimax": {
       "aliases": [
@@ -1890,6 +2136,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -1917,6 +2164,14 @@
         "level": "plausible",
         "as_of": "2026-09-12",
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM sambanova/MiniMax-M2.7=196608. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "mistral": {
@@ -1927,6 +2182,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -1958,6 +2214,14 @@
         "as_of": "2026-09-26",
         "superseded_value": 128000,
         "note": "Corrected from 128000 to 131072 based on faigate probe-window (2026-09-26). The probe measured the actual API ceiling; the previous catalog value was a plausible guess from the embedded faigate table."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "moonshot": {
@@ -1970,6 +2234,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -1997,6 +2262,14 @@
         "level": "plausible",
         "as_of": "2026-09-12",
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter moonshotai/kimi-k2.5=262144; LiteLLM azure_ai/kimi-k2.5=262144. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "kimi-coding": {
@@ -2009,6 +2282,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -2037,6 +2311,14 @@
         "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'kimi-coding/k2p5', so the figure stays unverified.",
         "unknown_kind": "unlisted",
         "unknown_reason": "no consulted source publishes a window for this model"
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "nvidia-nim": {
@@ -2071,7 +2353,16 @@
       "official_source_url": "https://build.nvidia.com/",
       "signup_url": "https://build.nvidia.com/explore/discover",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "ollama": {
       "aliases": [
@@ -2082,6 +2373,7 @@
       "track": "stable",
       "offer_track": "local",
       "provider_type": "local",
+      "tier_status": "deprecated",
       "auth_modes": [
         "none"
       ],
@@ -2116,6 +2408,14 @@
         "as_of": "2026-09-22",
         "superseded_value": 128000,
         "note": "Ollama sets its own default from available VRAM: '< 24 GiB VRAM: 4k context', '24-48 GiB: 32k', '>= 48 GiB: 256k'. 4096 is the lowest documented tier, so it is a floor in the strict sense: an operator with more VRAM, a Modelfile, or OLLAMA_CONTEXT_LENGTH gets more, never less. It describes the runner's default and not the window of whatever model is loaded, which is why it stays plausible. The 128000 it replaces came from faigate's embedded table and had no source at all."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "openai": {
@@ -2130,6 +2430,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -2162,6 +2463,14 @@
         "derived_from": "model_caps[\"gpt-4o\"]",
         "derived_from_value": 128000,
         "note": "vendor rollup; derived from primary model gpt-4o."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "openai-gpt4o": {
@@ -2304,7 +2613,15 @@
       "output_modalities": [
         "text"
       ],
-      "tier_status": "active"
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "openai-codex": {
       "aliases": [
@@ -2357,6 +2674,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -2386,6 +2704,14 @@
         "level": "plausible",
         "as_of": "2026-09-12",
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM azure_ai/claude-opus-4-6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "openrouter-fallback": {
@@ -2472,7 +2798,16 @@
           "url": "https://github.com/cheahjs/free-llm-api-resources"
         }
       ],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "qoder": {
       "aliases": [
@@ -2512,7 +2847,16 @@
           "url": "https://github.com/cheahjs/free-llm-api-resources"
         }
       ],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "qwen": {
       "aliases": [
@@ -2544,7 +2888,16 @@
       "official_source_url": "https://help.aliyun.com/zh/model-studio/developer-reference/quick-start",
       "signup_url": "https://dashscope.aliyun.com/",
       "watch_sources": [],
-      "last_reviewed": "2026-08-20"
+      "last_reviewed": "2026-08-20",
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "qwen-portal": {
       "aliases": [
@@ -2553,6 +2906,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "none"
       ],
@@ -2581,6 +2935,14 @@
         "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'coder-model', so the figure stays unverified.",
         "unknown_kind": "unlisted",
         "unknown_reason": "no consulted source publishes a window for this model"
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "synthetic": {
@@ -2590,6 +2952,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -2619,6 +2982,14 @@
         "level": "plausible",
         "as_of": "2026-09-12",
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: LiteLLM gmi/MiniMaxAI/MiniMax-M2.1=196608. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "tencent-hunyuan": {
@@ -2661,7 +3032,15 @@
           "as_of": "2026-09-11"
         }
       },
-      "tier_status": "active"
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
+      },
+      "tier_status": "deprecated"
     },
     "vercel-ai-gateway": {
       "aliases": [
@@ -2670,6 +3049,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -2699,6 +3079,14 @@
         "level": "plausible",
         "as_of": "2026-09-12",
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter anthropic/claude-opus-4.6=1000000; LiteLLM openrouter/anthropic/claude-opus-4.6=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "vllm": {
@@ -2708,6 +3096,7 @@
       "track": "stable",
       "offer_track": "local",
       "provider_type": "local",
+      "tier_status": "deprecated",
       "auth_modes": [
         "none"
       ],
@@ -2738,6 +3127,14 @@
         "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'vllm/your-model-id', so the figure stays unverified.",
         "unknown_kind": "runtime_dependent",
         "unknown_reason": "local runner — the window is whatever model the operator loaded"
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "volcengine": {
@@ -2748,6 +3145,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -2776,6 +3174,14 @@
         "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'volcengine/doubao-seed-1-8-251228', so the figure stays unverified.",
         "unknown_kind": "unlisted",
         "unknown_reason": "no consulted source publishes a window for this model"
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "volcengine-plan": {
@@ -2785,6 +3191,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -2814,6 +3221,14 @@
         "derived_from": "model_caps[\"kimi-k2.6\"]",
         "derived_from_value": 262144,
         "note": "plan rollup over ark coding models (ark-code-latest, kimi-k2.x, glm-4.x); no single window. Derived from the coding workhorse kimi-k2.6."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "xai": {
@@ -2823,6 +3238,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -2853,6 +3269,14 @@
         "source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
         "source_model_id": "azure_ai/global/grok-3",
         "as_of": "2026-09-12"
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     },
     "zai": {
@@ -2862,6 +3286,7 @@
       "track": "stable",
       "offer_track": "direct",
       "provider_type": "direct",
+      "tier_status": "deprecated",
       "auth_modes": [
         "api_key"
       ],
@@ -2889,6 +3314,14 @@
         "level": "plausible",
         "as_of": "2026-09-12",
         "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter z-ai/glm-4.7=204800; LiteLLM openrouter/z-ai/glm-4.7=202752. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
+      },
+      "retirement": {
+        "last_miss_round": "sha256:39b41d9a30ffc515",
+        "misses": 1,
+        "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+        "retired_at": "2026-09-28",
+        "last_confirmed_by": "unknown",
+        "last_confirmed_at": "unknown"
       }
     }
   },
