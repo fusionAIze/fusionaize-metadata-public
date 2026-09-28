@@ -122,7 +122,8 @@ def _ordered_entry(fields: dict, is_proxy: bool) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def _reconstruct_entry(provider: dict, model: dict) -> dict:
+def _reconstruct_entry(provider: dict, model: dict,
+                       existing_providers: dict | None = None) -> dict:
     """Reconstruct an old-style catalog entry from a provider folder + model."""
     entry: dict = {}
 
@@ -171,11 +172,19 @@ def _reconstruct_entry(provider: dict, model: dict) -> dict:
             entry[field] = original[field]
 
     # Retirement bookkeeping (FAI-247-F): the retirement rule writes
-    # per-entry records into catalog.v1.json.  Build-catalog must carry
-    # them forward from _original so a scheduled refresh does not undo
-    # the retirement decision.
+    # per-entry records into catalog.v1.json.  Build-catalog carries
+    # them forward from the existing catalog so a scheduled refresh does
+    # not undo the retirement decision.  The folder's _original is the
+    # primary source; the existing catalog is the fallback for entries
+    # whose folders are maintained by other lanes.
     if "retirement" in original:
         entry["retirement"] = original["retirement"]
+    elif existing_providers:
+        existing_entry = existing_providers.get(model["_source"], {})
+        if "retirement" in existing_entry:
+            entry["retirement"] = existing_entry["retirement"]
+        if "tier_status" in existing_entry and "tier_status" not in entry:
+            entry["tier_status"] = existing_entry["tier_status"]
 
     # Renamed fields  (old-name → new-name)
     entry["vendor"] = model["vendor"]
@@ -234,12 +243,13 @@ def build_catalog(providers_dir: Path) -> dict:
         if p.is_dir() and (p / "index.json").exists()
     )
 
+    existing_providers = existing.get("providers", {})
     for folder in folders:
         provider = json.loads((folder / "index.json").read_text())
         for model in provider.get("models", []):
             source_name = model["_source"]
             catalog["providers"][source_name] = _reconstruct_entry(
-                provider, model
+                provider, model, existing_providers,
             )
 
     return catalog

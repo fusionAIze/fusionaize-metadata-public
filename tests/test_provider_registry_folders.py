@@ -137,13 +137,21 @@ MERGED_FIELDS = {"aliases", "notes"}
 # is now contextLength).
 RENAMED_FIELDS = {"model", "vendor", "context_window"}
 
+# FAI-247-F: the cleanup rule writes retirement + tier_status into the catalog.
+# build-catalog.py carries them forward from the existing catalog (fallback) when
+# the folder's _original does not define them.  They are therefore not required
+# to be in the folder's _original and are excluded from the field-for-field
+# comparison.
+RULE_GENERATED_FIELDS = {"retirement", "tier_status"}
+
 
 def _old_fields_excluding_merged(entry: dict) -> set[str]:
     """All fields in an old entry that should be checked per-model."""
     return (set(entry.keys())
             - PROVIDER_LEVEL_FIELDS
             - MERGED_FIELDS
-            - RENAMED_FIELDS)
+            - RENAMED_FIELDS
+            - RULE_GENERATED_FIELDS)
 
 
 def test_red_proof_against_base():

@@ -335,9 +335,12 @@ def test_alias_ambiguity_resolves_via_vendor_model():
     # name to a single (vendor, model) identity regardless of how many provider
     # entries (differing only by hop or variant) carry it.
     #
-    # gemini-3.1-pro is no longer checked: all three provider entries carrying
-    # that model (google, gemini-pro-high, gemini-pro-low) are now deprecated by
-    # the cleanup run, so the derived recommended model returns None for each.
+    # FAI-247-F: gemini-3.1-pro is no longer checked.  The cleanup run
+    # deprecated all three provider entries carrying that model (google,
+    # gemini-pro-high, gemini-pro-low), so _derived_recommended_model returns
+    # None for each — they no longer appear in by_recommended.  The test
+    # reflects the catalog as the rule left it; the adjustment is a consequence
+    # of the catalog diff, not a hand edit.
     by_recommended = _derived_recommended_models(_load_catalog())
     for ambiguous in ["gpt-4o", "claude-opus-4-7"]:
         assert ambiguous in by_recommended
