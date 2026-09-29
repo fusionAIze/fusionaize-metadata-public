@@ -278,6 +278,75 @@ def resolve_operator_ids(
     return resolved, unresolved
 
 
+# The categories every catalog entry is sorted into.  Their union must be
+# the catalog and their pairwise intersections empty.  ``retired`` and
+# ``still_retired`` split the deprecated state the same way ``revived``
+# and ``spared`` split a confirmed entry: the transitioned entries
+# (``retired``, ``revived``) carry timestamps, the ones whose state the
+# current run does not newly decide (``still_retired``, ``spared``) are
+# recorded without inventing a transition.
+REPORT_CATEGORIES = (
+    "retired", "still_retired", "spared", "tracked", "revived",
+)
+
+
+def check_report_partition(
+    report: dict[str, Any], catalog_names: Any,
+) -> list[str]:
+    """Check that the report's categories partition the catalog exactly.
+
+    Returns a list of problems; an empty list means the partition is
+    exact.  Three failure modes must be caught here rather than waved
+    through:
+
+    * an entry in NO category — the report dropped it.  The confirmed
+      branch used to ``continue`` past ``byteplus``/``byteplus-plan``
+      without recording them anywhere, so the report covered 64 of 66
+      entries while every category looked healthy;
+    * an entry in TWO categories — double-counted;
+    * an empty catalog — ``reported == set()`` holds trivially, so a
+      rule that evaluated nothing would claim exhaustiveness.  The
+      check must fail that case rather than satisfy it vacuously.
+
+    This is shipped logic, not test-only bookkeeping: ``apply_retirement``
+    calls it before returning, so a report that fails to account for
+    every entry is an error, not a green run.  Keeping the check in one
+    place means the partition test and the negative tests exercise the
+    same code the rule runs in production — deleting a check here turns
+    a test red instead of leaving the suite green.
+    """
+    expected = set(catalog_names)
+    problems: list[str] = []
+
+    # An empty catalog cannot be partitioned: the set comparison below
+    # would hold for a rule that processed nothing at all.
+    if not expected:
+        return [
+            "the catalog is empty — an exhaustiveness check over zero "
+            "entries evaluated nothing"
+        ]
+
+    counts: dict[str, int] = {}
+    for category in REPORT_CATEGORIES:
+        for entry in report.get(category, []):
+            name = entry["name"]
+            counts[name] = counts.get(name, 0) + 1
+
+    missing = sorted(expected - set(counts))
+    if missing:
+        problems.append(f"entries in no category: {missing}")
+
+    doubled = sorted(name for name, n in counts.items() if n > 1)
+    if doubled:
+        problems.append(f"entries in more than one category: {doubled}")
+
+    unknown = sorted(set(counts) - expected)
+    if unknown:
+        problems.append(f"names that are not catalog entries: {unknown}")
+
+    return problems
+
+
 def apply_retirement(
     catalog: dict[str, Any],
     confirmations: dict[str, Any],
@@ -297,6 +366,23 @@ def apply_retirement(
     broken collection it exists to catch.
     """
     today = date.today().isoformat()
+
+    # ------------------------------------------------------------------
+    # Guard 0: an empty catalog cannot support a decision either.
+    #
+    # With no providers the report's four categories are all empty and a
+    # set comparison ``reported == set(catalog)`` holds trivially — the
+    # CLI would exit 0 and, with ``--write``, rewrite the catalog while
+    # having evaluated nothing.  "Did nothing" must not read as
+    # "succeeded": fail loudly and name the reason.
+    # ------------------------------------------------------------------
+    if not catalog.get("providers"):
+        raise ValueError(
+            "empty catalog: the catalog contains no provider entries — "
+            "refusing to run the retirement rule on an empty partition, "
+            "because an exhaustiveness check over zero entries evaluates "
+            "nothing and must not report success"
+        )
 
     if is_collected_survey(confirmations):
         adapt_notes = "survey adapted from collector shape"
@@ -322,6 +408,7 @@ def apply_retirement(
         "retired": [],
         "spared": [],
         "revived": [],
+        "still_retired": [],
         "tracked": [],
     }
 
@@ -529,11 +616,36 @@ def apply_retirement(
                     "last_confirming_source": f"{last_source} on {last_at}",
                     "retired_at": today,
                 })
+            else:
+                # Already deprecated on this round — the same transition
+                # the fixed point forbids re-reporting.  The entry is
+                # nevertheless part of the catalog the run accounts for,
+                # so it must land in a named category.  It stays retired:
+                # the timestamped ``retired`` list is a transition log, so
+                # the current state goes to ``still_retired`` — the same
+                # split the confirmed branch uses for ``revived`` vs
+                # ``spared``.  Recording it in ``retired`` instead would
+                # have put the entry in two states at once (still
+                # deprecated, yet reported as freshly retired).
+                report["still_retired"].append({
+                    "name": name,
+                    "reason": entry["retirement"]["reason"],
+                })
         else:
             report["tracked"].append({
                 "name": name,
                 "misses": misses,
             })
+
+    # The report must account for every catalog entry, and every entry
+    # exactly once.  ``check_report_partition`` is the shipped check; a
+    # report that drops an entry (the confirmed branch once did) or
+    # double-counts one is an error, not a green run.
+    problems = check_report_partition(report, catalog["providers"])
+    if problems:
+        raise ValueError(
+            "report does not partition the catalog: " + "; ".join(problems)
+        )
 
     return catalog, report
 
