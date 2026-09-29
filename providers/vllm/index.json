@@ -51,6 +51,15 @@
           "note": "Carried over unchanged from faigate's embedded provider table, which recorded no source. Neither OpenRouter nor LiteLLM lists 'vllm/your-model-id', so the figure stays unverified.",
           "unknown_kind": "runtime_dependent",
           "unknown_reason": "local runner — the window is whatever model the operator loaded"
+        },
+        "tier_status": "deprecated",
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": null

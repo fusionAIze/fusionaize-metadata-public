@@ -57,6 +57,15 @@
           "as_of": "2026-09-22",
           "superseded_value": 128000,
           "note": "Ollama sets its own default from available VRAM: '< 24 GiB VRAM: 4k context', '24-48 GiB: 32k', '>= 48 GiB: 256k'. 4096 is the lowest documented tier, so it is a floor in the strict sense: an operator with more VRAM, a Modelfile, or OLLAMA_CONTEXT_LENGTH gets more, never less. It describes the runner's default and not the window of whatever model is loaded, which is why it stays plausible. The 128000 it replaces came from faigate's embedded table and had no source at all."
+        },
+        "tier_status": "deprecated",
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": null

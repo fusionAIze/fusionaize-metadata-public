@@ -51,6 +51,15 @@
           "derived_from": "model_caps[\"gemini-2.5-pro\"]",
           "derived_from_value": 1048576,
           "note": "Google Vertex entry; derived from model gemini-2.5-pro."
+        },
+        "tier_status": "deprecated",
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": null

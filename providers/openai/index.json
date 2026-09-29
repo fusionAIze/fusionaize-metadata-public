@@ -58,6 +58,15 @@
           "derived_from": "model_caps[\"gpt-4o\"]",
           "derived_from_value": 128000,
           "note": "vendor rollup; derived from primary model gpt-4o."
+        },
+        "tier_status": "deprecated",
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": null
@@ -130,7 +139,7 @@
       "toolCalling": true,
       "_source": "openai-gpt-oss-120b",
       "_original": {
-        "tier_status": "active",
+        "tier_status": "deprecated",
         "capacity": {
           "max_input_tokens": 131072,
           "max_output_tokens": 32768,
@@ -155,6 +164,14 @@
           "secondary_source_url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "source_model_id": "openai/gpt-oss-120b",
           "as_of": "2026-09-12"
+        },
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
         }
       },
       "variant": null

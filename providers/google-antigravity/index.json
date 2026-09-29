@@ -48,7 +48,16 @@
           "as_of": "2026-09-12",
           "note": "Carried over unchanged from faigate's embedded provider table. The public sources disagree with it: OpenRouter google/gemini-2.5-pro=1048576; LiteLLM deepinfra/google/gemini-2.5-pro=1000000. The value is kept so this migration does not silently change routing headroom; the divergence is recorded here so the correction can be a deliberate step."
         },
-        "evidence_level_note": "faigate's code table recorded this as 'observed' — a fourth level it invented outside the published enum. Mapped to 'unofficial', which carries the same meaning in this schema: the integration was seen to work, the vendor documents none. The original word is kept here so the mapping is visible, not silent."
+        "evidence_level_note": "faigate's code table recorded this as 'observed' — a fourth level it invented outside the published enum. Mapped to 'unofficial', which carries the same meaning in this schema: the integration was seen to work, the vendor documents none. The original word is kept here so the mapping is visible, not silent.",
+        "tier_status": "deprecated",
+        "retirement": {
+          "last_miss_round": "sha256:39b41d9a30ffc515",
+          "misses": 1,
+          "reason": "unconfirmed across 1 collection rounds (threshold: 1)",
+          "retired_at": "2026-09-28",
+          "last_confirmed_by": "unknown",
+          "last_confirmed_at": "unknown"
+        }
       },
       "variant": null
     }
