@@ -446,6 +446,16 @@ def apply_retirement(
                     "confirmed_by": entry_sources,
                     "revived_at": today,
                 })
+            else:
+                # Confirmed this round but not revived — the survey
+                # vouches for the entry, so the rule has no reason to
+                # retire it.  Report as spared so the exhaustiveness
+                # partition is complete.
+                report["spared"].append({
+                    "name": name,
+                    "confirmed_by": entry_sources,
+                    "last_confirmed_at": last_at,
+                })
             continue
 
         # --- Not confirmed this round ---

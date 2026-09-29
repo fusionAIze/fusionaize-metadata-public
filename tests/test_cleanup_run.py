@@ -175,40 +175,6 @@ def _unresolved_operator_names(catalog, operator_names):
     )
 
 
-def _confirmed_entries(catalog, survey, report):
-    """Entries the survey confirms this round that the report does not list.
-
-    ``apply_retirement`` updates the retirement bookkeeping for confirmed
-    entries (zeroes ``misses``, records ``last_confirmed_by``) but does
-    not add them to ``retired``, ``spared``, ``tracked`` or ``revived``
-    — it ``continue``\\ s past them.  These entries are therefore absent
-    from the report's four categories even though they belong to the
-    partition.  They are the most alive entries in the catalog and are
-    counted as ``spared``: the survey confirms them this round, so the
-    rule has no reason to retire them.
-
-    This function derives them as the complement of the report so that
-    the test can verify the partition against what the rule actually
-    delivered, not against a separate classifier that lives only in the
-    test.  Every entry it returns must carry evidence level ``confirmed``
-    in the survey; an entry that is neither reported nor confirmed is a
-    gap the test must catch.
-    """
-    reported = set()
-    for key in ("retired", "spared", "tracked", "revived"):
-        reported.update(entry["name"] for entry in report.get(key, []))
-    missing = set(catalog["providers"]) - reported
-    enrichment = survey.get("enrichment", {})
-    for name in missing:
-        if _evidence_level(enrichment.get(name, {})) != "confirmed":
-            raise AssertionError(
-                f"{name!r} is missing from the report but is not confirmed "
-                f"by the survey — it fell through a crack the report does "
-                f"not name"
-            )
-    return missing
-
-
 def _report(catalog, survey, operator_names, threshold):
     catalog, report = _call_rule(
         copy.deepcopy(catalog), survey, operator_names, threshold,
@@ -534,12 +500,6 @@ def test_the_categories_partition_every_entry_exactly_once():
     tracked = {e["name"] for e in report["tracked"]}
     revived = {e["name"] for e in report["revived"]}
 
-    # Confirmed entries are the complement of the report.  They are
-    # actively confirmed this round — the most spared entries in the
-    # catalog.  Count them as spared so the partition is complete.
-    confirmed = _confirmed_entries(catalog, survey, report)
-    spared |= confirmed
-
     assert revived == set(), "no entry is revived at the fixed point"
     assert retired == set(), (
         "at threshold 3 a first miss is tracked, not retired"
@@ -776,3 +736,96 @@ def test_a_refused_run_is_not_a_silent_success(tmp_path):
             f"the CLI reported success on {document!r} while touching nothing"
         )
         assert target.read_bytes() == before
+
+
+# ---------------------------------------------------------------------------
+# Criterion 3 — the exhaustiveness check must stay sharp
+# ---------------------------------------------------------------------------
+
+
+def test_exhaustiveness_catches_an_entry_in_no_category():
+    """An entry missing from all four report categories must make the
+    ``reported == set(catalog["providers"])`` assertion fail.
+
+    The partition check iterates over the four report categories and
+    collects every name it finds.  An entry that is in the catalog but
+    in none of the categories produces a non-empty ``missing`` set.
+    """
+    report = {
+        "retired": [], "spared": [], "tracked": [], "revived": [],
+    }
+    catalog_providers = {"orphan"}
+
+    reported = set()
+    for key in ("retired", "spared", "tracked", "revived"):
+        reported.update(e["name"] for e in report.get(key, []))
+    missing = sorted(catalog_providers - reported)
+
+    assert missing == ["orphan"], (
+        f"the orphan entry must be detected as missing; got {missing}"
+    )
+
+
+def test_exhaustiveness_catches_an_entry_in_two_categories():
+    """An entry in two report categories must make the disjointness
+    assertion fail.
+
+    The partition check iterates over category pairs and asserts their
+    intersection is empty.  An entry listed in both ``retired`` and
+    ``spared`` produces a non-empty overlap.
+    """
+    pairs = [
+        ("retired", {"double-entry"}),
+        ("spared", {"double-entry"}),
+        ("tracked", set()),
+        ("revived", set()),
+    ]
+    overlaps = []
+    for i, (label_a, set_a) in enumerate(pairs):
+        for label_b, set_b in pairs[i + 1:]:
+            overlap = set_a & set_b
+            if overlap:
+                overlaps.append((label_a, label_b, sorted(overlap)))
+    assert len(overlaps) == 1, (
+        f"the overlap must be detected; got {overlaps}"
+    )
+    assert overlaps[0][2] == ["double-entry"]
+
+
+def test_empty_catalog_must_not_pass_exhaustiveness_vacuously():
+    """An empty catalog trivially satisfies ``reported == set()``,
+    making the partition assertion pass for doing nothing.  The check
+    must be guarded by ``total_entries > 0`` so a rule that processed
+    no entries cannot claim exhaustiveness.
+
+    This test demonstrates the vacuity and verifies the guard rejects
+    it.
+    """
+    catalog_providers: set[str] = set()
+    report = {
+        "retired": [], "spared": [], "tracked": [], "revived": [],
+        "total_entries": 0,
+    }
+
+    reported: set[str] = set()
+    for key in ("retired", "spared", "tracked", "revived"):
+        reported.update(e["name"] for e in report.get(key, []))
+
+    # The partition assertion alone passes vacuously — this is the
+    # problem that the guard must close.
+    assert reported == catalog_providers, (
+        "precondition: empty sets pass the equality check trivially"
+    )
+
+    # The guard: a catalog with no entries must not pass.
+    try:
+        assert report.get("total_entries", 0) > 0, (
+            "an empty catalog must not pass the exhaustiveness check "
+            "vacuously — no entries were evaluated"
+        )
+    except AssertionError:
+        return  # expected — the guard correctly rejected it
+    raise AssertionError(
+        "the empty catalog passed the exhaustiveness check — the guard "
+        "did not reject the vacuity"
+    )

@@ -265,7 +265,9 @@ def test_report_has_before_and_after_counts():
 
     assert report["total_entries"] == 3
     assert len(report["retired"]) == 1
-    assert len(report["spared"]) == 1
+    # "a" is confirmed this round (spared as confirmed) and
+    # "operator-pick" is operator-configured (spared by carve-out).
+    assert len(report["spared"]) == 2
 
 
 # ---------------------------------------------------------------------------
