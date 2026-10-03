@@ -175,40 +175,6 @@ def _unresolved_operator_names(catalog, operator_names):
     )
 
 
-def _confirmed_entries(catalog, survey, report):
-    """Entries the survey confirms this round that the report does not list.
-
-    ``apply_retirement`` updates the retirement bookkeeping for confirmed
-    entries (zeroes ``misses``, records ``last_confirmed_by``) but does
-    not add them to ``retired``, ``spared``, ``tracked`` or ``revived``
-    — it ``continue``\\ s past them.  These entries are therefore absent
-    from the report's four categories even though they belong to the
-    partition.  They are the most alive entries in the catalog and are
-    counted as ``spared``: the survey confirms them this round, so the
-    rule has no reason to retire them.
-
-    This function derives them as the complement of the report so that
-    the test can verify the partition against what the rule actually
-    delivered, not against a separate classifier that lives only in the
-    test.  Every entry it returns must carry evidence level ``confirmed``
-    in the survey; an entry that is neither reported nor confirmed is a
-    gap the test must catch.
-    """
-    reported = set()
-    for key in ("retired", "spared", "tracked", "revived"):
-        reported.update(entry["name"] for entry in report.get(key, []))
-    missing = set(catalog["providers"]) - reported
-    enrichment = survey.get("enrichment", {})
-    for name in missing:
-        if _evidence_level(enrichment.get(name, {})) != "confirmed":
-            raise AssertionError(
-                f"{name!r} is missing from the report but is not confirmed "
-                f"by the survey — it fell through a crack the report does "
-                f"not name"
-            )
-    return missing
-
-
 def _report(catalog, survey, operator_names, threshold):
     catalog, report = _call_rule(
         copy.deepcopy(catalog), survey, operator_names, threshold,
@@ -529,16 +495,14 @@ def test_the_categories_partition_every_entry_exactly_once():
 
     _, report = _report(catalog, survey, names, 3)
 
-    retired = {e["name"] for e in report["retired"]}
-    spared = {e["name"] for e in report["spared"]}
-    tracked = {e["name"] for e in report["tracked"]}
-    revived = {e["name"] for e in report["revived"]}
-
-    # Confirmed entries are the complement of the report.  They are
-    # actively confirmed this round — the most spared entries in the
-    # catalog.  Count them as spared so the partition is complete.
-    confirmed = _confirmed_entries(catalog, survey, report)
-    spared |= confirmed
+    # Read each category with a default so that on a rule that does not
+    # emit a category the red proof reaches a real assertion (a count
+    # mismatch) rather than a ``KeyError`` from the test's own indexing.
+    retired = {e["name"] for e in report.get("retired", [])}
+    still_retired = {e["name"] for e in report.get("still_retired", [])}
+    spared = {e["name"] for e in report.get("spared", [])}
+    tracked = {e["name"] for e in report.get("tracked", [])}
+    revived = {e["name"] for e in report.get("revived", [])}
 
     assert revived == set(), "no entry is revived at the fixed point"
     assert retired == set(), (
@@ -554,20 +518,32 @@ def test_the_categories_partition_every_entry_exactly_once():
         f"{sorted(spared)}"
     )
 
-    # Exhaustiveness: every catalog entry in exactly one category.
-    reported = retired | spared | tracked | revived
-    assert reported == set(catalog["providers"]), (
-        f"the partition must cover all 66 entries; "
-        f"missing {sorted(set(catalog['providers']) - reported)}"
+    # Exhaustiveness and disjointness are checked by the SHIPPED
+    # ``check_report_partition`` — the same helper ``apply_retirement``
+    # runs before it returns.  Wrapping it in a test-only re-check kept
+    # the suite green when the check was deleted; driving the shipped
+    # helper means removing it turns this test (and the criterion-3
+    # negatives below) red.
+    categories = {
+        "retired": retired,
+        "still_retired": still_retired,
+        "spared": spared,
+        "tracked": tracked,
+        "revived": revived,
+    }
+    problems = _shipped_errors(report, catalog["providers"])
+    assert not problems, (
+        "the shipped partition check rejected this report: "
+        f"{problems}; categories were {categories}"
+    )
+    assert set(catalog["providers"]) == set().union(*categories.values()), (
+        "the partition must cover all 66 entries; "
+        f"missing {sorted(set(catalog['providers']) - set().union(*categories.values()))}"
     )
 
-    # Disjointness: no entry in two categories.
-    pairs = [
-        ("retired", retired),
-        ("spared", spared),
-        ("tracked", tracked),
-        ("revived", revived),
-    ]
+    # Disjointness, stated here as well so the test reads as the rigel it
+    # is: no entry may appear in two categories.
+    pairs = list(categories.items())
     for i, (label_a, set_a) in enumerate(pairs):
         for label_b, set_b in pairs[i + 1:]:
             overlap = set_a & set_b
@@ -776,3 +752,160 @@ def test_a_refused_run_is_not_a_silent_success(tmp_path):
             f"the CLI reported success on {document!r} while touching nothing"
         )
         assert target.read_bytes() == before
+
+
+def _empty_catalog_document():
+    """A catalog with a ``providers`` map but no entries."""
+    return {"schema_version": "fusionaize-provider-catalog/v1.4", "providers": {}}
+
+
+def test_cli_refuses_to_write_on_an_empty_catalog(tmp_path):
+    """An empty catalog must not exit 0 and must not be rewritten.
+
+    ``reported == set(catalog["providers"])`` holds trivially when there
+    are no providers, so before this guard the CLI processed nothing,
+    exited 0 and — with ``--write`` — rewrote the catalog anyway.  The
+    partition check must fail loudly on a catalog it cannot partition,
+    and the process must leave the file byte-identical.
+    """
+    target = tmp_path / "empty-catalog.json"
+    target.write_text(json.dumps(_empty_catalog_document()))
+    before = target.read_bytes()
+
+    result = _run_cli(target, COLLECTED, OPERATOR, 1, "--write")
+
+    assert result.returncode != 0, (
+        "an empty catalog must fail loudly; the process exited 0 with "
+        f"stdout={result.stdout!r}"
+    )
+    assert target.read_bytes() == before, (
+        "a run that refused to decide must not rewrite an empty catalog"
+    )
+    combined = (result.stdout + result.stderr).lower()
+    assert "empty catalog" in combined, (
+        "the refusal must name the empty catalog as the reason; got "
+        f"stdout={result.stdout!r} stderr={result.stderr!r}"
+    )
+
+
+def test_a_report_that_fails_the_partition_is_an_error_not_a_green_run(monkeypatch):
+    """The rule refuses to RETURN a report that does not partition.
+
+    ``check_report_partition`` is shipped logic and the rule calls it
+    before returning.  This pins the call site: when the check reports a
+    problem the run raises to the caller instead of printing a success.
+    Without the call a future change could drop an entry from every
+    category — exactly the ``byteplus`` bug — and still report green.
+    """
+    import retire
+
+    if not hasattr(retire, "check_report_partition"):
+        raise AssertionError(
+            "retire.check_report_partition is missing — the partition check "
+            "must be shipped logic the rule calls, not a test-only copy"
+        )
+
+    monkeypatch.setattr(
+        retire, "check_report_partition",
+        lambda report, catalog_names: ["entry 'ghost' is in no category"],
+    )
+
+    try:
+        retire.apply_retirement(
+            _real_catalog(), _real_survey(), _operator_names(), 3,
+        )
+    except ValueError as exc:
+        assert "partition" in str(exc).lower(), (
+            f"the failure must name the partition as the reason; got {str(exc)!r}"
+        )
+        return
+
+    raise AssertionError(
+        "the rule returned a report the partition check rejects — it must "
+        "raise, not report success"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Criterion 3 — the exhaustiveness check must stay sharp
+#
+# The three tests below drive the SHIPPED ``check_report_partition``
+# helper, the same function ``test_the_categories_partition_every_entry_
+# exactly_once`` goes through and ``apply_retirement`` calls before it
+# returns.  A test-only re-implementation would stay green when the
+# check is deleted; driving the shipped helper means removing it turns
+# at least one of these red.
+# ---------------------------------------------------------------------------
+
+def _shipped_errors(report, catalog_names):
+    try:
+        from retire import check_report_partition
+    except ImportError:
+        return ["retire.check_report_partition is missing"]
+    return check_report_partition(report, catalog_names)
+
+
+def test_exhaustiveness_catches_an_entry_in_no_category():
+    """An entry missing from all four report categories must be named.
+
+    This is the confirmed-branch bug: ``byteplus``/``byteplus-plan``
+    were dropped from every category while the report still looked
+    healthy.  ``check_report_partition`` — the shipped check — must
+    report the orphan.
+    """
+    report = {
+        "retired": [], "spared": [], "tracked": [], "revived": [],
+    }
+
+    problems = _shipped_errors(report, ["orphan"])
+
+    assert problems, (
+        "the shipped partition check passed a report that accounts for no "
+        "entry — an orphaned entry must be caught"
+    )
+    assert any("no category" in p and "orphan" in p for p in problems), (
+        f"the orphan entry must be named as missing; got {problems}"
+    )
+
+
+def test_exhaustiveness_catches_an_entry_in_two_categories():
+    """An entry in two report categories must be named as double-counted."""
+    report = {
+        "retired": [{"name": "double-entry"}],
+        "spared": [{"name": "double-entry"}],
+        "tracked": [],
+        "revived": [],
+    }
+
+    problems = _shipped_errors(report, ["double-entry"])
+
+    assert problems, (
+        "the shipped partition check accepted an entry counted twice"
+    )
+    assert any("more than one" in p and "double-entry" in p for p in problems), (
+        f"the double-counted entry must be named; got {problems}"
+    )
+
+
+def test_empty_catalog_must_not_pass_exhaustiveness_vacuously():
+    """An empty catalog satisfies ``reported == set()`` trivially — the
+    shipped check must fail it rather than wave it through.
+
+    The rule now refuses an empty catalog at the API boundary, so this
+    drives ``check_report_partition`` directly: the helper must not
+    report success for zero entries.
+    """
+    report = {
+        "retired": [], "spared": [], "tracked": [], "revived": [],
+        "total_entries": 0,
+    }
+
+    problems = _shipped_errors(report, set())
+
+    assert problems, (
+        "the shipped partition check passed an empty catalog — a rule that "
+        "evaluated nothing must not claim exhaustiveness"
+    )
+    assert any("empty" in p for p in problems), (
+        f"the empty-catalog problem must be named; got {problems}"
+    )

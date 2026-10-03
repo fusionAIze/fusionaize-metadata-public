@@ -265,7 +265,9 @@ def test_report_has_before_and_after_counts():
 
     assert report["total_entries"] == 3
     assert len(report["retired"]) == 1
-    assert len(report["spared"]) == 1
+    # "a" is confirmed this round (spared as confirmed) and
+    # "operator-pick" is operator-configured (spared by carve-out).
+    assert len(report["spared"]) == 2
 
 
 # ---------------------------------------------------------------------------
@@ -389,15 +391,36 @@ def test_failed_collection_is_reported_and_retires_nothing():
     assert report.get("aborted") is True
 
 
-def test_empty_catalog_and_empty_sources_do_not_crash_or_retire():
-    """Both empty: no crash, no retirement."""
+def test_empty_catalog_fails_loudly_instead_of_reporting_success():
+    """An empty catalog cannot support a decision — the rule must fail.
+
+    An empty catalog trivially satisfies the report's partition
+    (``reported == set(catalog["providers"])`` is ``set() == set()``),
+    so a rule that simply returned would report a green run that
+    evaluated nothing — the false signal this lane closes.  The rule
+    must raise and name the reason, not hand back an empty success.
+
+    A non-empty survey and operator list isolate the failure to the
+    catalog: the earlier guards would otherwise fire first.
+    """
     catalog = {"schema_version": "v1.4", "providers": {}}
-    confs = _confirmations([], {})
 
-    catalog, report = _call_retirement(catalog, confs, _PLACEHOLDER_OPERATOR, threshold=1)
+    try:
+        _, report = _call_retirement(
+            catalog, _confirmations(["openrouter"], {}),
+            _PLACEHOLDER_OPERATOR, threshold=1,
+        )
+    except (ValueError, RuntimeError) as exc:
+        assert "empty catalog" in str(exc).lower(), (
+            f"the failure must name the empty catalog as the reason; got "
+            f"{str(exc)!r}"
+        )
+        return
 
-    assert report["retired"] == []
-    assert report["total_entries"] == 0
+    raise AssertionError(
+        "an empty catalog returned an ordinary report instead of failing — "
+        f"'did nothing' is not 'succeeded'; got {report!r}"
+    )
 
 
 # ---------------------------------------------------------------------------
